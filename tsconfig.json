@@ -1,0 +1,26 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "noImplicitUseStrict": true,
+    "noImplicitReturns": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "module": "umd",
+    "target": "es5",
+    "pretty": true,
+    "allowJs": false,
+    "charset": "utf8",
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictNullChecks": true,
+    "compileOnSave": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "./src/main/script/**/*.ts"
+  ]
+}

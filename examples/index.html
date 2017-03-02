@@ -1,0 +1,116 @@
+<head>
+  <script src="../dist/index.js"></script>
+</head>
+<body>
+  <canvas id="canvas" width="600" height="600"></canvas>
+  <script>
+    window.addEventListener('load', function() {
+      var model = {
+        sequenceConfig: {
+          range: {
+            start: 1,
+            end: 201
+          }
+        },
+        tracks: [
+          {
+            displayConfig: {
+              distance: 200,
+              width: 10,
+              style: 'stroke: blue; fill: white;'
+            },
+            axes: [
+              {
+                displayConfig: {
+                  distance: -15,
+                  width: 2,
+                  style: 'stroke: orange; fill: brown;',
+                  scales: [
+                    {
+                      width: 4,
+                      distance: -4,
+                      total: 10,
+                      style: 'stroke: green; stroke-width: 2;'
+                    }
+                  ]
+                }
+              }
+            ],
+            markers: [
+              {
+                displayConfig: {
+                  width: 14,
+                  style: 'stroke: red; fill: yellow; stroke-opacity: 0.4; stroke-width: 10; stroke-linejoin: round;'
+                },
+                location: {
+                  start: 1,
+                  end: 100
+                }
+              },
+              {
+                displayConfig: {
+                  width: 18,
+                  style: 'stroke: green; fill: purple; fill-opacity: 0.2; stroke-dasharray: 5,10,5'
+                },
+                location: {
+                  start: 120,
+                  end: 170
+                }
+              }
+            ]
+          },
+          {
+            displayConfig: {
+              distance: 235,
+              width: 10
+            },
+            axes: [
+              {
+                displayConfig: {
+                  distance: -15,
+                  width: 2,
+                  style: 'stroke: red; fill: violet;',
+                  scales: [
+                    {
+                      width: 4,
+                      distance: -4,
+                      interval: 10,
+                      style: 'stroke: green; stroke-width: 2;'
+                    }
+                  ]
+                }
+              }
+            ],
+            markers: []
+          },
+          {
+            displayConfig: {
+              distance: 260,
+              width: 10
+            },
+            axes: [
+              {
+                displayConfig: {
+                  distance: 14,
+                  width: 2,
+                  style: 'stroke: green; fill: yellow;',
+                  scales: [
+                    {
+                      width: 10,
+                      distance: 4,
+                      ticks: [50, 100, 150, 200],
+                      style: 'stroke: red; stroke-width: 4;'
+                    }
+                  ]
+                }
+              }
+            ],
+            markers: []
+          }
+        ]
+      };
+      var mapComponent = new CanvasPlasmid.Circular.VectorMapComponent(document.querySelector('#canvas'));
+      mapComponent.draw(model);
+    });
+  </script>
+</body>
