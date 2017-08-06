@@ -44,18 +44,24 @@
                 },
                 location: {
                   start: 1,
-                  end: 100
-                }
+                  end: 101
+                },
+                direction: '+'
               },
               {
                 displayConfig: {
                   width: 18,
-                  style: 'stroke: green; fill: purple; fill-opacity: 0.2; stroke-dasharray: 5,10,5'
+                  style: 'stroke: green; fill: purple; fill-opacity: 0.2; stroke-dasharray: 5,10,5',
+                  anchor: {
+                    width: 18,
+                    height: 18
+                  }
                 },
                 location: {
-                  start: 120,
-                  end: 170
-                }
+                  start: 121,
+                  end: 171
+                },
+                direction: '*'
               }
             ]
           },
@@ -98,7 +104,7 @@
                     {
                       width: 10,
                       distance: 4,
-                      ticks: [50, 100, 150, 200],
+                      ticks: [51, 101, 151, 201],
                       style: 'stroke: red; stroke-width: 4;'
                     }
                   ]

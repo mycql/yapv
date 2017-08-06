@@ -1,5 +1,7 @@
 import { ScaleLinear } from 'd3-scale';
 
+export type Coord = { x: number, y: number };
+
 export interface Location {
   start: number;
   end: number;
@@ -37,13 +39,19 @@ export const Directions: {
     BOTH: '*'
 };
 
+export type AnchorDisplayConfig = SizedDisplayConfig;
+
+export interface MarkerDisplayConfig extends DisplayConfig {
+  anchor: AnchorDisplayConfig;
+}
+
 /**
  * Supported styles:
  * fill, fill-rule, fill-opacity, stroke, stroke-opacity,
  * stroke-width, stroke-linecap, stroke-linejoin,
  * stroke-miterlimit, stroke-dasharray, stroke-dashoffset
  */
-export interface Marker extends ComponentModel<DisplayConfig> {
+export interface Marker extends ComponentModel<MarkerDisplayConfig> {
   location: Location;
   direction: Direction;
   labels?: Array<MarkerLabel>;

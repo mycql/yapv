@@ -1,7 +1,10 @@
 import { scaleLinear } from 'd3-scale';
 import { arc } from 'd3-shape';
+import { Coord } from './models';
 
-type StringKeyValMap = {[key: string]: string };
+type StringKeyValMap = { [key: string]: string };
+
+const _ANGLE_OFFSET: number = Math.PI + (Math.PI / 2);
 
 export function parseStyle(style: string): StringKeyValMap {
   return style.split(';')
@@ -74,7 +77,21 @@ export function pathDraw(context: CanvasRenderingContext2D, style: string): void
   context.restore();
 }
 
+export function toRadians(degrees: number): number {
+  return degrees * (Math.PI / 180);
+}
+
+export function toCartesianCoords(centerX: number,
+                                 centerY: number,
+                                 radius: number,
+                                 angleInRadians: number): Coord {
+  return {
+    x: centerX + (radius * Math.cos(_ANGLE_OFFSET + angleInRadians)),
+    y: centerY + (radius * Math.sin(_ANGLE_OFFSET + angleInRadians))
+  };
+}
+
 export {
   scaleLinear,
-  arc,
+  arc
 };
