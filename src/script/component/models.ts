@@ -21,8 +21,16 @@ export interface ComponentModel<T extends DisplayConfig> {
   parent?: ComponentModel<DisplayConfig>;
 }
 
-export interface MarkerLabel extends ComponentModel<DisplayConfig> {
+export type LabelType = 'path' | 'text';
+
+export interface LabelDisplayConfig extends DisplayConfig {
+  vOffset?: number;
+  hOffset?: number;
+}
+
+export interface Label extends ComponentModel<LabelDisplayConfig> {
   text: string;
+  type: LabelType;
 }
 
 export type Direction = string;
@@ -54,7 +62,7 @@ export interface MarkerDisplayConfig extends DisplayConfig {
 export interface Marker extends ComponentModel<MarkerDisplayConfig> {
   location: Location;
   direction: Direction;
-  labels?: Array<MarkerLabel>;
+  labels?: Array<Label>;
 }
 
 export interface TrackDisplayConfig extends DisplayConfig {

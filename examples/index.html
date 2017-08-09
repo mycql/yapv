@@ -46,7 +46,25 @@
                   start: 1,
                   end: 101
                 },
-                direction: '+'
+                direction: '+',
+                labels: [
+                  {
+                    text: 'CRISPR 001',
+                    type: 'path',
+                    displayConfig: {
+                      style: 'text-align: left; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5px;'
+                    }
+                  },
+                  {
+                    text: 'gene',
+                    type: 'path',
+                    displayConfig: {
+                      style: 'text-align: left; font: 10px "Courier New", monospace; fill: gray;',
+                      vOffset: 10,
+                      hOffset: 34
+                    }
+                  }
+                ]
               },
               {
                 displayConfig: {
@@ -61,7 +79,16 @@
                   start: 121,
                   end: 171
                 },
-                direction: '*'
+                direction: '*',
+                labels: [
+                  {
+                    text: 'CRISPR 002',
+                    type: 'text',
+                    displayConfig: {
+                      style: 'text-align: center; font: 10px "Arial", sans-serif; fill: red;'
+                    }
+                  }
+                ]
               }
             ]
           },

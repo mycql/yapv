@@ -34,9 +34,9 @@ export class MarkerComponent implements Renderable<Marker, MarkerDisplayConfig> 
     const location: Location = model.location;
     const halfWidth: number = displayConfig.width / 2;
     const style: string = displayConfig.style || defaultStyle;
-    const arcMiddleRad: number = parentConfig.distance;
-    const arcInnerRad: number = arcMiddleRad - halfWidth;
-    const arcOuterRad: number = arcMiddleRad + halfWidth;
+    const arcMidRadius: number = parentConfig.distance;
+    const arcInnerRad: number = arcMidRadius - halfWidth;
+    const arcOuterRad: number = arcMidRadius + halfWidth;
     let arcStartRad: number = scale(location.start);
     let arcEndRad: number = scale(location.end);
     if (anchorConfig && direction !== Directions.NONE) {
@@ -46,7 +46,7 @@ export class MarkerComponent implements Renderable<Marker, MarkerDisplayConfig> 
           anchorStartRad: number = 0,
           anchorEndRad: number = 0;
 
-      offsetRad = computeAnchorAngle(arcMiddleRad, halfAnchorHeight, anchorConfig.width);
+      offsetRad = computeAnchorAngle(arcMidRadius, halfAnchorHeight, anchorConfig.width);
 
       switch (direction) {
         case Directions.FORWARD:
@@ -54,9 +54,9 @@ export class MarkerComponent implements Renderable<Marker, MarkerDisplayConfig> 
           anchorEndRad = arcEndRad;
           arcEndRad = anchorStartRad;
           anchorCoords.push([
-            toCartesianCoords(centerX, centerY, arcMiddleRad + halfAnchorHeight, anchorStartRad),
-            toCartesianCoords(centerX, centerY, arcMiddleRad, anchorEndRad),
-            toCartesianCoords(centerX, centerY, arcMiddleRad - halfAnchorHeight, anchorStartRad)
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorStartRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius, anchorEndRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorStartRad)
           ]);
           break;
         case Directions.REVERSE:
@@ -64,9 +64,9 @@ export class MarkerComponent implements Renderable<Marker, MarkerDisplayConfig> 
           anchorEndRad = arcStartRad + offsetRad;
           arcStartRad = anchorEndRad;
           anchorCoords.push([
-            toCartesianCoords(centerX, centerY, arcMiddleRad + halfAnchorHeight, anchorEndRad),
-            toCartesianCoords(centerX, centerY, arcMiddleRad, anchorStartRad),
-            toCartesianCoords(centerX, centerY, arcMiddleRad - halfAnchorHeight, anchorEndRad)
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorEndRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius, anchorStartRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorEndRad)
           ]);
           break;
         case Directions.BOTH:
@@ -75,16 +75,16 @@ export class MarkerComponent implements Renderable<Marker, MarkerDisplayConfig> 
           anchorStartRad = arcEndRad;
           anchorEndRad = arcEndRad + offsetRad;
           anchorCoords.push([
-            toCartesianCoords(centerX, centerY, arcMiddleRad + halfAnchorHeight, anchorStartRad),
-            toCartesianCoords(centerX, centerY, arcMiddleRad, anchorEndRad),
-            toCartesianCoords(centerX, centerY, arcMiddleRad - halfAnchorHeight, anchorStartRad)
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorStartRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius, anchorEndRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorStartRad)
           ]);
           anchorStartRad = arcStartRad;
           anchorEndRad = arcStartRad - offsetRad;
           anchorCoords.push([
-            toCartesianCoords(centerX, centerY, arcMiddleRad + halfAnchorHeight, anchorStartRad),
-            toCartesianCoords(centerX, centerY, arcMiddleRad, anchorEndRad),
-            toCartesianCoords(centerX, centerY, arcMiddleRad - halfAnchorHeight, anchorStartRad)
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorStartRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius, anchorEndRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorStartRad)
           ]);
           break;
         case Directions.NONE:
