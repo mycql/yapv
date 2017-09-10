@@ -2,11 +2,9 @@ import { ScaleLinear } from 'd3-scale';
 import {
   Renderable,
   LabelType,
+  LabelTypes,
   Label,
   LabelDisplayConfig,
-  Marker,
-  Track,
-  TrackDisplayConfig,
   Location,
   Coord
 } from '../models';
@@ -17,6 +15,17 @@ import {
 } from '../util';
 
 const defaultStyle: string = 'stroke: black; fill: black; font: 10px "Courier New", monospace;';
+
+type DrawTextParams = {
+  radius: number;
+  location: Location;
+  content: string;
+  styleObj: StringKeyValMap;
+  center: Coord;
+  offset: Coord;
+  scale: ScaleLinear<number, number>;
+  context: CanvasRenderingContext2D;
+};
 
 function resolveStyle(styleProp: string, styleVal: string, context: CanvasRenderingContext2D): void {
   context.textAlign = 'center';
@@ -30,14 +39,9 @@ function resolveStyle(styleProp: string, styleVal: string, context: CanvasRender
   }
 }
 
-function drawTextAlongArc(radius: number,
-                          location: Location,
-                          content: string,
-                          styleObj: StringKeyValMap,
-                          center: Coord,
-                          offset: Coord,
-                          scale: ScaleLinear<number, number>,
-                          context: CanvasRenderingContext2D): void {
+function drawTextAlongArc(params: DrawTextParams): void {
+  const { radius, location, content, styleObj,
+          center, offset, scale, context}: DrawTextParams = params;
   const arcStartRad: number = scale(location.start);
   const arcEndRad: number = scale(location.end);
   const arcLengthRad: number = Math.abs(arcEndRad - arcStartRad);
@@ -80,14 +84,9 @@ function drawTextAlongArc(radius: number,
   });
 }
 
-function drawTextAlongAxis(radius: number,
-                           location: Location,
-                           content: string,
-                           styleObj: StringKeyValMap,
-                           center: Coord,
-                           offset: Coord,
-                           scale: ScaleLinear<number, number>,
-                           context: CanvasRenderingContext2D): void {
+function drawTextAlongAxis(params: DrawTextParams): void {
+  const { radius, location, content, styleObj,
+          center, offset, scale, context}: DrawTextParams = params;
   const arcStartRad: number = scale(location.start);
   const arcEndRad: number = scale(location.end);
   const arcLengthRad: number = Math.abs(arcEndRad - arcStartRad);
@@ -123,26 +122,27 @@ function drawTextAlongAxis(radius: number,
 export class LabelComponent implements Renderable<Label, LabelDisplayConfig> {
 
   public render(model: Label, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<boolean> {
-    const type: LabelType = model.type;
     const content: string = model.text;
     const displayConfig: LabelDisplayConfig = model.displayConfig;
     const center: Coord = { x: 0, y: 0 };
     const offset: Coord = { x: displayConfig.hOffset || 0, y: displayConfig.vOffset || 0 };
     const style: string = displayConfig.style || defaultStyle;
-    const marker: Marker = <Marker>model.parent;
-    const track: Track = <Track>marker.parent;
-    const trackConfig: TrackDisplayConfig = track.displayConfig;
-    const location: Location = marker.location;
-    const arcMidRadius: number = trackConfig.distance;
+    const location: Location = model.location;
+    const type: LabelType = displayConfig.type || LabelTypes.PATH;
+    const radius: number = displayConfig.distance;
     const styleObj: StringKeyValMap = updateContextStyle(context, style, resolveStyle);
+    const drawParams: DrawTextParams = {
+      radius, location, content, styleObj,
+      center, offset, scale, context
+    };
     context.save();
     switch (type) {
-      case 'path':
-        drawTextAlongArc(arcMidRadius, location, content, styleObj, center, offset, scale, context);
+      case LabelTypes.PATH:
+        drawTextAlongArc(drawParams);
         break;
-      case 'text':
+      case LabelTypes.TEXT:
       default:
-        drawTextAlongAxis(arcMidRadius, location, content, styleObj, center, offset, scale, context);
+        drawTextAlongAxis(drawParams);
         break;
     }
     context.restore();

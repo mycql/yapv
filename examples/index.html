@@ -30,7 +30,12 @@
                       width: 4,
                       distance: -4,
                       total: 10,
-                      style: 'stroke: green; stroke-width: 2;'
+                      style: 'stroke: green; stroke-width: 2;',
+                      label: {
+                        type: 'text',
+                        style: 'text-align: center; font: 10px "Courier", monotype; fill: blued;',
+                        distance: -15
+                      }
                     }
                   ]
                 }
@@ -50,15 +55,15 @@
                 labels: [
                   {
                     text: 'CRISPR 001',
-                    type: 'path',
                     displayConfig: {
+                      type: 'path',
                       style: 'text-align: left; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5px;'
                     }
                   },
                   {
                     text: 'gene',
-                    type: 'path',
                     displayConfig: {
+                      type: 'path',
                       style: 'text-align: left; font: 10px "Courier New", monospace; fill: gray;',
                       vOffset: 10,
                       hOffset: 34
@@ -83,8 +88,8 @@
                 labels: [
                   {
                     text: 'CRISPR 002',
-                    type: 'text',
                     displayConfig: {
+                      type: 'text',
                       style: 'text-align: center; font: 10px "Arial", sans-serif; fill: red;'
                     }
                   }
@@ -108,7 +113,12 @@
                       width: 4,
                       distance: -4,
                       interval: 10,
-                      style: 'stroke: green; stroke-width: 2;'
+                      style: 'stroke: green; stroke-width: 2;',
+                      label: {
+                        type: 'path',
+                        style: 'text-align: center; font: 10px "Arial", sans-serif; fill: red;',
+                        distance: 10
+                      }
                     }
                   ]
                 }
@@ -131,8 +141,13 @@
                     {
                       width: 10,
                       distance: 4,
-                      ticks: [51, 101, 151, 201],
-                      style: 'stroke: red; stroke-width: 4;'
+                      ticks: [50, 100, 150, 200],
+                      style: 'stroke: red; stroke-width: 4;',
+                      label: {
+                        type: 'text',
+                        style: 'text-align: center; font: 10px "Arial", sans-serif; fill: red;',
+                        distance: -10
+                      }
                     }
                   ]
                 }
@@ -142,8 +157,8 @@
           }
         ]
       };
-      var mapComponent = new CanvasPlasmid.Circular.VectorMapComponent(document.querySelector('#canvas'));
-      mapComponent.draw(model);
+      var mapComponent = new CanvasPlasmid.Circular.VectorMapComponent();
+      mapComponent.draw(document.querySelector('#canvas'), model);
     });
   </script>
 </body>

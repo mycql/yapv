@@ -5,8 +5,6 @@ import {
   Renderable,
   Marker,
   MarkerDisplayConfig,
-  Track,
-  TrackDisplayConfig,
   AnchorDisplayConfig,
   Location,
   Direction,
@@ -29,12 +27,10 @@ export class MarkerComponent implements Renderable<Marker, MarkerDisplayConfig> 
     const displayConfig: MarkerDisplayConfig = model.displayConfig;
     const anchorConfig: AnchorDisplayConfig = displayConfig.anchor;
     const direction: Direction = model.direction || Directions.NONE;
-    const parent: Track = <Track>model.parent;
-    const parentConfig: TrackDisplayConfig = parent.displayConfig;
     const location: Location = model.location;
     const halfWidth: number = displayConfig.width / 2;
     const style: string = displayConfig.style || defaultStyle;
-    const arcMidRadius: number = parentConfig.distance;
+    const arcMidRadius: number = displayConfig.distance;
     const arcInnerRad: number = arcMidRadius - halfWidth;
     const arcOuterRad: number = arcMidRadius + halfWidth;
     let arcStartRad: number = scale(location.start);

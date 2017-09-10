@@ -12,28 +12,47 @@ export interface DisplayConfig {
   style: string;
 }
 
+export interface SpacedDispayConfig extends DisplayConfig {
+  /**
+   * Distance of the center of the the target component
+   * to a reference point:
+   * For circular, the center of the vector
+   * For linear, the center of the main axis
+   */
+  distance: number;
+}
+
 export interface SizedDisplayConfig extends DisplayConfig {
   height: number;
 }
 
 export interface ComponentModel<T extends DisplayConfig> {
   displayConfig: T;
-  parent?: ComponentModel<DisplayConfig>;
+  // parent?: ComponentModel<DisplayConfig>;
+}
+
+export interface LocatableComponentModel<T extends DisplayConfig> extends ComponentModel<T> {
+  location: Location;
 }
 
 export type LabelType = 'path' | 'text';
 
-export interface LabelDisplayConfig extends DisplayConfig {
+export const LabelTypes: { PATH: LabelType; TEXT: LabelType } = {
+  PATH: 'path',
+  TEXT: 'text'
+};
+
+export interface LabelDisplayConfig extends SpacedDispayConfig {
   vOffset?: number;
   hOffset?: number;
-}
-
-export interface Label extends ComponentModel<LabelDisplayConfig> {
-  text: string;
   type: LabelType;
 }
 
-export type Direction = string;
+export interface Label extends LocatableComponentModel<LabelDisplayConfig> {
+  text: string;
+}
+
+export type Direction = '+' | '-' | '#' | '*';
 
 export const Directions: {
   FORWARD: string;
@@ -49,7 +68,7 @@ export const Directions: {
 
 export type AnchorDisplayConfig = SizedDisplayConfig;
 
-export interface MarkerDisplayConfig extends DisplayConfig {
+export interface MarkerDisplayConfig extends SpacedDispayConfig {
   anchor: AnchorDisplayConfig;
 }
 
@@ -59,22 +78,14 @@ export interface MarkerDisplayConfig extends DisplayConfig {
  * stroke-width, stroke-linecap, stroke-linejoin,
  * stroke-miterlimit, stroke-dasharray, stroke-dashoffset
  */
-export interface Marker extends ComponentModel<MarkerDisplayConfig> {
-  location: Location;
+export interface Marker extends LocatableComponentModel<MarkerDisplayConfig> {
   direction: Direction;
   labels?: Array<Label>;
 }
 
-export interface TrackDisplayConfig extends DisplayConfig {
-  /**
-   * Distance of the center of the track to a reference point:
-   * For circular, the center of the vector
-   * For linear, the center of the main axis
-   */
-  distance: number;
-}
+export type TrackDisplayConfig = SpacedDispayConfig;
 
-export interface AxisTickConfig extends TrackDisplayConfig {
+export interface AxisTickConfig extends SpacedDispayConfig {
   /**
    * Vertical distance of each scale marker to
    * the center of the axis on which it is
@@ -97,13 +108,19 @@ export interface AxisTickConfig extends TrackDisplayConfig {
    * will spread the tick values across the map
    */
   ticks?: Array<number>;
+  /**
+   * If specified, display properties for the
+   * labels to be rendered,, otherwise no
+   * labels will be associated with tick items
+   */
+  label: LabelDisplayConfig;
 }
 
 /**
  * For axes, the distance is relative to the middle of
  * the enclosing track
  */
-export interface AxisDisplayConfig extends TrackDisplayConfig {
+export interface AxisDisplayConfig extends SpacedDispayConfig {
   /**
    * Distance of the center of the axis to the
    * center of the track on which the scales
@@ -113,7 +130,7 @@ export interface AxisDisplayConfig extends TrackDisplayConfig {
   scales: Array<AxisTickConfig>;
 }
 
-export type Axis = ComponentModel<AxisDisplayConfig>;
+export type Axis = LocatableComponentModel<AxisDisplayConfig>;
 
 /**
  * Supported styles:

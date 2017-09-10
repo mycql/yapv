@@ -1,14 +1,19 @@
 import { ScaleLinear } from 'd3-scale';
 import { DefaultArcObject } from 'd3-shape';
 import { arc, pathDraw } from '../util';
-import { Renderable, Axis, AxisDisplayConfig, AxisTickConfig, Track, TrackDisplayConfig, VectorMap, Location } from '../models';
+import { Renderable, Axis, AxisDisplayConfig, AxisTickConfig, Location, Label } from '../models';
+
+import { LabelComponent } from './label';
+
+const labelRenderer: LabelComponent = new LabelComponent();
 
 const defaultStyle: string = 'stroke: black; fill: gray;';
 
 function intervalToScales(tickInterVal: number, location: Location): Array<number> {
   const ticks: Array<number> = [];
-  let tick: number = location.start;
-  while (tick <= location.end) {
+  const { start, end }: Location = location;
+  let tick: number = start === 1 ? start - 1 : start;
+  while (tick <= end) {
     ticks.push(tick);
     tick += tickInterVal;
   }
@@ -85,6 +90,17 @@ function drawScales(displayConfig: AxisDisplayConfig,
       arc().context(context)(arcConfig);
       context.closePath();
       pathDraw(context, style);
+
+      const shoudDrawLabels: boolean = tickConfig.label !== null &&
+        typeof tickConfig.label === 'object';
+      if (shoudDrawLabels) {
+        const label: Label = {
+          text: tick.toString(),
+          location: { start: tick, end: tick },
+          displayConfig: tickConfig.label
+        };
+        labelRenderer.render(label, scale, context);
+      }
     });
   });
 }
@@ -93,11 +109,8 @@ export class AxisComponent implements Renderable<Axis, AxisDisplayConfig> {
 
   public render(model: Axis, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<boolean> {
     const displayConfig: AxisDisplayConfig = model.displayConfig;
-    const track: Track = <Track>model.parent;
-    const trackConfig: TrackDisplayConfig = track.displayConfig;
-    const vectorMap: VectorMap = <VectorMap>track.parent;
-    const mapLocation: Location = vectorMap.sequenceConfig.range;
-    const distanceFromTrack: number = trackConfig.distance + displayConfig.distance;
+    const mapLocation: Location = model.location;
+    const distanceFromTrack: number = displayConfig.distance;
     drawAxis(displayConfig,  distanceFromTrack, scale, context, mapLocation);
     drawScales(displayConfig, distanceFromTrack, scale, context, mapLocation);
     return Promise.resolve(true);

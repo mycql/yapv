@@ -114,6 +114,11 @@ export function toCartesianCoords(centerX: number,
   };
 }
 
+export function deepClone<T extends Object>(target: T): T {
+  return JSON.parse(JSON.stringify(target));
+}
+
+
 export {
   scaleLinear,
   arc
