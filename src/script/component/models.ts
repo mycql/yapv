@@ -55,15 +55,15 @@ export interface Label extends LocatableComponentModel<LabelDisplayConfig> {
 export type Direction = '+' | '-' | '#' | '*';
 
 export const Directions: {
-  FORWARD: string;
-  REVERSE: string;
-  NONE: string;
-  BOTH: string;
+  FORWARD: Direction;
+  REVERSE: Direction;
+  NONE: Direction;
+  BOTH: Direction;
 } = {
-    FORWARD: '+',
-    REVERSE: '-',
-    NONE: '#',
-    BOTH: '*'
+  FORWARD: '+',
+  REVERSE: '-',
+  NONE: '#',
+  BOTH: '*'
 };
 
 export type AnchorDisplayConfig = SizedDisplayConfig;
@@ -157,6 +157,15 @@ export interface VectorMap extends ComponentModel<VectorMapDisplayConfig> {
   tracks: Array<Track>;
 }
 
-export interface Renderable<T extends ComponentModel<U>, U extends DisplayConfig> {
-  render(model: T, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<boolean>;
+export interface Renderable<T extends ComponentModel<U>, U extends DisplayConfig, V extends Object> {
+  render(model: T, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<V>;
+}
+
+export type RenderWithLabelsResult = {
+  status: boolean;
+  renderLabels: () => Promise<boolean>;
+};
+
+export interface RenderableWithLabels<T extends ComponentModel<U>, U extends DisplayConfig> extends Renderable<T, U, RenderWithLabelsResult> {
+
 }

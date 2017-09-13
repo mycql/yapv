@@ -2,8 +2,10 @@ import { ScaleLinear } from 'd3-scale';
 import { DefaultArcObject, line} from 'd3-shape';
 import { arc, pathDraw, toCartesianCoords } from '../util';
 import {
-  Renderable,
+  RenderableWithLabels,
+  RenderWithLabelsResult,
   Marker,
+  Label,
   MarkerDisplayConfig,
   AnchorDisplayConfig,
   Location,
@@ -11,6 +13,8 @@ import {
   Directions,
   Coord
 } from '../models';
+
+import renderLabel from './label';
 
 const defaultStyle: string = 'stroke: black; fill: gray;';
 
@@ -20,9 +24,19 @@ function computeAnchorAngle(radius: number, halfAnchorHeight: number, anchorWidt
   return halfAngle * 2;
 }
 
-export class MarkerComponent implements Renderable<Marker, MarkerDisplayConfig> {
+function renderLabels(model: Marker, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<boolean> {
+  if (model.labels) {
+    context.save();
+    model.labels.forEach((label: Label) =>
+      renderLabel(label, scale, context));
+    context.restore();
+  }
+  return Promise.resolve(true);
+}
 
-  public render(model: Marker, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<boolean> {
+export class MarkerComponent implements RenderableWithLabels<Marker, MarkerDisplayConfig> {
+
+  public render(model: Marker, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<RenderWithLabelsResult> {
     const centerX: number = 0, centerY: number = 0;
     const displayConfig: MarkerDisplayConfig = model.displayConfig;
     const anchorConfig: AnchorDisplayConfig = displayConfig.anchor;
@@ -108,6 +122,12 @@ export class MarkerComponent implements Renderable<Marker, MarkerDisplayConfig> 
     context.closePath();
     pathDraw(context, style);
 
-    return Promise.resolve(true);
+    const result: RenderWithLabelsResult = {
+      status: true,
+      renderLabels: (): Promise<boolean> => renderLabels(model, scale, context)
+    };
+    return Promise.resolve(result);
   }
 }
+
+export default MarkerComponent.prototype.render;

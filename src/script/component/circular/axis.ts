@@ -1,11 +1,17 @@
 import { ScaleLinear } from 'd3-scale';
 import { DefaultArcObject } from 'd3-shape';
 import { arc, pathDraw } from '../util';
-import { Renderable, Axis, AxisDisplayConfig, AxisTickConfig, Location, Label } from '../models';
+import {
+  RenderableWithLabels,
+  RenderWithLabelsResult,
+  Axis,
+  AxisDisplayConfig,
+  AxisTickConfig,
+  Location,
+  Label
+} from '../models';
 
-import { LabelComponent } from './label';
-
-const labelRenderer: LabelComponent = new LabelComponent();
+import renderLabel from './label';
 
 const defaultStyle: string = 'stroke: black; fill: gray;';
 
@@ -34,10 +40,31 @@ function totalToInterval(totalTicks: number, location: Location): number {
   return (molLength - (molLength % parseInt(digits.join('')))) / totalTicks;
 }
 
+type TickModel = {
+  config: AxisTickConfig,
+  ticks: Array<number>
+};
+
+function createTicks(configs: Array<AxisTickConfig>, location: Location): Array<TickModel> {
+  return (configs || []).map((config: AxisTickConfig) => {
+    const tickTotal: number = config.total;
+    const tickInterVal: number = config.interval;
+    let ticks: Array<number> = config.ticks || [];
+    if (ticks.length <= 0) {
+      if (tickInterVal) {
+        ticks = intervalToScales(tickInterVal, location);
+      } else if (tickTotal) {
+        ticks = intervalToScales(totalToInterval(tickTotal, location), location);
+      }
+    }
+    return { config, ticks };
+  });
+}
+
 function drawAxis(displayConfig: AxisDisplayConfig,
-                  distanceFromTrack: number,
                   scale: ScaleLinear<number, number>,
                   context: CanvasRenderingContext2D,
+                  distanceFromTrack: number,
                   location: Location): void {
   const style: string = displayConfig.style || defaultStyle;
   const halfWidth: number = displayConfig.width / 2;
@@ -54,29 +81,15 @@ function drawAxis(displayConfig: AxisDisplayConfig,
   pathDraw(context, style);
 }
 
-function drawScales(displayConfig: AxisDisplayConfig,
-                    distanceFromTrack: number,
+function drawScales(tickModels: Array<TickModel>,
                     scale: ScaleLinear<number, number>,
                     context: CanvasRenderingContext2D,
-                    location: Location): void {
-  const tickOptions: Array<AxisTickConfig> = displayConfig.scales;
-  if (!tickOptions) {
-    return;
-  }
-  tickOptions.forEach((tickConfig: AxisTickConfig) => {
-    const tickTotal: number = tickConfig.total;
-    const tickInterVal: number = tickConfig.interval;
-    let ticks: Array<number> = tickConfig.ticks || [];
-    if (ticks.length <= 0) {
-      if (tickInterVal) {
-        ticks = intervalToScales(tickInterVal, location);
-      } else if (tickTotal) {
-        ticks = intervalToScales(totalToInterval(tickTotal, location), location);
-      }
-    }
-    const style: string = tickConfig.style || defaultStyle;
-    const halfWidth: number = tickConfig.width / 2;
-    const distanceFromAxis: number = tickConfig.distance || 0;
+                    distanceFromTrack: number): void {
+  tickModels.forEach((tickModel: TickModel) => {
+    const { config, ticks }: TickModel = tickModel;
+    const style: string = config.style || defaultStyle;
+    const halfWidth: number = config.width / 2;
+    const distanceFromAxis: number = config.distance || 0;
     const tickDistance: number = distanceFromTrack + distanceFromAxis;
     ticks.forEach((tick: number) => {
       const arcConfig: DefaultArcObject = {
@@ -90,29 +103,46 @@ function drawScales(displayConfig: AxisDisplayConfig,
       arc().context(context)(arcConfig);
       context.closePath();
       pathDraw(context, style);
-
-      const shoudDrawLabels: boolean = tickConfig.label !== null &&
-        typeof tickConfig.label === 'object';
-      if (shoudDrawLabels) {
-        const label: Label = {
-          text: tick.toString(),
-          location: { start: tick, end: tick },
-          displayConfig: tickConfig.label
-        };
-        labelRenderer.render(label, scale, context);
-      }
     });
   });
 }
 
-export class AxisComponent implements Renderable<Axis, AxisDisplayConfig> {
+function renderLabels(tickModels: Array<TickModel>,
+                      scale: ScaleLinear<number, number>,
+                      context: CanvasRenderingContext2D): Promise<boolean> {
+  tickModels.forEach((tickModel: TickModel) => {
+    const { config, ticks }: TickModel = tickModel;
+    ticks.forEach((tick: number) => {
+      const shoudDrawLabels: boolean = config.label !== null &&
+        typeof config.label === 'object';
+      if (shoudDrawLabels) {
+        const label: Label = {
+          text: tick.toString(),
+          location: { start: tick, end: tick },
+          displayConfig: config.label
+        };
+        renderLabel(label, scale, context);
+      }
+    });
+  });
+  return Promise.resolve(true);
+}
 
-  public render(model: Axis, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<boolean> {
+export class AxisComponent implements RenderableWithLabels<Axis, AxisDisplayConfig> {
+
+  public render(model: Axis, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<RenderWithLabelsResult> {
     const displayConfig: AxisDisplayConfig = model.displayConfig;
     const mapLocation: Location = model.location;
     const distanceFromTrack: number = displayConfig.distance;
-    drawAxis(displayConfig,  distanceFromTrack, scale, context, mapLocation);
-    drawScales(displayConfig, distanceFromTrack, scale, context, mapLocation);
-    return Promise.resolve(true);
+    const tickModels: Array<TickModel> = createTicks(displayConfig.scales, mapLocation);
+    drawAxis(displayConfig, scale, context, distanceFromTrack,  mapLocation);
+    drawScales(tickModels, scale, context, distanceFromTrack);
+    const result: RenderWithLabelsResult = {
+      status: true,
+      renderLabels: (): Promise<boolean> => renderLabels(tickModels, scale, context)
+    };
+    return Promise.resolve(result);
   }
 }
+
+export default AxisComponent.prototype.render;

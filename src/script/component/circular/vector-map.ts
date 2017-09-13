@@ -5,81 +5,84 @@ import {
   VectorMapDisplayConfig,
   AxisTickConfig,
   Renderable,
+  RenderWithLabelsResult,
   Location,
   Track,
   Marker,
   Axis,
   Label
 } from '../models';
-import { TrackComponent } from './track';
-import { LabelComponent } from './label';
+import renderTrack from './track';
 
-const trackRenderer: TrackComponent = new TrackComponent();
-const labelRenderer: LabelComponent = new LabelComponent();
+function normalizeMarkerConfig(trackDistance: number): (marker: Marker) => void {
+  return (marker: Marker) => {
+    marker.displayConfig.distance = trackDistance;
+    if (marker.labels) {
+       marker.labels.forEach((label: Label) => {
+        label.location = marker.location;
+        label.displayConfig.distance = trackDistance;
+      });
+    }
+  };
+}
 
-export class VectorMapComponent implements Renderable<VectorMap, VectorMapDisplayConfig> {
+function normalizeAxisConfig(trackDistance: number, range: Location): (axis: Axis) => void {
+  return (axis: Axis) => {
+    const axisDistCenter: number = axis.displayConfig.distance + trackDistance;
+    axis.location = range;
+    axis.displayConfig.distance = axisDistCenter;
+    const ticks: Array<AxisTickConfig> = axis.displayConfig.scales || [];
+    ticks.forEach((tick: AxisTickConfig) => {
+      if (tick.label) {
+        tick.label.distance = (tick.label.distance || 0) + axisDistCenter;
+      }
+    });
+  };
+}
+
+function normalizeTrackConfig(range: Location): (track: Track) => void {
+  return (track: Track) => {
+    const distance: number = track.displayConfig.distance;
+    if (track.markers) {
+      track.markers.forEach(normalizeMarkerConfig(distance));
+    }
+    if (track.axes) {
+      track.axes.forEach(normalizeAxisConfig(distance, range));
+    }
+  };
+}
+
+export class VectorMapComponent implements Renderable<VectorMap, VectorMapDisplayConfig, boolean> {
 
   public draw(canvas: HTMLCanvasElement, model: VectorMap): Promise<boolean> {
     model = deepClone(model);
     const range: Location = model.sequenceConfig.range;
-    const scale: ScaleLinear<number, number> =
-      scaleLinear().domain([range.start, range.end]).range([0, Math.PI * 2]);
-    model.tracks.forEach((track: Track) => {
-      if (track.markers) {
-        track.markers.forEach((marker: Marker) => {
-          marker.displayConfig.distance = track.displayConfig.distance;
-          if (marker.labels) {
-             marker.labels.forEach((label: Label) => {
-              label.location = marker.location;
-              label.displayConfig.distance = track.displayConfig.distance;
-            });
-          }
-        });
-      }
-      if (track.axes) {
-        track.axes.forEach((axis: Axis) => {
-          const axisDistCenter: number = axis.displayConfig.distance +
-            track.displayConfig.distance;
-          axis.location = model.sequenceConfig.range;
-          axis.displayConfig.distance = axisDistCenter;
-          const ticks: Array<AxisTickConfig> = axis.displayConfig.scales || [];
-          ticks.forEach((tick: AxisTickConfig) => {
-            if (tick.label) {
-              tick.label.distance = (tick.label.distance || 0) + axisDistCenter;
-            }
-          });
-        });
-      }
-    });
+    const scale: ScaleLinear<number, number> = scaleLinear().domain([range.start, range.end])
+                                                            .range([0, Math.PI * 2]);
+    model.tracks.forEach(normalizeTrackConfig(range));
     const context: CanvasRenderingContext2D = canvas.getContext('2d');
     context.translate(canvas.width / 2, canvas.height / 2);
     return this.render(model, scale, context);
   }
 
   public render(model: VectorMap, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<boolean> {
-    return new Promise((rootResolve: (success: boolean) => void) => {
-      const trackPromises: Array<Promise<boolean>> = model.tracks.map((track: Track) => {
-        return new Promise((resolve: (success: boolean) => void) => {
+    return new Promise((rootResolve: (status: boolean) => void) => {
+      const tracksRenderedResults: Array<Promise<RenderWithLabelsResult>> = model.tracks.map((track: Track) => {
+        return new Promise((resolve: (result: Promise<RenderWithLabelsResult>) => void) => {
           requestAnimationFrame(() => {
             context.save();
-            trackRenderer.render(track, scale, context);
+            const result: Promise<RenderWithLabelsResult> =
+              renderTrack(track, scale, context);
             context.restore();
-            resolve(true);
+            resolve(result);
           });
         });
       });
-      Promise.all(trackPromises).then(() => {
-        model.tracks.forEach((track: Track) => {
-          track.markers.forEach((marker: Marker) => {
-            if (marker.labels) {
-              context.save();
-              marker.labels.forEach((label: Label) =>
-                labelRenderer.render(label, scale, context));
-              context.restore();
-            }
-          });
-        });
-        rootResolve(true);
+      Promise.all(tracksRenderedResults).then((results: Array<RenderWithLabelsResult>) => {
+        const labelsRenderedResult: Array<Promise<boolean>> =
+          results.filter((result: RenderWithLabelsResult) => typeof result.renderLabels === 'function')
+                 .map((result: RenderWithLabelsResult) => result.renderLabels());
+        Promise.all(labelsRenderedResult).then(() => rootResolve(true));
       });
     });
   }

@@ -119,7 +119,7 @@ function drawTextAlongAxis(params: DrawTextParams): void {
   }
 }
 
-export class LabelComponent implements Renderable<Label, LabelDisplayConfig> {
+export class LabelComponent implements Renderable<Label, LabelDisplayConfig, boolean> {
 
   public render(model: Label, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<boolean> {
     const content: string = model.text;
@@ -150,3 +150,5 @@ export class LabelComponent implements Renderable<Label, LabelDisplayConfig> {
   }
 
 }
+
+export default LabelComponent.prototype.render;
