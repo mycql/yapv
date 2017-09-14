@@ -155,6 +155,7 @@ export interface VectorMap extends ComponentModel<VectorMapDisplayConfig> {
   displayConfig: VectorMapDisplayConfig;
   sequenceConfig: VectorMapSeqConfig;
   tracks: Array<Track>;
+  labels?: Array<Label>;
 }
 
 export interface Renderable<T extends ComponentModel<U>, U extends DisplayConfig, V extends Object> {
