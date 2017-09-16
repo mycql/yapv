@@ -10,7 +10,9 @@ import {
 } from '../models';
 import {
   StringKeyValMap,
+  normalizeToCanvas,
   toCartesianCoords,
+  angleRadInBetweenSides,
   updateContextStyle,
 } from '../util';
 
@@ -66,9 +68,11 @@ function drawTextAlongArc(params: DrawTextParams): void {
       break;
   }
   const rotateAngle: number = widthPerChar / radius;
-  const coord: Coord = toCartesianCoords(center.x, center.y, radius, angleRad);
-  const x: number = coord.x + offset.x;
-  const y: number = coord.y + offset.y;
+  const labelRadius: number = radius + offset.y;
+  angleRad = angleRad + angleRadInBetweenSides(labelRadius, labelRadius, offset.x);
+  const normAngleRad: number = normalizeToCanvas(angleRad);
+  const coord: Coord = toCartesianCoords(center.x, center.y, labelRadius, normAngleRad);
+  const { x, y }: Coord = coord;
   content.split('').forEach((symbol: string) => {
     context.rotate(rotateAngle);
     context.save();
@@ -107,7 +111,8 @@ function drawTextAlongAxis(params: DrawTextParams): void {
       angleRad = arcMidRad;
       break;
   }
-  const coord: Coord = toCartesianCoords(center.x, center.y, radius, angleRad);
+  const normAngleRad: number = normalizeToCanvas(angleRad);
+  const coord: Coord = toCartesianCoords(center.x, center.y, radius, normAngleRad);
   const x: number = coord.x + offset.x;
   const y: number = coord.y + offset.y;
   context.translate(x, y);

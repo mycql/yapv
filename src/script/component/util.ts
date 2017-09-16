@@ -8,7 +8,7 @@ export enum Quadrant {
   FIRST, SECOND, THIRD, FOURTH
 }
 
-const _ANGLE_OFFSET: number = Math.PI + (Math.PI / 2);
+const _ANGLE_OFFSET: number = toRadians(-90);
 
 export function parseStyle(style: string): StringKeyValMap {
   return style.split(';')
@@ -59,7 +59,7 @@ export function updateContextStyle(context: CanvasRenderingContext2D, style: str
   return styles;
 }
 
-export function pathDraw(context: CanvasRenderingContext2D, style: string): void {
+export function pathDraw(context: CanvasRenderingContext2D, style: string, fill: boolean = true): void {
   context.save();
   const styles: StringKeyValMap = updateContextStyle(context, style);
   const fillRule: string = styles['fill-rule'];
@@ -71,15 +71,17 @@ export function pathDraw(context: CanvasRenderingContext2D, style: string): void
     context.globalAlpha = 1;
   }
   context.stroke();
-  if (fillOpacity) {
-    context.globalAlpha = parseFloat(fillOpacity);
-  } else {
-    context.globalAlpha = 1;
-  }
-  if (fillRule) {
-    context.fill(fillRule);
-  } else {
-    context.fill();
+  if (fill) {
+    if (fillOpacity) {
+      context.globalAlpha = parseFloat(fillOpacity);
+    } else {
+      context.globalAlpha = 1;
+    }
+    if (fillRule) {
+      context.fill(fillRule);
+    } else {
+      context.fill();
+    }
   }
   context.restore();
 }
@@ -109,15 +111,35 @@ export function toCartesianCoords(centerX: number,
                                   radius: number,
                                   angleInRadians: number): Coord {
   return {
-    x: centerX + (radius * Math.cos(_ANGLE_OFFSET + angleInRadians)),
-    y: centerY + (radius * Math.sin(_ANGLE_OFFSET + angleInRadians))
+    x: centerX + (radius * Math.cos(angleInRadians)),
+    y: centerY + (radius * Math.sin(angleInRadians))
   };
+}
+
+export function normalizeToCanvas(angleInRadians: number): number {
+  return _ANGLE_OFFSET + angleInRadians;
+}
+
+export function deNormalizeFromCanvas(angleInRadians: number): number {
+  return angleInRadians - _ANGLE_OFFSET;
+}
+
+export function angleRadInBetweenSides(adjacentSideA: number,
+                                       adjacentSideB: number,
+                                       oppositeSide: number): number {
+  const squaredTotal: number = squared(adjacentSideA) +
+                               squared(adjacentSideB) -
+                               squared(oppositeSide);
+  return Math.acos(squaredTotal / (2 * adjacentSideA * adjacentSideB));
 }
 
 export function deepClone<T extends Object>(target: T): T {
   return JSON.parse(JSON.stringify(target));
 }
 
+export function squared(value: number): number {
+  return Math.pow(value, 2);
+}
 
 export {
   scaleLinear,

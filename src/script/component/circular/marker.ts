@@ -1,6 +1,13 @@
 import { ScaleLinear } from 'd3-scale';
 import { DefaultArcObject, line} from 'd3-shape';
-import { arc, pathDraw, toCartesianCoords } from '../util';
+import {
+  arc,
+  pathDraw,
+  toCartesianCoords,
+  normalizeToCanvas,
+  deNormalizeFromCanvas,
+  squared
+} from '../util';
 import {
   RenderableWithLabels,
   RenderWithLabelsResult,
@@ -19,7 +26,7 @@ import renderLabel from './label';
 const defaultStyle: string = 'stroke: black; fill: gray;';
 
 function computeAnchorAngle(radius: number, halfAnchorHeight: number, anchorWidth: number): number {
-  const angleOppositeWidth: number = Math.sqrt(Math.pow(anchorWidth, 2) - Math.pow(halfAnchorHeight, 2));
+  const angleOppositeWidth: number = Math.sqrt(squared(anchorWidth) - squared(halfAnchorHeight));
   const halfAngle: number = Math.asin((angleOppositeWidth / 2) / radius);
   return halfAngle * 2;
 }
@@ -47,8 +54,8 @@ export class MarkerComponent implements RenderableWithLabels<Marker, MarkerDispl
     const arcMidRadius: number = displayConfig.distance;
     const arcInnerRad: number = arcMidRadius - halfWidth;
     const arcOuterRad: number = arcMidRadius + halfWidth;
-    let arcStartRad: number = scale(location.start);
-    let arcEndRad: number = scale(location.end);
+    let arcStartRad: number = normalizeToCanvas(scale(location.start));
+    let arcEndRad: number = normalizeToCanvas(scale(location.end));
     if (anchorConfig && direction !== Directions.NONE) {
       const halfAnchorHeight: number = anchorConfig.height / 2;
       let anchorCoords: Array<Array<Coord>> = [];
@@ -111,8 +118,8 @@ export class MarkerComponent implements RenderableWithLabels<Marker, MarkerDispl
     }
 
     const arcConfig: DefaultArcObject = {
-      startAngle: arcStartRad,
-      endAngle: arcEndRad,
+      startAngle: deNormalizeFromCanvas(arcStartRad),
+      endAngle: deNormalizeFromCanvas(arcEndRad),
       innerRadius: arcInnerRad,
       outerRadius: arcOuterRad,
       padAngle: null
