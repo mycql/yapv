@@ -1,11 +1,8 @@
 import { ScaleLinear } from 'd3-scale';
-import { DefaultArcObject, line} from 'd3-shape';
 import {
-  arc,
   pathDraw,
   toCartesianCoords,
   normalizeToCanvas,
-  deNormalizeFromCanvas,
   squared
 } from '../util';
 import {
@@ -54,79 +51,107 @@ export class MarkerComponent implements RenderableWithLabels<Marker, MarkerDispl
     const arcMidRadius: number = displayConfig.distance;
     const arcInnerRad: number = arcMidRadius - halfWidth;
     const arcOuterRad: number = arcMidRadius + halfWidth;
+    const halfAnchorHeight: number = anchorConfig ? anchorConfig.height / 2 : halfWidth;
     let arcStartRad: number = normalizeToCanvas(scale(location.start));
     let arcEndRad: number = normalizeToCanvas(scale(location.end));
+    let anchorCoords: Array<Array<Coord>> = [];
+    let offsetRad: number = 0,
+        anchorStartRad: number = 0,
+        anchorEndRad: number = 0;
+
     if (anchorConfig && direction !== Directions.NONE) {
-      const halfAnchorHeight: number = anchorConfig.height / 2;
-      let anchorCoords: Array<Array<Coord>> = [];
-      let offsetRad: number = 0,
-          anchorStartRad: number = 0,
-          anchorEndRad: number = 0;
-
       offsetRad = computeAnchorAngle(arcMidRadius, halfAnchorHeight, anchorConfig.width);
-
-      switch (direction) {
-        case Directions.FORWARD:
-          anchorStartRad = arcEndRad - offsetRad;
-          anchorEndRad = arcEndRad;
-          arcEndRad = anchorStartRad;
-          anchorCoords.push([
-            toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorStartRad),
+    }
+    switch (direction) {
+      case Directions.FORWARD:
+        anchorStartRad = arcEndRad - offsetRad;
+        anchorEndRad = arcEndRad;
+        arcEndRad = anchorStartRad;
+        anchorCoords.push(
+          [
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcStartRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcStartRad)
+          ],
+          [
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, anchorStartRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorStartRad),
             toCartesianCoords(centerX, centerY, arcMidRadius, anchorEndRad),
-            toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorStartRad)
-          ]);
-          break;
-        case Directions.REVERSE:
-          anchorStartRad = arcStartRad;
-          anchorEndRad = arcStartRad + offsetRad;
-          arcStartRad = anchorEndRad;
-          anchorCoords.push([
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorStartRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, anchorStartRad)
+          ]
+        );
+        break;
+      case Directions.REVERSE:
+        anchorStartRad = arcStartRad;
+        anchorEndRad = arcStartRad + offsetRad;
+        arcStartRad = anchorEndRad;
+        anchorCoords.push(
+          [
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, anchorEndRad),
             toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorEndRad),
             toCartesianCoords(centerX, centerY, arcMidRadius, anchorStartRad),
-            toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorEndRad)
-          ]);
-          break;
-        case Directions.BOTH:
-          arcEndRad = arcEndRad - offsetRad;
-          arcStartRad = arcStartRad + offsetRad;
-          anchorStartRad = arcEndRad;
-          anchorEndRad = arcEndRad + offsetRad;
-          anchorCoords.push([
-            toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorStartRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorEndRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, anchorEndRad),
+          ],
+          [
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcEndRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcEndRad)
+          ]
+        );
+        break;
+      case Directions.BOTH:
+        anchorStartRad = arcStartRad;
+        anchorEndRad = arcStartRad + offsetRad;
+        arcStartRad = anchorEndRad;
+        anchorCoords.push(
+          [
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, anchorEndRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorEndRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius, anchorStartRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorEndRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, anchorEndRad),
+          ]
+        );
+        arcStartRad = anchorEndRad;
+        anchorStartRad = arcEndRad - offsetRad;
+        anchorEndRad = arcEndRad;
+        arcEndRad = anchorStartRad;
+        anchorCoords.push(
+          [
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, anchorStartRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorStartRad),
             toCartesianCoords(centerX, centerY, arcMidRadius, anchorEndRad),
-            toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorStartRad)
-          ]);
-          anchorStartRad = arcStartRad;
-          anchorEndRad = arcStartRad - offsetRad;
-          anchorCoords.push([
             toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorStartRad),
-            toCartesianCoords(centerX, centerY, arcMidRadius, anchorEndRad),
-            toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorStartRad)
-          ]);
-          break;
-        case Directions.NONE:
-        default:
-          break;
-      }
-      context.beginPath();
-      anchorCoords.forEach((coords: Array<Coord>) => {
-        line<Coord>().x((coord: Coord) => coord.x)
-                     .y((coord: Coord) => coord.y)
-                     .context(context)(coords);
-      });
-      pathDraw(context, style);
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, anchorStartRad)
+          ]
+        );
+        break;
+      case Directions.NONE:
+      default:
+        anchorCoords.push(
+          [
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcStartRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcStartRad)
+          ],
+          [
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcEndRad),
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcEndRad)
+          ]
+        );
+        break;
     }
 
-    const arcConfig: DefaultArcObject = {
-      startAngle: deNormalizeFromCanvas(arcStartRad),
-      endAngle: deNormalizeFromCanvas(arcEndRad),
-      innerRadius: arcInnerRad,
-      outerRadius: arcOuterRad,
-      padAngle: null
-    };
     context.beginPath();
-    arc().context(context)(arcConfig);
-    context.closePath();
+    anchorCoords.forEach((coords: Array<Coord>, index: number) => {
+      coords.forEach((coord: Coord) => {
+        context.lineTo(coord.x, coord.y);
+      });
+      if (index === 0) {
+        context.arc(centerX, centerY, arcInnerRad, arcStartRad, arcEndRad);
+      } else {
+        context.arc(centerX, centerY, arcOuterRad, arcEndRad, arcStartRad, true);
+      }
+    });
     pathDraw(context, style);
 
     const result: RenderWithLabelsResult = {
