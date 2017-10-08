@@ -1,7 +1,7 @@
 import { ScaleLinear } from 'd3-scale';
-import { DefaultArcObject } from 'd3-shape';
 import { arc, pathDraw } from '../util';
 import {
+  DefaultArcObject,
   RenderableWithLabels,
   RenderWithLabelsResult,
   Track,
@@ -29,7 +29,7 @@ export class TrackComponent implements RenderableWithLabels<Track, TrackDisplayC
       padAngle: null,
     };
     context.beginPath();
-    arc().context(context)(arcConfig);
+    arc(context, arcConfig);
     context.closePath();
     pathDraw(context, style);
     let firstPass: Array<Promise<RenderWithLabelsResult>> = [];

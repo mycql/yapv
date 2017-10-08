@@ -1,7 +1,7 @@
 import { ScaleLinear } from 'd3-scale';
-import { DefaultArcObject } from 'd3-shape';
 import { arc, pathDraw } from '../util';
 import {
+  DefaultArcObject,
   RenderableWithLabels,
   RenderWithLabelsResult,
   Axis,
@@ -76,7 +76,7 @@ function drawAxis(displayConfig: AxisDisplayConfig,
     padAngle: null,
   };
   context.beginPath();
-  arc().context(context)(arcConfig);
+  arc(context, arcConfig);
   context.closePath();
   pathDraw(context, style);
 }
@@ -100,7 +100,7 @@ function drawScales(tickModels: Array<TickModel>,
         padAngle: null,
       };
       context.beginPath();
-      arc().context(context)(arcConfig);
+      arc(context, arcConfig);
       context.closePath();
       pathDraw(context, style);
     });

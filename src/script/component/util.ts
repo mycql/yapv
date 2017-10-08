@@ -1,6 +1,5 @@
 import { scaleLinear } from 'd3-scale';
-import { arc } from 'd3-shape';
-import { Coord } from './models';
+import { Coord, DefaultArcObject } from './models';
 
 export type StringKeyValMap = { [key: string]: string };
 export type StyleResolver = (styleProp: string, styleVal: string, context: CanvasRenderingContext2D) => void;
@@ -141,7 +140,16 @@ export function squared(value: number): number {
   return Math.pow(value, 2);
 }
 
+export function arc(context: CanvasRenderingContext2D, config: DefaultArcObject): void {
+  const { innerRadius, outerRadius, startAngle, endAngle }: DefaultArcObject = config;
+  context.arc(0, 0, innerRadius, startAngle, endAngle);
+  const connector1: Coord = toCartesianCoords(0, 0, outerRadius, endAngle);
+  context.lineTo(connector1.x, connector1.y);
+  context.arc(0, 0, outerRadius, endAngle, startAngle, true);
+  const connector2: Coord = toCartesianCoords(0, 0, innerRadius, startAngle);
+  context.lineTo(connector2.x, connector2.y);
+}
+
 export {
-  scaleLinear,
-  arc
+  scaleLinear
 };

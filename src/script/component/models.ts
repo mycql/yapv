@@ -1,5 +1,13 @@
 import { ScaleLinear } from 'd3-scale';
 
+export interface DefaultArcObject {
+  innerRadius: number;
+  outerRadius: number;
+  startAngle: number;
+  endAngle: number;
+  padAngle: number;
+}
+
 export type Coord = { x: number, y: number };
 
 export interface Location {
