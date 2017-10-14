@@ -43,6 +43,10 @@ export interface LocatableComponentModel<T extends DisplayConfig> extends Compon
   location: Location;
 }
 
+export interface Line extends ComponentModel<DisplayConfig> {
+  coords: Array<Coord>;
+}
+
 export type LabelType = 'path' | 'text';
 
 export const LabelTypes: { PATH: LabelType; TEXT: LabelType } = {
@@ -58,6 +62,7 @@ export interface LabelDisplayConfig extends SpacedDispayConfig {
 
 export interface Label extends LocatableComponentModel<LabelDisplayConfig> {
   text: string;
+  line?: boolean | Line;
 }
 
 export type Direction = '+' | '-' | '#' | '*';

@@ -1,4 +1,6 @@
+<!doctype html>
 <head>
+  <meta charset="UTF-8">
   <script src="../dist/index.js"></script>
 </head>
 <body>
@@ -189,9 +191,49 @@
                 labels: [
                   {
                     text: 'CRISPR 003',
+                    line: {
+                      coords: [
+                        { x: 10, y: -20 }
+                      ],
+                      displayConfig: {
+                        style: 'stroke: red;'
+                      }
+                    },
                     displayConfig: {
                       type: 'path',
-                      style: 'text-align: left; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5px;'
+                      style: 'text-align: right; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5px;',
+                      vOffset: 30
+                    }
+                  }
+                ]
+              },
+              {
+                displayConfig: {
+                  width: 14,
+                  style: 'stroke: limegreen; fill: red; fill-opacity: 0.2; stroke-width: 1; stroke-linejoin: round;',
+                  anchor: {
+                    width: 18,
+                    height: 30
+                  }
+                },
+                location: {
+                  start: 130,
+                  end: 170
+                },
+                direction: '+',
+                labels: [
+                  {
+                    text: 'CRISPR 006',
+                    line: {
+                      coords: [
+                        { x: -20, y: -20 }
+                      ]
+                    },
+                    displayConfig: {
+                      type: 'text',
+                      style: 'text-align: center; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5px;',
+                      vOffset: -200,
+                      hOffset: -10
                     }
                   }
                 ]
@@ -213,9 +255,38 @@
                 labels: [
                   {
                     text: 'CRISPR 004',
+                    line: true,
                     displayConfig: {
                       type: 'text',
-                      style: 'text-align: center; font: 10px "Courier New", monospace; fill: green; stroke: green; letter-spacing: 5px;'
+                      style: 'text-align: center; font: 10px "Courier New", monospace; fill: green; stroke: green; letter-spacing: 5px;',
+                      vOffset: 20,
+                      hOffset: 100
+                    }
+                  }
+                ]
+              },
+              {
+                displayConfig: {
+                  width: 14,
+                  style: 'stroke: blue; fill: orange; fill-opacity: 0.2; stroke-width: 1;',
+                  anchor: {
+                    width: 18,
+                    height: 30
+                  }
+                },
+                location: {
+                  start: 30,
+                  end: 70
+                },
+                direction: '-',
+                labels: [
+                  {
+                    text: 'CRISPR 005',
+                    line: true,
+                    displayConfig: {
+                      type: 'path',
+                      style: 'text-align: center; font: 10px "Courier New", monospace; fill: green; stroke: orange; letter-spacing: 5px;',
+                      vOffset: 30
                     }
                   }
                 ]

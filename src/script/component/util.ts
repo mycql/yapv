@@ -14,13 +14,14 @@ export function parseStyle(style: string): StringKeyValMap {
     .filter((styleEl: string) => styleEl.length > 0)
     .map((styleEl: string) => styleEl.trim().split(':'))
     .reduce((acc: StringKeyValMap, keyVal: string[]) => {
-      acc[keyVal[0]] = keyVal[1].trim();
+      if (keyVal[1]) {
+        acc[keyVal[0]] = keyVal[1].trim();
+      }
       return acc;
     }, {});
 }
 
-export function updateContextStyle(context: CanvasRenderingContext2D, style: string, resolve?: StyleResolver): StringKeyValMap {
-  const styles: StringKeyValMap = parseStyle(style);
+export function updateContextStyle(context: CanvasRenderingContext2D, styles: StringKeyValMap, resolve?: StyleResolver): void {
   Object.keys(styles).forEach((styleProp: string) => {
     const styleVal: string = styles[styleProp];
     switch (styleProp) {
@@ -55,15 +56,15 @@ export function updateContextStyle(context: CanvasRenderingContext2D, style: str
       resolve(styleProp, styleVal, context);
     }
   });
-  return styles;
 }
 
 export function pathDraw(context: CanvasRenderingContext2D, style: string, fill: boolean = true): void {
-  context.save();
-  const styles: StringKeyValMap = updateContextStyle(context, style);
+  const styles: StringKeyValMap = parseStyle(style);
   const fillRule: string = styles['fill-rule'];
   const strokeOpacity: string = styles['stroke-opacity'];
   const fillOpacity: string = styles['fill-opacity'];
+  context.save();
+  updateContextStyle(context, styles);
   if (strokeOpacity) {
     context.globalAlpha = parseFloat(strokeOpacity);
   } else {

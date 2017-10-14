@@ -1,5 +1,5 @@
 import { ScaleLinear } from 'd3-scale';
-import { arc, pathDraw } from '../util';
+import { arc, pathDraw, normalizeToCanvas } from '../util';
 import {
   DefaultArcObject,
   RenderableWithLabels,
@@ -71,8 +71,8 @@ function drawAxis(displayConfig: AxisDisplayConfig,
   const arcConfig: DefaultArcObject = {
     innerRadius: distanceFromTrack - halfWidth,
     outerRadius: distanceFromTrack + halfWidth,
-    startAngle: scale(location.start),
-    endAngle: scale(location.end),
+    startAngle: normalizeToCanvas(scale(location.start)),
+    endAngle: normalizeToCanvas(scale(location.end)),
     padAngle: null,
   };
   context.beginPath();
@@ -95,8 +95,8 @@ function drawScales(tickModels: Array<TickModel>,
       const arcConfig: DefaultArcObject = {
         innerRadius: tickDistance - halfWidth,
         outerRadius: tickDistance + halfWidth,
-        startAngle: scale(tick),
-        endAngle: scale(tick),
+        startAngle: normalizeToCanvas(scale(tick)),
+        endAngle: normalizeToCanvas(scale(tick)),
         padAngle: null,
       };
       context.beginPath();
