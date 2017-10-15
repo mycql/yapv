@@ -1,5 +1,7 @@
 import { ScaleLinear } from 'd3-scale';
 
+export type StringKeyValMap = { [key: string]: string };
+
 export interface DefaultArcObject {
   innerRadius: number;
   outerRadius: number;
@@ -182,4 +184,12 @@ export type RenderWithLabelsResult = {
 
 export interface RenderableWithLabels<T extends ComponentModel<U>, U extends DisplayConfig> extends Renderable<T, U, RenderWithLabelsResult> {
 
+}
+
+export interface RenderModelMapper<T extends ComponentModel<U>, U extends DisplayConfig, V extends Object, W extends Object> {
+  map(model: T, scale: ScaleLinear<number, number>, params?: W): Promise<V>;
+}
+
+export interface ComponentRenderer<T extends Object, U extends Object, V extends Object> {
+  render(params: T, context?: U): Promise<V>;
 }

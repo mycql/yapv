@@ -1,28 +1,51 @@
 import { ScaleLinear } from 'd3-scale';
 import {
+  Coord,
   DisplayConfig,
-  Renderable,
-  LabelType,
-  LabelTypes,
   Label,
   LabelDisplayConfig,
+  LabelType,
+  LabelTypes,
   Line,
   Location,
-  Coord,
-  StringKeyValMap
-} from '../models';
+  RenderModelMapper,
+  StringKeyValMap,
+} from '../../models';
 import {
   normalizeToCanvas,
   toCartesianCoords,
   angleRadInBetweenSides,
-  parseStyle,
-  updateContextStyle,
-  pathDraw
-} from '../util';
+  parseStyle
+} from '../../util';
 
 const defaultStyle: string = 'stroke: black; fill: black; font: 10px "Courier New", monospace;';
 
+export type TextMeasurer = (text: string) => number;
+
+export type LabelRenderParams = {
+  content: string;
+  position: Coord;
+  style: StringKeyValMap;
+  anglesInRadians?: {
+    rotation: number;
+    path: number;
+  };
+};
+
+export type ConnectorRenderParams = {
+  from: Coord;
+  to: Array<Coord>;
+  style: StringKeyValMap;
+};
+
+export type RenderParams = {
+  type: LabelType,
+  label: LabelRenderParams;
+  connector?: ConnectorRenderParams;
+};
+
 type DrawTextParams = {
+  type: LabelType,
   radius: number;
   location: Location;
   content: string;
@@ -31,53 +54,41 @@ type DrawTextParams = {
   offset: Coord;
   line: boolean | Line;
   scale: ScaleLinear<number, number>;
-  context: CanvasRenderingContext2D;
+  measure: TextMeasurer;
 };
 
-function resolveStyle(styleProp: string, styleVal: string, context: CanvasRenderingContext2D): void {
-  context.textAlign = 'center';
-  context.textBaseline = 'middle';
-  switch (styleProp) {
-    case 'font':
-      context.font = styleVal;
-      break;
-    default:
-      break;
-  }
-}
-
-function drawLine(params: DrawTextParams, to: Coord, lineRad: number, arcMidRad: number): void {
-  const { radius, style, center, line, context}: DrawTextParams = params;
-  context.save();
+function connector(params: DrawTextParams, end: Coord, lineRad: number, arcMidRad: number): ConnectorRenderParams {
+  const { radius, style, center, line }: DrawTextParams = params;
   const useDefaultLine: boolean = typeof line === 'boolean' && line === true;
   const useCustomLine: boolean = typeof line === 'object';
   let lineStyle: string = style;
-  context.beginPath();
+  const to: Array<Coord> = [];
+  let from: Coord = null;
   if (useDefaultLine) {
-    const from: Coord = toCartesianCoords(center.x, center.y, radius, lineRad);
-    context.moveTo(from.x, from.y);
-    context.lineTo(to.x, to.y);
+    from = toCartesianCoords(center.x, center.y, radius, lineRad);
+    to.push(end);
   } else if (useCustomLine) {
     const lineModel: Line = (<Line>line);
     const lineConfig: DisplayConfig = lineModel.displayConfig;
     if (lineConfig && lineConfig.style) {
       lineStyle = lineConfig.style;
     }
-    const from: Coord = toCartesianCoords(center.x, center.y,
-      radius, normalizeToCanvas(arcMidRad));
-    context.moveTo(from.x, from.y);
+    from = toCartesianCoords(center.x, center.y, radius, normalizeToCanvas(arcMidRad));
     (lineModel.coords || []).forEach((lineOffset: Coord) => {
-      context.lineTo(from.x + lineOffset.x, from.y + lineOffset.y);
+      to.push({ x: from.x + lineOffset.x, y: from.y + lineOffset.y });
     });
-    context.lineTo(to.x, to.y);
+    to.push(end);
   }
-  context.restore();
-  pathDraw(context, lineStyle, false);
+  return {
+    from,
+    to,
+    style: parseStyle(lineStyle)
+  };
 }
 
-function drawTextAlongArc(params: DrawTextParams): void {
-  const { radius, location, content, style,
-    center, offset, line, scale, context}: DrawTextParams = params;
+function textAlongArc(params: DrawTextParams): RenderParams {
+  const { radius, location, content, style, type,
+    center, offset, line, scale, measure }: DrawTextParams = params;
   const crossesOver: boolean = location.start > location.end;
   const arcStartRad: number = scale(location.start);
   const arcEndRad: number = scale(location.end);
@@ -87,14 +98,9 @@ function drawTextAlongArc(params: DrawTextParams): void {
   const styleObj: StringKeyValMap = parseStyle(style);
   const alignment: string = styleObj['text-align'] || 'center';
   const letterSpacing: number = parseInt(styleObj['letter-spacing'] || '0');
-  const hasStroke: boolean = typeof styleObj['stroke'] === 'string';
-  const hasfill: boolean = typeof styleObj['fill'] === 'string';
   const labelRadius: number = radius + offset.y;
-  // we need to update the context stye so we can measure the text properly
-  context.save();
-  updateContextStyle(context, styleObj, resolveStyle);
-  const textMetrics: TextMetrics = context.measureText(content);
-  const textWidth: number = textMetrics.width + ((content.length - 1) * letterSpacing);
+  const contentWidth: number = measure(content);
+  const textWidth: number = contentWidth + ((content.length - 1) * letterSpacing);
   const textArcRad: number = angleRadInBetweenSides(radius, radius, textWidth);
   const textArcRadHalf: number = textArcRad / 2;
   const widthPerChar: number = textWidth / content.length;
@@ -115,36 +121,32 @@ function drawTextAlongArc(params: DrawTextParams): void {
   angleRad = angleRad + angleRadInBetweenSides(radius, radius, offset.x);
   const normAngleRad: number = normalizeToCanvas(angleRad);
   const coord: Coord = toCartesianCoords(center.x, center.y, labelRadius, normAngleRad);
-  const { x, y }: Coord = coord;
 
-  context.save();
-  content.split('').forEach((symbol: string) => {
-    context.rotate(rotateAngle);
-    context.save();
-    context.translate(x, y);
-    context.rotate(angleRad);
-    if (hasfill) {
-      context.fillText(symbol, 0, 0);
+  const renderParams: RenderParams = {
+    type,
+    label: {
+      content,
+      position: coord,
+      style: styleObj,
+      anglesInRadians: {
+        rotation: rotateAngle,
+        path: angleRad
+      }
     }
-    if (hasStroke) {
-      context.strokeText(symbol, 0, 0);
-    }
-    context.restore();
-  });
-  context.restore();
-  context.restore();
+  };
 
-  if (!line) {
-    return;
+  if (line) {
+    const lineRad: number = normAngleRad + textArcRadHalf;
+    const to: Coord = toCartesianCoords(center.x, center.y, labelRadius, lineRad);
+    renderParams.connector = connector(params, to, lineRad, arcMidRad);
   }
-  const lineRad: number = normAngleRad + textArcRadHalf;
-  const to: Coord = toCartesianCoords(center.x, center.y, labelRadius, lineRad);
-  drawLine(params, to, lineRad, arcMidRad);
+
+  return renderParams;
 }
 
-function drawTextAlongAxis(params: DrawTextParams): void {
-  const { radius, location, content, style,
-    center, offset, line, scale, context}: DrawTextParams = params;
+function textAlongAxis(params: DrawTextParams): RenderParams {
+  const { radius, location, content, style, type,
+    center, offset, line, scale }: DrawTextParams = params;
   const crossesOver: boolean = location.start > location.end;
   const arcStartRad: number = scale(location.start);
   const arcEndRad: number = scale(location.end);
@@ -153,8 +155,6 @@ function drawTextAlongAxis(params: DrawTextParams): void {
   const arcMidRad: number = arcStartRad + (arcDiffRad / 2);
   const styleObj: StringKeyValMap = parseStyle(style);
   const alignment: string = styleObj['text-align'] || 'center';
-  const hasStroke: boolean = typeof styleObj['stroke'] === 'string';
-  const hasfill: boolean = typeof styleObj['fill'] === 'string';
   let angleRad: number = 0;
   switch (alignment) {
     case 'left':
@@ -168,36 +168,34 @@ function drawTextAlongAxis(params: DrawTextParams): void {
       angleRad = arcMidRad;
       break;
   }
+
   const normAngleRad: number = normalizeToCanvas(angleRad);
   const coord: Coord = toCartesianCoords(center.x, center.y, radius, normAngleRad);
   const x: number = coord.x + offset.x;
   const y: number = coord.y + offset.y;
+  const position: Coord = { x, y };
 
-  context.save();
-  updateContextStyle(context, styleObj, resolveStyle);
-  context.save();
-  context.translate(x, y);
-  if (hasfill) {
-    context.fillText(content, 0, 0);
-  }
-  if (hasStroke) {
-    context.strokeText(content, 0, 0);
-  }
-  context.restore();
-  context.restore();
+  const renderParams: RenderParams = {
+    type,
+    label: {
+      content,
+      position,
+      style: styleObj
+    }
+  };
 
-  if (!line) {
-    return;
+  if (line) {
+    const lineRad: number = normalizeToCanvas(arcMidRad);
+    const to: Coord = position;
+    renderParams.connector = connector(params, to, lineRad, arcMidRad);
   }
 
-  const lineRad: number = normalizeToCanvas(arcMidRad);
-  const to: Coord = { x, y };
-  drawLine(params, to, lineRad, arcMidRad);
+  return renderParams;
 }
 
-export class LabelComponent implements Renderable<Label, LabelDisplayConfig, boolean> {
+export class LabelRenderMapper implements RenderModelMapper<Label, LabelDisplayConfig, RenderParams, TextMeasurer> {
 
-  public render(model: Label, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<boolean> {
+  public map(model: Label, scale: ScaleLinear<number, number>, measure: TextMeasurer): Promise<RenderParams> {
     const content: string = model.text;
     const displayConfig: LabelDisplayConfig = model.displayConfig;
     const center: Coord = { x: 0, y: 0 };
@@ -208,23 +206,19 @@ export class LabelComponent implements Renderable<Label, LabelDisplayConfig, boo
     const radius: number = displayConfig.distance;
     const line: boolean | Line = model.line;
     const drawParams: DrawTextParams = {
-      radius, location, content, style,
-      center, offset, line, scale, context
+      radius, location, content, style, type,
+      center, offset, line, scale, measure
     };
 
-    switch (type) {
-      case LabelTypes.PATH:
-        drawTextAlongArc(drawParams);
-        break;
-      case LabelTypes.TEXT:
-      default:
-        drawTextAlongAxis(drawParams);
-        break;
-    }
+    const renderParams: RenderParams =
+      [type].map((labelType: string) =>
+        labelType === LabelTypes.PATH ?
+          textAlongArc(drawParams) :
+          textAlongAxis(drawParams))[0];
 
-    return Promise.resolve(true);
+    return Promise.resolve(renderParams);
   }
 
 }
 
-export default LabelComponent.prototype.render;
+export default LabelRenderMapper.prototype.map;

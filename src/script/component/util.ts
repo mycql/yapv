@@ -1,7 +1,6 @@
 import { scaleLinear } from 'd3-scale';
-import { Coord, DefaultArcObject } from './models';
+import { Coord, DefaultArcObject, StringKeyValMap } from './models';
 
-export type StringKeyValMap = { [key: string]: string };
 export type StyleResolver = (styleProp: string, styleVal: string, context: CanvasRenderingContext2D) => void;
 export enum Quadrant {
   FIRST, SECOND, THIRD, FOURTH
@@ -58,8 +57,8 @@ export function updateContextStyle(context: CanvasRenderingContext2D, styles: St
   });
 }
 
-export function pathDraw(context: CanvasRenderingContext2D, style: string, fill: boolean = true): void {
-  const styles: StringKeyValMap = parseStyle(style);
+export function pathDraw(context: CanvasRenderingContext2D, style: string | StringKeyValMap, fill: boolean = true): void {
+  const styles: StringKeyValMap = typeof style === 'string' ? parseStyle(style) : style;
   const fillRule: string = styles['fill-rule'];
   const strokeOpacity: string = styles['stroke-opacity'];
   const fillOpacity: string = styles['fill-opacity'];
