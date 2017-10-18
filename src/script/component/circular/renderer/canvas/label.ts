@@ -1,20 +1,20 @@
 import {
-  RenderParams,
-  LabelRenderParams,
-  ConnectorRenderParams
-} from '../../mapper/label';
-import {
   ComponentRenderer,
   Coord,
   LabelType,
   LabelTypes
 } from '../../../models';
 import {
-  updateContextStyle,
-  pathDraw
+  pathDraw,
+  updateContextStyle
 } from '../../../util';
+import {
+  ConnectorRenderModel,
+  LabelRenderModel,
+  TextRenderModel
+} from '../../mapper/label';
 
-type RenderLabel = (params: LabelRenderParams, context: CanvasRenderingContext2D) => void;
+type RenderLabel = (params: TextRenderModel, context: CanvasRenderingContext2D) => void;
 
 function resolveStyle(styleProp: string, styleVal: string, context: CanvasRenderingContext2D): void {
   context.textAlign = 'center';
@@ -28,7 +28,7 @@ function resolveStyle(styleProp: string, styleVal: string, context: CanvasRender
   }
 }
 
-function drawLine(params: ConnectorRenderParams, context: CanvasRenderingContext2D): void {
+function drawLine(params: ConnectorRenderModel, context: CanvasRenderingContext2D): void {
   context.save();
   context.beginPath();
   context.moveTo(params.from.x, params.from.y);
@@ -39,8 +39,8 @@ function drawLine(params: ConnectorRenderParams, context: CanvasRenderingContext
   pathDraw(context, params.style, false);
 }
 
-function drawTextAlongArc(params: LabelRenderParams, context: CanvasRenderingContext2D): void {
-  const { content, anglesInRadians: angles, position, style }: LabelRenderParams = params;
+function drawTextAlongArc(params: TextRenderModel, context: CanvasRenderingContext2D): void {
+  const { content, anglesInRadians: angles, position, style }: TextRenderModel = params;
   const hasStroke: boolean = typeof style['stroke'] === 'string';
   const hasfill: boolean = typeof style['fill'] === 'string';
   context.save();
@@ -61,8 +61,8 @@ function drawTextAlongArc(params: LabelRenderParams, context: CanvasRenderingCon
   context.restore();
 }
 
-function drawTextAlongAxis(params: LabelRenderParams, context: CanvasRenderingContext2D): void {
-  const { content, position, style }: LabelRenderParams = params;
+function drawTextAlongAxis(params: TextRenderModel, context: CanvasRenderingContext2D): void {
+  const { content, position, style }: TextRenderModel = params;
   const hasStroke: boolean = typeof style['stroke'] === 'string';
   const hasfill: boolean = typeof style['fill'] === 'string';
   context.save();
@@ -77,14 +77,15 @@ function drawTextAlongAxis(params: LabelRenderParams, context: CanvasRenderingCo
   context.restore();
 }
 
-export class LabelRenderer implements ComponentRenderer<RenderParams, CanvasRenderingContext2D, boolean> {
-  public render(params: RenderParams, context: CanvasRenderingContext2D): Promise<boolean> {
-    const drawLabel: RenderLabel = [params.type].map((type: LabelType) =>
-      type === LabelTypes.PATH ? drawTextAlongArc : drawTextAlongAxis)[0];
-    drawLabel(params.label, context);
-    if (params.connector) {
-      drawLine(params.connector, context);
-    }
-    return Promise.resolve(true);
+type Renderer = ComponentRenderer<LabelRenderModel, CanvasRenderingContext2D, boolean>;
+const LabelRenderer: Renderer = (params: LabelRenderModel, context: CanvasRenderingContext2D): Promise<boolean> => {
+  const drawLabel: RenderLabel = [params.type].map((type: LabelType) =>
+    type === LabelTypes.PATH ? drawTextAlongArc : drawTextAlongAxis)[0];
+  drawLabel(params.label, context);
+  if (params.connector) {
+    drawLine(params.connector, context);
   }
-}
+  return Promise.resolve(true);
+};
+
+export default LabelRenderer;

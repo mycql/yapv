@@ -9,7 +9,7 @@ import {
   Line,
   Location,
   RenderModelMapper,
-  StringKeyValMap,
+  StringKeyValMap
 } from '../../models';
 import {
   normalizeToCanvas,
@@ -20,9 +20,9 @@ import {
 
 const defaultStyle: string = 'stroke: black; fill: black; font: 10px "Courier New", monospace;';
 
-export type TextMeasurer = (text: string) => number;
+export type TextMeasurer = (text: string, style: StringKeyValMap) => number;
 
-export type LabelRenderParams = {
+export type TextRenderModel = {
   content: string;
   position: Coord;
   style: StringKeyValMap;
@@ -32,19 +32,19 @@ export type LabelRenderParams = {
   };
 };
 
-export type ConnectorRenderParams = {
+export type ConnectorRenderModel = {
   from: Coord;
   to: Array<Coord>;
   style: StringKeyValMap;
 };
 
-export type RenderParams = {
+export type LabelRenderModel = {
   type: LabelType,
-  label: LabelRenderParams;
-  connector?: ConnectorRenderParams;
+  label: TextRenderModel;
+  connector?: ConnectorRenderModel;
 };
 
-type DrawTextParams = {
+type DrawTextModel = {
   type: LabelType,
   radius: number;
   location: Location;
@@ -57,8 +57,8 @@ type DrawTextParams = {
   measure: TextMeasurer;
 };
 
-function connector(params: DrawTextParams, end: Coord, lineRad: number, arcMidRad: number): ConnectorRenderParams {
-  const { radius, style, center, line }: DrawTextParams = params;
+function connector(params: DrawTextModel, end: Coord, lineRad: number, arcMidRad: number): ConnectorRenderModel {
+  const { radius, style, center, line }: DrawTextModel = params;
   const useDefaultLine: boolean = typeof line === 'boolean' && line === true;
   const useCustomLine: boolean = typeof line === 'object';
   let lineStyle: string = style;
@@ -86,9 +86,9 @@ function connector(params: DrawTextParams, end: Coord, lineRad: number, arcMidRa
   };
 }
 
-function textAlongArc(params: DrawTextParams): RenderParams {
+function textAlongArc(params: DrawTextModel): LabelRenderModel {
   const { radius, location, content, style, type,
-    center, offset, line, scale, measure }: DrawTextParams = params;
+    center, offset, line, scale, measure }: DrawTextModel = params;
   const crossesOver: boolean = location.start > location.end;
   const arcStartRad: number = scale(location.start);
   const arcEndRad: number = scale(location.end);
@@ -99,7 +99,7 @@ function textAlongArc(params: DrawTextParams): RenderParams {
   const alignment: string = styleObj['text-align'] || 'center';
   const letterSpacing: number = parseInt(styleObj['letter-spacing'] || '0');
   const labelRadius: number = radius + offset.y;
-  const contentWidth: number = measure(content);
+  const contentWidth: number = measure(content, styleObj);
   const textWidth: number = contentWidth + ((content.length - 1) * letterSpacing);
   const textArcRad: number = angleRadInBetweenSides(radius, radius, textWidth);
   const textArcRadHalf: number = textArcRad / 2;
@@ -122,7 +122,7 @@ function textAlongArc(params: DrawTextParams): RenderParams {
   const normAngleRad: number = normalizeToCanvas(angleRad);
   const coord: Coord = toCartesianCoords(center.x, center.y, labelRadius, normAngleRad);
 
-  const renderParams: RenderParams = {
+  const renderParams: LabelRenderModel = {
     type,
     label: {
       content,
@@ -144,9 +144,9 @@ function textAlongArc(params: DrawTextParams): RenderParams {
   return renderParams;
 }
 
-function textAlongAxis(params: DrawTextParams): RenderParams {
+function textAlongAxis(params: DrawTextModel): LabelRenderModel {
   const { radius, location, content, style, type,
-    center, offset, line, scale }: DrawTextParams = params;
+    center, offset, line, scale }: DrawTextModel = params;
   const crossesOver: boolean = location.start > location.end;
   const arcStartRad: number = scale(location.start);
   const arcEndRad: number = scale(location.end);
@@ -175,7 +175,7 @@ function textAlongAxis(params: DrawTextParams): RenderParams {
   const y: number = coord.y + offset.y;
   const position: Coord = { x, y };
 
-  const renderParams: RenderParams = {
+  const renderParams: LabelRenderModel = {
     type,
     label: {
       content,
@@ -193,32 +193,29 @@ function textAlongAxis(params: DrawTextParams): RenderParams {
   return renderParams;
 }
 
-export class LabelRenderMapper implements RenderModelMapper<Label, LabelDisplayConfig, RenderParams, TextMeasurer> {
+type Mapper = RenderModelMapper<Label, LabelDisplayConfig, LabelRenderModel, TextMeasurer>;
+const LabelRenderMapper: Mapper = (model: Label, scale: ScaleLinear<number, number>, measure: TextMeasurer): LabelRenderModel => {
+  const content: string = model.text;
+  const displayConfig: LabelDisplayConfig = model.displayConfig;
+  const center: Coord = { x: 0, y: 0 };
+  const offset: Coord = { x: displayConfig.hOffset || 0, y: displayConfig.vOffset || 0 };
+  const style: string = displayConfig.style || defaultStyle;
+  const location: Location = model.location;
+  const type: LabelType = displayConfig.type || LabelTypes.PATH;
+  const radius: number = displayConfig.distance;
+  const line: boolean | Line = model.line;
+  const drawParams: DrawTextModel = {
+    radius, location, content, style, type,
+    center, offset, line, scale, measure
+  };
 
-  public map(model: Label, scale: ScaleLinear<number, number>, measure: TextMeasurer): Promise<RenderParams> {
-    const content: string = model.text;
-    const displayConfig: LabelDisplayConfig = model.displayConfig;
-    const center: Coord = { x: 0, y: 0 };
-    const offset: Coord = { x: displayConfig.hOffset || 0, y: displayConfig.vOffset || 0 };
-    const style: string = displayConfig.style || defaultStyle;
-    const location: Location = model.location;
-    const type: LabelType = displayConfig.type || LabelTypes.PATH;
-    const radius: number = displayConfig.distance;
-    const line: boolean | Line = model.line;
-    const drawParams: DrawTextParams = {
-      radius, location, content, style, type,
-      center, offset, line, scale, measure
-    };
+  const renderParams: LabelRenderModel =
+    [type].map((labelType: string) =>
+      labelType === LabelTypes.PATH ?
+        textAlongArc(drawParams) :
+        textAlongAxis(drawParams))[0];
 
-    const renderParams: RenderParams =
-      [type].map((labelType: string) =>
-        labelType === LabelTypes.PATH ?
-          textAlongArc(drawParams) :
-          textAlongAxis(drawParams))[0];
+  return renderParams;
+};
 
-    return Promise.resolve(renderParams);
-  }
-
-}
-
-export default LabelRenderMapper.prototype.map;
+export default LabelRenderMapper;

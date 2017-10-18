@@ -186,10 +186,5 @@ export interface RenderableWithLabels<T extends ComponentModel<U>, U extends Dis
 
 }
 
-export interface RenderModelMapper<T extends ComponentModel<U>, U extends DisplayConfig, V extends Object, W extends Object> {
-  map(model: T, scale: ScaleLinear<number, number>, params?: W): Promise<V>;
-}
-
-export interface ComponentRenderer<T extends Object, U extends Object, V extends Object> {
-  render(params: T, context?: U): Promise<V>;
-}
+export type RenderModelMapper<T extends ComponentModel<U>, U extends DisplayConfig, V extends Object, W extends Object> = (model: T, scale: ScaleLinear<number, number>, params?: W) => V;
+export type ComponentRenderer<T extends Object, U extends Object, V extends Object> = (params: T, context?: U) => Promise<V>;
