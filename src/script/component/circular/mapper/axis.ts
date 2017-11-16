@@ -11,8 +11,6 @@ import {
   StringKeyValMap
 } from '../../models';
 import { normalizeToCanvas, parseStyle } from '../../util';
-import { LabelRenderModel, TextMeasurer } from './label';
-import mapLabel from './label';
 
 const defaultStyle: string = 'stroke: black; fill: gray;';
 
@@ -29,7 +27,7 @@ export type ScaleRenderModel = {
 export type AxisRenderModel = {
   axis: AnnulusRenderModel,
   scales: Array<ScaleRenderModel>;
-  labels: Array<Array<LabelRenderModel>>;
+  labels: Array<Array<Label>>;
 };
 
 function intervalToScales(tickInterVal: number, location: Location): Array<number> {
@@ -118,16 +116,15 @@ function mapScales(tickModels: Array<TickModel>,
     return {
       ticks,
       style
-    }
+    };
   });
 }
 
 function mapLabels(tickModels: Array<TickModel>,
-                   scale: ScaleLinear<number, number>,
-                   measureText: TextMeasurer): Array<Array<LabelRenderModel>> {
+                   scale: ScaleLinear<number, number>): Array<Array<Label>> {
   return tickModels.filter(labeledScales).map((tickModel: TickModel) => {
     const { config, ticks }: TickModel = tickModel;
-    return ticks.map(ticksAsLabels(config.label, scale, measureText));
+    return ticks.map(ticksAsLabels(config.label, scale));
   });
 }
 
@@ -139,26 +136,24 @@ function labeledScales(model: TickModel): boolean {
 }
 
 function ticksAsLabels(config: LabelDisplayConfig,
-                       scale: ScaleLinear<number, number>,
-                       measureText: TextMeasurer): (digit: number) => LabelRenderModel {
+                       scale: ScaleLinear<number, number>): (digit: number) => Label {
   return (digit: number) => {
-    const label: Label = {
+    return {
       text: digit.toString(),
       location: { start: digit, end: digit },
       displayConfig: config
     };
-    return mapLabel(label, scale, measureText);
   };
 }
 
-type Mapper = RenderModelMapper<Axis, AxisDisplayConfig, AxisRenderModel, TextMeasurer>;
-const AxisRenderMapper: Mapper = (model: Axis, scale: ScaleLinear<number, number>, measureText: TextMeasurer): AxisRenderModel => {
+type Mapper = RenderModelMapper<Axis, AxisDisplayConfig, AxisRenderModel, {}>;
+const AxisRenderMapper: Mapper = (model: Axis, scale: ScaleLinear<number, number>): AxisRenderModel => {
   const { displayConfig, location: mapLocation }: Axis = model;
   const { distance: distanceFromTrack, scales: scalesConfig }: AxisDisplayConfig = displayConfig;
   const ticks: Array<TickModel> = createTicks(scalesConfig, mapLocation);
   const axis: AnnulusRenderModel = mapAxis(displayConfig, scale, distanceFromTrack, mapLocation);
   const scales: Array<ScaleRenderModel> = mapScales(ticks, scale, distanceFromTrack);
-  const labels: Array<Array<LabelRenderModel>> = mapLabels(ticks, scale, measureText);
+  const labels: Array<Array<Label>> = mapLabels(ticks, scale);
   return { axis, scales, labels };
 };
 

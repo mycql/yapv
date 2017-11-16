@@ -4,7 +4,6 @@ import {
   Coord,
   Direction,
   Directions,
-  Label,
   Location,
   Marker,
   MarkerDisplayConfig,
@@ -17,8 +16,6 @@ import {
   toCartesianCoords,
   squared
 } from '../../util';
-import { LabelRenderModel, TextMeasurer } from './label';
-import mapLabel from './label';
 
 const defaultStyle: string = 'stroke: black; fill: gray;';
 
@@ -33,7 +30,6 @@ export type MarkerRenderModel = {
     end: Array<Coord>;
   };
   anglesInRadians: Location;
-  labels: Array<LabelRenderModel>;
   style: StringKeyValMap;
 };
 
@@ -43,15 +39,15 @@ function computeAnchorAngle(radius: number, halfAnchorHeight: number, anchorWidt
   return halfAngle * 2;
 }
 
-type Mapper = RenderModelMapper<Marker, MarkerDisplayConfig, MarkerRenderModel, TextMeasurer>;
-const MarkerRenderMapper: Mapper = (model: Marker, scale: ScaleLinear<number, number>, measure: TextMeasurer): MarkerRenderModel => {
+type Mapper = RenderModelMapper<Marker, MarkerDisplayConfig, MarkerRenderModel, {}>;
+const MarkerRenderMapper: Mapper = (model: Marker, scale: ScaleLinear<number, number>): MarkerRenderModel => {
   const centerX: number = 0, centerY: number = 0;
   const displayConfig: MarkerDisplayConfig = model.displayConfig;
   const anchorConfig: AnchorDisplayConfig = displayConfig.anchor;
   const direction: Direction = model.direction || Directions.NONE;
   const location: Location = model.location;
   const halfWidth: number = displayConfig.width / 2;
-  const style: string = displayConfig.style || defaultStyle;
+  const style: StringKeyValMap = parseStyle(displayConfig.style || defaultStyle);
   const arcMidRadius: number = displayConfig.distance;
   const arcInnerRad: number = arcMidRadius - halfWidth;
   const arcOuterRad: number = arcMidRadius + halfWidth;
@@ -145,6 +141,7 @@ const MarkerRenderMapper: Mapper = (model: Marker, scale: ScaleLinear<number, nu
       break;
   }
   return {
+    style,
     center: {
       x: centerX,
       y: centerY
@@ -160,10 +157,7 @@ const MarkerRenderMapper: Mapper = (model: Marker, scale: ScaleLinear<number, nu
     anglesInRadians: {
       start: arcStartRad,
       end: arcEndRad
-    },
-    labels: model.labels.map((label: Label) =>
-      mapLabel(label, scale, measure)),
-    style: parseStyle(style)
+    }
   };
 };
 

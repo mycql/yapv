@@ -295,7 +295,7 @@
           }
         ]
       };
-      var mapComponent = new CanvasPlasmid.Circular.VectorMapComponent();
+      var mapComponent = CanvasPlasmid.circular//new CanvasPlasmid.Circular.VectorMapComponent();
       var canvas = document.querySelector('#canvas');
       var presets = ['purple', 'red', 'green', 'orange', 'violet', 'blue', 'brown', 'yellow', 'maroon', 'pink'];
       var location = model.tracks[0].markers[0].location;
@@ -317,7 +317,7 @@
         } else {
           location.start -= 1;
         }
-        mapComponent.draw(canvas, model).then(() => {
+        mapComponent(canvas, model).then(() => {
           // setTimeout(animate, 60 / 1000);
         });
       }
