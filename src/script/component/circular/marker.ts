@@ -3,7 +3,7 @@ import {
   pathDraw,
   toCartesianCoords,
   normalizeToCanvas,
-  squared
+  squared,
 } from '../util';
 import {
   RenderableWithLabels,
@@ -15,7 +15,7 @@ import {
   Location,
   Direction,
   Directions,
-  Coord
+  Coord,
 } from '../models';
 
 import renderLabel from './label';
@@ -28,7 +28,9 @@ function computeAnchorAngle(radius: number, halfAnchorHeight: number, anchorWidt
   return halfAngle * 2;
 }
 
-function renderLabels(model: Marker, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<boolean> {
+function renderLabels(model: Marker,
+                      scale: ScaleLinear<number, number>,
+                      context: CanvasRenderingContext2D): Promise<boolean> {
   if (model.labels) {
     context.save();
     model.labels.forEach((label: Label) =>
@@ -40,8 +42,11 @@ function renderLabels(model: Marker, scale: ScaleLinear<number, number>, context
 
 export class MarkerComponent implements RenderableWithLabels<Marker, MarkerDisplayConfig> {
 
-  public render(model: Marker, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<RenderWithLabelsResult> {
-    const centerX: number = 0, centerY: number = 0;
+  public render(model: Marker,
+                scale: ScaleLinear<number, number>,
+                context: CanvasRenderingContext2D): Promise<RenderWithLabelsResult> {
+    const centerX: number = 0;
+    const centerY: number = 0;
     const displayConfig: MarkerDisplayConfig = model.displayConfig;
     const anchorConfig: AnchorDisplayConfig = displayConfig.anchor;
     const direction: Direction = model.direction || Directions.NONE;
@@ -54,10 +59,10 @@ export class MarkerComponent implements RenderableWithLabels<Marker, MarkerDispl
     const halfAnchorHeight: number = anchorConfig ? anchorConfig.height / 2 : halfWidth;
     let arcStartRad: number = normalizeToCanvas(scale(location.start));
     let arcEndRad: number = normalizeToCanvas(scale(location.end));
-    let anchorCoords: Array<Array<Coord>> = [];
-    let offsetRad: number = 0,
-        anchorStartRad: number = 0,
-        anchorEndRad: number = 0;
+    const anchorCoords: Coord[][] = [];
+    let offsetRad: number = 0;
+    let anchorStartRad: number = 0;
+    let anchorEndRad: number = 0;
 
     if (anchorConfig && direction !== Directions.NONE) {
       offsetRad = computeAnchorAngle(arcMidRadius, halfAnchorHeight, anchorConfig.width);
@@ -70,15 +75,15 @@ export class MarkerComponent implements RenderableWithLabels<Marker, MarkerDispl
         anchorCoords.push(
           [
             toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcStartRad),
-            toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcStartRad)
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcStartRad),
           ],
           [
             toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, anchorStartRad),
             toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorStartRad),
             toCartesianCoords(centerX, centerY, arcMidRadius, anchorEndRad),
             toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorStartRad),
-            toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, anchorStartRad)
-          ]
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, anchorStartRad),
+          ],
         );
         break;
       case Directions.REVERSE:
@@ -95,8 +100,8 @@ export class MarkerComponent implements RenderableWithLabels<Marker, MarkerDispl
           ],
           [
             toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcEndRad),
-            toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcEndRad)
-          ]
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcEndRad),
+          ],
         );
         break;
       case Directions.BOTH:
@@ -110,7 +115,7 @@ export class MarkerComponent implements RenderableWithLabels<Marker, MarkerDispl
             toCartesianCoords(centerX, centerY, arcMidRadius, anchorStartRad),
             toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorEndRad),
             toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, anchorEndRad),
-          ]
+          ],
         );
         arcStartRad = anchorEndRad;
         anchorStartRad = arcEndRad - offsetRad;
@@ -122,8 +127,8 @@ export class MarkerComponent implements RenderableWithLabels<Marker, MarkerDispl
             toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorStartRad),
             toCartesianCoords(centerX, centerY, arcMidRadius, anchorEndRad),
             toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorStartRad),
-            toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, anchorStartRad)
-          ]
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, anchorStartRad),
+          ],
         );
         break;
       case Directions.NONE:
@@ -131,18 +136,18 @@ export class MarkerComponent implements RenderableWithLabels<Marker, MarkerDispl
         anchorCoords.push(
           [
             toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcStartRad),
-            toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcStartRad)
+            toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcStartRad),
           ],
           [
             toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcEndRad),
-            toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcEndRad)
-          ]
+            toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcEndRad),
+          ],
         );
         break;
     }
 
     context.beginPath();
-    anchorCoords.forEach((coords: Array<Coord>, index: number) => {
+    anchorCoords.forEach((coords: Coord[], index: number) => {
       coords.forEach((coord: Coord) => {
         context.lineTo(coord.x, coord.y);
       });
@@ -156,10 +161,10 @@ export class MarkerComponent implements RenderableWithLabels<Marker, MarkerDispl
 
     const result: RenderWithLabelsResult = {
       status: true,
-      renderLabels: (): Promise<boolean> => renderLabels(model, scale, context)
+      renderLabels: (): Promise<boolean> => renderLabels(model, scale, context),
     };
     return Promise.resolve(result);
   }
 }
 
-export default MarkerComponent.prototype.render;
+export default new MarkerComponent().render;

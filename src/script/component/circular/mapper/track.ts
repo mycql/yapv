@@ -4,7 +4,7 @@ import {
   RenderModelMapper,
   StringKeyValMap,
   Track,
-  TrackDisplayConfig
+  TrackDisplayConfig,
 } from '../../models';
 import { parseStyle } from '../../util';
 
@@ -25,7 +25,7 @@ const TrackRenderMapper: Mapper = (model: Track, scale: ScaleLinear<number, numb
     outerRadius: distance + halfWidth,
     startAngle: 0,
     endAngle: Math.PI * 2,
-    padAngle: null,
+    padAngle: 0,
   };
   return { annulus, style };
 };

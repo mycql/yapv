@@ -9,13 +9,13 @@ import {
   Line,
   Location,
   RenderModelMapper,
-  StringKeyValMap
+  StringKeyValMap,
 } from '../../models';
 import {
   normalizeToCanvas,
   toCartesianCoords,
   angleRadInBetweenSides,
-  parseStyle
+  parseStyle,
 } from '../../util';
 
 const defaultStyle: string = 'stroke: black; fill: black; font: 10px "Courier New", monospace;';
@@ -34,7 +34,7 @@ export type TextRenderModel = {
 
 export type ConnectorRenderModel = {
   from: Coord;
-  to: Array<Coord>;
+  to: Coord[];
   style: StringKeyValMap;
 };
 
@@ -54,7 +54,7 @@ type DrawTextModel = {
   offset: Coord;
   line: boolean | Line;
   scale: ScaleLinear<number, number>;
-  measure: TextMeasurer;
+  measure: TextMeasurer | undefined;
 };
 
 function connector(params: DrawTextModel, end: Coord, lineRad: number, arcMidRad: number): ConnectorRenderModel {
@@ -62,13 +62,13 @@ function connector(params: DrawTextModel, end: Coord, lineRad: number, arcMidRad
   const useDefaultLine: boolean = typeof line === 'boolean' && line === true;
   const useCustomLine: boolean = typeof line === 'object';
   let lineStyle: string = style;
-  const to: Array<Coord> = [];
-  let from: Coord = null;
+  const to: Coord[] = [];
+  let from: Coord = { x: center.x, y: center.y };
   if (useDefaultLine) {
     from = toCartesianCoords(center.x, center.y, radius, lineRad);
     to.push(end);
   } else if (useCustomLine) {
-    const lineModel: Line = (<Line>line);
+    const lineModel: Line = line as Line;
     const lineConfig: DisplayConfig = lineModel.displayConfig;
     if (lineConfig && lineConfig.style) {
       lineStyle = lineConfig.style;
@@ -82,7 +82,7 @@ function connector(params: DrawTextModel, end: Coord, lineRad: number, arcMidRad
   return {
     from,
     to,
-    style: parseStyle(lineStyle)
+    style: parseStyle(lineStyle),
   };
 }
 
@@ -97,9 +97,9 @@ function textAlongArc(params: DrawTextModel): LabelRenderModel {
   const arcMidRad: number = arcStartRad + (arcDiffRad / 2);
   const styleObj: StringKeyValMap = parseStyle(style);
   const alignment: string = styleObj['text-align'] || 'center';
-  const letterSpacing: number = parseInt(styleObj['letter-spacing'] || '0');
+  const letterSpacing: number = parseInt(styleObj['letter-spacing'] || '0', 10);
   const labelRadius: number = radius + offset.y;
-  const contentWidth: number = measure(content, styleObj);
+  const contentWidth: number = measure ? measure(content, styleObj) : 0;
   const textWidth: number = contentWidth + ((content.length - 1) * letterSpacing);
   const textArcRad: number = angleRadInBetweenSides(radius, radius, textWidth);
   const textArcRadHalf: number = textArcRad / 2;
@@ -130,9 +130,9 @@ function textAlongArc(params: DrawTextModel): LabelRenderModel {
       style: styleObj,
       anglesInRadians: {
         rotation: rotateAngle,
-        path: angleRad
-      }
-    }
+        path: angleRad,
+      },
+    },
   };
 
   if (line) {
@@ -180,8 +180,8 @@ function textAlongAxis(params: DrawTextModel): LabelRenderModel {
     label: {
       content,
       position,
-      style: styleObj
-    }
+      style: styleObj,
+    },
   };
 
   if (line) {
@@ -194,7 +194,9 @@ function textAlongAxis(params: DrawTextModel): LabelRenderModel {
 }
 
 type Mapper = RenderModelMapper<Label, LabelDisplayConfig, LabelRenderModel, TextMeasurer>;
-const LabelRenderMapper: Mapper = (model: Label, scale: ScaleLinear<number, number>, measure: TextMeasurer): LabelRenderModel => {
+const LabelRenderMapper: Mapper = (model: Label,
+                                   scale: ScaleLinear<number, number>,
+                                   measure?: TextMeasurer): LabelRenderModel => {
   const content: string = model.text;
   const displayConfig: LabelDisplayConfig = model.displayConfig;
   const center: Coord = { x: 0, y: 0 };
@@ -203,10 +205,10 @@ const LabelRenderMapper: Mapper = (model: Label, scale: ScaleLinear<number, numb
   const location: Location = model.location;
   const type: LabelType = displayConfig.type || LabelTypes.PATH;
   const radius: number = displayConfig.distance;
-  const line: boolean | Line = model.line;
+  const line: boolean | Line = model.line as boolean | Line;
   const drawParams: DrawTextModel = {
-    radius, location, content, style, type,
-    center, offset, line, scale, measure
+    center, content, line, location, measure,
+     offset, radius, scale, style, type,
   };
 
   const renderParams: LabelRenderModel =

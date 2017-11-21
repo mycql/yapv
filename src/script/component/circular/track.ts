@@ -7,7 +7,7 @@ import {
   Track,
   TrackDisplayConfig,
   Marker,
-  Axis
+  Axis,
 } from '../models';
 
 import renderMarker from './marker';
@@ -17,7 +17,9 @@ const defaultStyle: string = 'stroke: black; fill: white;';
 
 export class TrackComponent implements RenderableWithLabels<Track, TrackDisplayConfig> {
 
-  public render(model: Track, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<RenderWithLabelsResult> {
+  public render(model: Track,
+                scale: ScaleLinear<number, number>,
+                context: CanvasRenderingContext2D): Promise<RenderWithLabelsResult> {
     const displayConfig: TrackDisplayConfig = model.displayConfig;
     const halfWidth: number = displayConfig.width / 2;
     const style: string = displayConfig.style || defaultStyle;
@@ -26,7 +28,7 @@ export class TrackComponent implements RenderableWithLabels<Track, TrackDisplayC
       outerRadius: displayConfig.distance + halfWidth,
       startAngle: 0,
       endAngle: Math.PI * 2,
-      padAngle: null,
+      padAngle: 0,
     };
     context.beginPath();
     arc(context, arcConfig);
@@ -52,18 +54,18 @@ export class TrackComponent implements RenderableWithLabels<Track, TrackDisplayC
       status: true,
       renderLabels: (): Promise<boolean> => {
         return new Promise((resolve: (status: boolean) => void) => {
-          Promise.all(firstPass).then((results: Array<RenderWithLabelsResult>) => {
+          Promise.all(firstPass).then((results: RenderWithLabelsResult[]) => {
             const secondPass: Array<Promise<boolean>> =
               results.filter((renderResult: RenderWithLabelsResult) => typeof renderResult.renderLabels === 'function')
                 .map((renderResult: RenderWithLabelsResult) => renderResult.renderLabels());
             Promise.all(secondPass).then(() => resolve(true));
           });
         });
-      }
+      },
     };
     return Promise.resolve(result);
   }
 
 }
 
-export default TrackComponent.prototype.render;
+export default new TrackComponent().render;

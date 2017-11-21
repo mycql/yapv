@@ -10,7 +10,7 @@ import {
   Track,
   Marker,
   Axis,
-  Label
+  Label,
 } from '../models';
 
 import renderTrack from './track';
@@ -33,7 +33,7 @@ function normalizeAxisConfig(trackDistance: number, range: Location): (axis: Axi
     const axisDistCenter: number = axis.displayConfig.distance + trackDistance;
     axis.location = range;
     axis.displayConfig.distance = axisDistCenter;
-    const ticks: Array<AxisTickConfig> = axis.displayConfig.scales || [];
+    const ticks: AxisTickConfig[] = axis.displayConfig.scales || [];
     ticks.forEach((tick: AxisTickConfig) => {
       if (tick.label) {
         tick.label.distance = (tick.label.distance || 0) + axisDistCenter;
@@ -61,7 +61,7 @@ function normalizeMapLabelConfig(label: Label): void {
 
 function renderSymbols(model: VectorMap,
                        scale: ScaleLinear<number, number>,
-                       context: CanvasRenderingContext2D): Promise<Array<RenderWithLabelsResult>> {
+                       context: CanvasRenderingContext2D): Promise<RenderWithLabelsResult[]> {
   return Promise.all(model.tracks.map((track: Track) => {
     return new Promise((resolve: (result: Promise<RenderWithLabelsResult>) => void) => {
       requestAnimationFrame(() => {
@@ -77,12 +77,12 @@ function renderSymbols(model: VectorMap,
 
 function renderLabels(model: VectorMap,
                       scale: ScaleLinear<number, number>,
-                      context: CanvasRenderingContext2D): (results: Array<RenderWithLabelsResult>) => Promise<boolean> {
-  return (results: Array<RenderWithLabelsResult>) => {
+                      context: CanvasRenderingContext2D): (results: RenderWithLabelsResult[]) => Promise<boolean> {
+  return (results: RenderWithLabelsResult[]) => {
     const renderResults: Array<Promise<boolean>> =
       results.filter((result: RenderWithLabelsResult) => typeof result.renderLabels === 'function')
              .map((result: RenderWithLabelsResult) => result.renderLabels())
-             .concat(model.labels.map((label: Label) => renderLabel(label, scale, context)));
+             .concat((model.labels || []).map((label: Label) => renderLabel(label, scale, context)));
     return new Promise((resolve: (status: boolean) => void) =>  {
       Promise.all(renderResults).then(() => resolve(true));
     });
@@ -101,7 +101,10 @@ export class VectorMapComponent implements Renderable<VectorMap, VectorMapDispla
                                                             .range([0, Math.PI * 2]);
     (model.tracks || []).forEach(normalizeTrackConfig(range));
     (model.labels || []).forEach(normalizeMapLabelConfig);
-    const context: CanvasRenderingContext2D = canvas.getContext('2d');
+    const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
+    if (!context) {
+      return Promise.resolve(false);
+    }
     context.save();
     context.translate(x, y);
     context.clearRect(-x, -y, width, height);
@@ -113,7 +116,9 @@ export class VectorMapComponent implements Renderable<VectorMap, VectorMapDispla
     });
   }
 
-  public render(model: VectorMap, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<boolean> {
+  public render(model: VectorMap,
+                scale: ScaleLinear<number, number>,
+                context: CanvasRenderingContext2D): Promise<boolean> {
     return new Promise((rootResolve: (status: boolean) => void) => {
       renderSymbols(model, scale, context)
         .then(renderLabels(model, scale, context))

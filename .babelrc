@@ -1,0 +1,19 @@
+{
+  "presets": [
+    [
+      "env", {
+        "modules": false,
+        "targets": {
+          // browser presets are based on browsers supported by TFC.
+          // See https://www.thermofisher.com/sg/en/home/cloud.html
+          "browsers": [
+            "firefox >= 32",
+            "chrome >= 38",
+            "safari >= 7",
+            "ie >= 10"
+          ]
+        }
+      }
+    ]
+  ]
+}

@@ -2,16 +2,16 @@ import {
   ComponentRenderer,
   Coord,
   LabelType,
-  LabelTypes
+  LabelTypes,
 } from '../../../models';
 import {
   pathDraw,
-  updateContextStyle
+  updateContextStyle,
 } from '../../../util';
 import {
   ConnectorRenderModel,
   LabelRenderModel,
-  TextRenderModel
+  TextRenderModel,
 } from '../../mapper/label';
 
 type RenderLabel = (params: TextRenderModel, context: CanvasRenderingContext2D) => void;
@@ -45,19 +45,21 @@ function drawTextAlongArc(params: TextRenderModel, context: CanvasRenderingConte
   const hasfill: boolean = typeof style['fill'] === 'string';
   context.save();
   updateContextStyle(context, style, resolveStyle);
-  content.split('').forEach((symbol: string) => {
-    context.rotate(angles.rotation);
-    context.save();
-    context.translate(position.x, position.y);
-    context.rotate(angles.path);
-    if (hasfill) {
-      context.fillText(symbol, 0, 0);
-    }
-    if (hasStroke) {
-      context.strokeText(symbol, 0, 0);
-    }
-    context.restore();
-  });
+  if (angles) {
+    content.split('').forEach((symbol: string) => {
+      context.rotate(angles.rotation);
+      context.save();
+      context.translate(position.x, position.y);
+      context.rotate(angles.path);
+      if (hasfill) {
+        context.fillText(symbol, 0, 0);
+      }
+      if (hasStroke) {
+        context.strokeText(symbol, 0, 0);
+      }
+      context.restore();
+    });
+  }
   context.restore();
 }
 

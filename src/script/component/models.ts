@@ -46,14 +46,14 @@ export interface LocatableComponentModel<T extends DisplayConfig> extends Compon
 }
 
 export interface Line extends ComponentModel<DisplayConfig> {
-  coords: Array<Coord>;
+  coords: Coord[];
 }
 
 export type LabelType = 'path' | 'text';
 
 export const LabelTypes: { PATH: LabelType; TEXT: LabelType } = {
   PATH: 'path',
-  TEXT: 'text'
+  TEXT: 'text',
 };
 
 export interface LabelDisplayConfig extends SpacedDispayConfig {
@@ -78,7 +78,7 @@ export const Directions: {
   FORWARD: '+',
   REVERSE: '-',
   NONE: '#',
-  BOTH: '*'
+  BOTH: '*',
 };
 
 export type AnchorDisplayConfig = SizedDisplayConfig;
@@ -95,7 +95,7 @@ export interface MarkerDisplayConfig extends SpacedDispayConfig {
  */
 export interface Marker extends LocatableComponentModel<MarkerDisplayConfig> {
   direction: Direction;
-  labels?: Array<Label>;
+  labels?: Label[];
 }
 
 export type TrackDisplayConfig = SpacedDispayConfig;
@@ -122,7 +122,7 @@ export interface AxisTickConfig extends SpacedDispayConfig {
    * The actual tick values to render. The component
    * will spread the tick values across the map
    */
-  ticks?: Array<number>;
+  ticks?: number[];
   /**
    * If specified, display properties for the
    * labels to be rendered,, otherwise no
@@ -142,7 +142,7 @@ export interface AxisDisplayConfig extends SpacedDispayConfig {
    * are to be displayed
    */
   distance: number;
-  scales: Array<AxisTickConfig>;
+  scales: AxisTickConfig[];
 }
 
 export type Axis = LocatableComponentModel<AxisDisplayConfig>;
@@ -155,8 +155,8 @@ export type Axis = LocatableComponentModel<AxisDisplayConfig>;
  */
 export interface Track extends ComponentModel<TrackDisplayConfig> {
   index: number;
-  markers: Array<Marker>;
-  axes?: Array<Axis>;
+  markers: Marker[];
+  axes?: Axis[];
 }
 
 export type VectorMapDisplayConfig = SizedDisplayConfig;
@@ -169,11 +169,11 @@ export interface VectorMapSeqConfig {
 export interface VectorMap extends ComponentModel<VectorMapDisplayConfig> {
   displayConfig: VectorMapDisplayConfig;
   sequenceConfig: VectorMapSeqConfig;
-  tracks: Array<Track>;
-  labels?: Array<Label>;
+  tracks: Track[];
+  labels?: Label[];
 }
 
-export interface Renderable<T extends ComponentModel<U>, U extends DisplayConfig, V extends Object> {
+export interface Renderable<T extends ComponentModel<U>, U extends DisplayConfig, V extends any> {
   render(model: T, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<V>;
 }
 
@@ -182,9 +182,16 @@ export type RenderWithLabelsResult = {
   renderLabels: () => Promise<boolean>;
 };
 
-export interface RenderableWithLabels<T extends ComponentModel<U>, U extends DisplayConfig> extends Renderable<T, U, RenderWithLabelsResult> {
+export interface RenderableWithLabels<T extends ComponentModel<U>,
+                                      U extends DisplayConfig> extends Renderable<T, U, RenderWithLabelsResult> {
 
 }
 
-export type RenderModelMapper<T extends ComponentModel<U>, U extends DisplayConfig, V extends Object, W extends Object> = (model: T, scale: ScaleLinear<number, number>, params?: W) => V;
-export type ComponentRenderer<T extends Object, U extends Object, V extends Object> = (params: T, context: U) => Promise<V>;
+export type RenderModelMapper<T extends ComponentModel<U>,
+                              U extends DisplayConfig,
+                              V extends object, W extends object> =
+  (model: T, scale: ScaleLinear<number, number>, params?: W) => V;
+export type ComponentRenderer<T extends object,
+                              U extends object,
+                              V extends any> =
+  (params: T, context: U) => Promise<V>;

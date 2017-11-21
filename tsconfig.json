@@ -3,24 +3,25 @@
   "compilerOptions": {
     "outDir": "./dist/",
     "sourceMap": true,
-    "noImplicitAny": true,
-    "noImplicitUseStrict": true,
-    "noImplicitReturns": true,
+    "suppressImplicitAnyIndexErrors": true,
     "removeComments": true,
     "preserveConstEnums": true,
-    "module": "umd",
-    "target": "es5",
+    "module": "es2015",
+    "target": "es2015",
     "pretty": true,
     "allowJs": false,
     "charset": "utf8",
     "forceConsistentCasingInFileNames": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "strictNullChecks": true,
-    "compileOnSave": true,
-    "skipLibCheck": true
+    "allowUnreachableCode": false,
+    "newLine": "LF",
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "strict": true,
+    "strictNullChecks": true
   },
   "include": [
-    "./src/main/script/**/*.ts"
+    "./src/script/**/*.ts",
+    "./src/script/**/*.ts"
   ]
 }

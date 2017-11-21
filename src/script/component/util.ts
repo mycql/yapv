@@ -3,7 +3,7 @@ import { Coord, DefaultArcObject, StringKeyValMap } from './models';
 
 export type StyleResolver = (styleProp: string, styleVal: string, context: CanvasRenderingContext2D) => void;
 export enum Quadrant {
-  FIRST, SECOND, THIRD, FOURTH
+  FIRST, SECOND, THIRD, FOURTH,
 }
 
 const _ANGLE_OFFSET: number = toRadians(-90);
@@ -20,7 +20,9 @@ export function parseStyle(style: string): StringKeyValMap {
     }, {});
 }
 
-export function updateContextStyle(context: CanvasRenderingContext2D, styles: StringKeyValMap, resolve?: StyleResolver): void {
+export function updateContextStyle(context: CanvasRenderingContext2D,
+                                   styles: StringKeyValMap,
+                                   resolve?: StyleResolver): void {
   Object.keys(styles).forEach((styleProp: string) => {
     const styleVal: string = styles[styleProp];
     switch (styleProp) {
@@ -57,7 +59,9 @@ export function updateContextStyle(context: CanvasRenderingContext2D, styles: St
   });
 }
 
-export function pathDraw(context: CanvasRenderingContext2D, style: string | StringKeyValMap, fill: boolean = true): void {
+export function pathDraw(context: CanvasRenderingContext2D,
+                         style: string | StringKeyValMap,
+                         fill: boolean = true): void {
   const styles: StringKeyValMap = typeof style === 'string' ? parseStyle(style) : style;
   const fillRule: string = styles['fill-rule'];
   const strokeOpacity: string = styles['stroke-opacity'];
@@ -77,7 +81,7 @@ export function pathDraw(context: CanvasRenderingContext2D, style: string | Stri
       context.globalAlpha = 1;
     }
     if (fillRule) {
-      context.fill(fillRule);
+      context.fill(fillRule as CanvasFillRule);
     } else {
       context.fill();
     }
@@ -111,7 +115,7 @@ export function toCartesianCoords(centerX: number,
                                   angleInRadians: number): Coord {
   return {
     x: centerX + (radius * Math.cos(angleInRadians)),
-    y: centerY + (radius * Math.sin(angleInRadians))
+    y: centerY + (radius * Math.sin(angleInRadians)),
   };
 }
 
@@ -132,7 +136,7 @@ export function angleRadInBetweenSides(adjacentSideA: number,
   return Math.acos(squaredTotal / (2 * adjacentSideA * adjacentSideB));
 }
 
-export function deepClone<T extends Object>(target: T): T {
+export function deepClone<T extends object>(target: T): T {
   return JSON.parse(JSON.stringify(target));
 }
 
@@ -151,5 +155,5 @@ export function arc(context: CanvasRenderingContext2D, config: DefaultArcObject)
 }
 
 export {
-  scaleLinear
+  scaleLinear,
 };

@@ -5,7 +5,7 @@ import {
   AxisAndLabels,
   MapRenderModel,
   MarkerAndLabels,
-  TrackRenderModelComponents
+  TrackRenderModelComponents,
 } from '../../mapper/map';
 
 import { TrackRenderModel } from '../../mapper/track';
@@ -21,15 +21,17 @@ import renderAxis from './axis';
 import renderLabel from './label';
 
 type OrderedModels = {
-  tracks: Array<TrackRenderModel>;
-  axes: Array<AxisRenderModel>;
-  markers: Array<MarkerRenderModel>;
-  labels: Array<LabelRenderModel>;
+  tracks: TrackRenderModel[];
+  axes: AxisRenderModel[];
+  markers: MarkerRenderModel[];
+  labels: LabelRenderModel[];
 };
 
+type ComponentObjectRenderer = ComponentRenderer<object, CanvasRenderingContext2D, boolean>;
+
 type ModelRendererPair = {
-  render: ComponentRenderer<Object, CanvasRenderingContext2D, boolean>;
-  models: Array<Object>;
+  render: ComponentObjectRenderer;
+  models: object[];
 };
 
 function resolveStyle(styleProp: string, styleVal: string, context: CanvasRenderingContext2D): void {
@@ -49,7 +51,10 @@ export default function draw(canvas: HTMLCanvasElement, model: VectorMap): Promi
   const x: number = width / 2;
   const y: number = height / 2;
 
-  const context: CanvasRenderingContext2D = canvas.getContext('2d');
+  const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
+  if (!context) {
+    return Promise.resolve(false);
+  }
   context.save();
   context.translate(x, y);
   context.clearRect(-x, -y, width, height);
@@ -64,7 +69,7 @@ export default function draw(canvas: HTMLCanvasElement, model: VectorMap): Promi
 
   const renderModel: MapRenderModel = translateModel(model, measureText);
   const orderedModels: OrderedModels = {
-    axes: [], labels: [], markers: [], tracks: []
+    axes: [], labels: [], markers: [], tracks: [],
   };
   renderModel.tracks.reduce((acc: OrderedModels, trackComponents: TrackRenderModelComponents) => {
     acc.tracks.push(trackComponents.track);
@@ -72,7 +77,7 @@ export default function draw(canvas: HTMLCanvasElement, model: VectorMap): Promi
       acc.markers.push(markerAndLabels.marker);
       acc.labels = acc.labels.concat(markerAndLabels.labels);
     });
-    trackComponents.axes.forEach((axisAndLabels: AxisAndLabels) => {
+    (trackComponents.axes || []).forEach((axisAndLabels: AxisAndLabels) => {
       acc.axes.push(axisAndLabels.axis);
       acc.labels = acc.labels.concat(axisAndLabels.labels);
     });
@@ -80,27 +85,27 @@ export default function draw(canvas: HTMLCanvasElement, model: VectorMap): Promi
   }, orderedModels);
   orderedModels.labels = orderedModels.labels.concat(renderModel.labels);
 
-  const renderPairs: Array<ModelRendererPair> = [
+  const renderPairs: ModelRendererPair[] = [
     {
-      render: renderTrack,
-      models: orderedModels.tracks
+      render: renderTrack as ComponentObjectRenderer,
+      models: orderedModels.tracks,
     },
     {
-      render: renderMarker,
-      models: orderedModels.markers
+      render: renderAxis as ComponentObjectRenderer,
+      models: orderedModels.axes,
     },
     {
-      render: renderAxis,
-      models: orderedModels.axes
+      render: renderMarker as ComponentObjectRenderer,
+      models: orderedModels.markers,
     },
     {
-      render: renderLabel,
-      models: orderedModels.labels
-    }
+      render: renderLabel as ComponentObjectRenderer,
+      models: orderedModels.labels,
+    },
   ];
 
   renderPairs.forEach((renderPair: ModelRendererPair) => {
-    renderPair.models.forEach((toRender: Object) => {
+    renderPair.models.forEach((toRender: object) => {
       renderPair.render(toRender, context);
     });
   });

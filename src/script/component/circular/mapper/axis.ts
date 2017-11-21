@@ -8,7 +8,7 @@ import {
   Label,
   LabelDisplayConfig,
   RenderModelMapper,
-  StringKeyValMap
+  StringKeyValMap,
 } from '../../models';
 import { normalizeToCanvas, parseStyle } from '../../util';
 
@@ -20,18 +20,18 @@ export type AnnulusRenderModel = {
 };
 
 export type ScaleRenderModel = {
-  ticks: Array<DefaultArcObject>;
+  ticks: DefaultArcObject[];
   style: StringKeyValMap;
 };
 
 export type AxisRenderModel = {
   axis: AnnulusRenderModel,
-  scales: Array<ScaleRenderModel>;
-  labels: Array<Array<Label>>;
+  scales: ScaleRenderModel[];
+  labels: Label[][];
 };
 
-function intervalToScales(tickInterVal: number, location: Location): Array<number> {
-  const ticks: Array<number> = [];
+function intervalToScales(tickInterVal: number, location: Location): number[] {
+  const ticks: number[] = [];
   const { start, end }: Location = location;
   let tick: number = start === 1 ? start - 1 : start;
   while (tick <= end) {
@@ -43,8 +43,8 @@ function intervalToScales(tickInterVal: number, location: Location): Array<numbe
 
 function totalToInterval(totalTicks: number, location: Location): number {
   const molLength: number = location.end - location.start;
-  const numDigitsLength: number = molLength.toString().length,
-        digits: Array<string> = [];
+  const numDigitsLength: number = molLength.toString().length;
+  const digits: string[] = [];
   for (let i: number = 0; i < numDigitsLength; i++) {
     if (i === 0) {
       digits.push('1');
@@ -52,19 +52,19 @@ function totalToInterval(totalTicks: number, location: Location): number {
       digits.push('0');
     }
   }
-  return (molLength - (molLength % parseInt(digits.join('')))) / totalTicks;
+  return (molLength - (molLength % parseInt(digits.join(''), 10))) / totalTicks;
 }
 
 type TickModel = {
-  config: AxisTickConfig,
-  ticks: Array<number>
+  config: AxisTickConfig;
+  ticks: number[];
 };
 
-function createTicks(configs: Array<AxisTickConfig>, location: Location): Array<TickModel> {
+function createTicks(configs: AxisTickConfig[], location: Location): TickModel[] {
   return (configs || []).map((config: AxisTickConfig) => {
-    const tickTotal: number = config.total;
-    const tickInterVal: number = config.interval;
-    let ticks: Array<number> = config.ticks || [];
+    const tickTotal: number | undefined = config.total;
+    const tickInterVal: number | undefined = config.interval;
+    let ticks: number[] = config.ticks || [];
     if (ticks.length <= 0) {
       if (tickInterVal) {
         ticks = intervalToScales(tickInterVal, location);
@@ -87,41 +87,41 @@ function mapAxis(displayConfig: AxisDisplayConfig,
     outerRadius: distanceFromTrack + halfWidth,
     startAngle: normalizeToCanvas(scale(location.start)),
     endAngle: normalizeToCanvas(scale(location.end)),
-    padAngle: null,
+    padAngle: 0,
   };
   return {
     annulus,
-    style
+    style,
   };
 }
 
-function mapScales(tickModels: Array<TickModel>,
+function mapScales(tickModels: TickModel[],
                    scale: ScaleLinear<number, number>,
-                   distanceFromTrack: number): Array<ScaleRenderModel> {
+                   distanceFromTrack: number): ScaleRenderModel[] {
   return tickModels.map((tickModel: TickModel) => {
     const { config, ticks: digits }: TickModel = tickModel;
     const style: StringKeyValMap = parseStyle(config.style || defaultStyle);
     const halfWidth: number = config.width / 2;
     const distanceFromAxis: number = config.distance || 0;
     const tickDistance: number = distanceFromTrack + distanceFromAxis;
-    const ticks: Array<DefaultArcObject> = digits.map((digit: number) => {
+    const ticks: DefaultArcObject[] = digits.map((digit: number) => {
       return {
         innerRadius: tickDistance - halfWidth,
         outerRadius: tickDistance + halfWidth,
         startAngle: normalizeToCanvas(scale(digit)),
         endAngle: normalizeToCanvas(scale(digit)),
-        padAngle: null,
+        padAngle: 0,
       };
     });
     return {
       ticks,
-      style
+      style,
     };
   });
 }
 
-function mapLabels(tickModels: Array<TickModel>,
-                   scale: ScaleLinear<number, number>): Array<Array<Label>> {
+function mapLabels(tickModels: TickModel[],
+                   scale: ScaleLinear<number, number>): Label[][] {
   return tickModels.filter(labeledScales).map((tickModel: TickModel) => {
     const { config, ticks }: TickModel = tickModel;
     return ticks.map(ticksAsLabels(config.label, scale));
@@ -141,7 +141,7 @@ function ticksAsLabels(config: LabelDisplayConfig,
     return {
       text: digit.toString(),
       location: { start: digit, end: digit },
-      displayConfig: config
+      displayConfig: config,
     };
   };
 }
@@ -150,10 +150,10 @@ type Mapper = RenderModelMapper<Axis, AxisDisplayConfig, AxisRenderModel, {}>;
 const AxisRenderMapper: Mapper = (model: Axis, scale: ScaleLinear<number, number>): AxisRenderModel => {
   const { displayConfig, location: mapLocation }: Axis = model;
   const { distance: distanceFromTrack, scales: scalesConfig }: AxisDisplayConfig = displayConfig;
-  const ticks: Array<TickModel> = createTicks(scalesConfig, mapLocation);
+  const ticks: TickModel[] = createTicks(scalesConfig, mapLocation);
   const axis: AnnulusRenderModel = mapAxis(displayConfig, scale, distanceFromTrack, mapLocation);
-  const scales: Array<ScaleRenderModel> = mapScales(ticks, scale, distanceFromTrack);
-  const labels: Array<Array<Label>> = mapLabels(ticks, scale);
+  const scales: ScaleRenderModel[] = mapScales(ticks, scale, distanceFromTrack);
+  const labels: Label[][] = mapLabels(ticks, scale);
   return { axis, scales, labels };
 };
 

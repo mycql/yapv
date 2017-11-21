@@ -9,7 +9,7 @@ import {
   Line,
   Location,
   Coord,
-  StringKeyValMap
+  StringKeyValMap,
 } from '../models';
 import {
   normalizeToCanvas,
@@ -17,7 +17,7 @@ import {
   angleRadInBetweenSides,
   parseStyle,
   updateContextStyle,
-  pathDraw
+  pathDraw,
 } from '../util';
 
 const defaultStyle: string = 'stroke: black; fill: black; font: 10px "Courier New", monospace;';
@@ -58,7 +58,7 @@ function drawLine(params: DrawTextParams, to: Coord, lineRad: number, arcMidRad:
     context.moveTo(from.x, from.y);
     context.lineTo(to.x, to.y);
   } else if (useCustomLine) {
-    const lineModel: Line = (<Line>line);
+    const lineModel: Line = line as Line;
     const lineConfig: DisplayConfig = lineModel.displayConfig;
     if (lineConfig && lineConfig.style) {
       lineStyle = lineConfig.style;
@@ -86,7 +86,7 @@ function drawTextAlongArc(params: DrawTextParams): void {
   const arcMidRad: number = arcStartRad + (arcDiffRad / 2);
   const styleObj: StringKeyValMap = parseStyle(style);
   const alignment: string = styleObj['text-align'] || 'center';
-  const letterSpacing: number = parseInt(styleObj['letter-spacing'] || '0');
+  const letterSpacing: number = parseInt(styleObj['letter-spacing'] || '0', 10);
   const hasStroke: boolean = typeof styleObj['stroke'] === 'string';
   const hasfill: boolean = typeof styleObj['fill'] === 'string';
   const labelRadius: number = radius + offset.y;
@@ -206,10 +206,10 @@ export class LabelComponent implements Renderable<Label, LabelDisplayConfig, boo
     const location: Location = model.location;
     const type: LabelType = displayConfig.type || LabelTypes.PATH;
     const radius: number = displayConfig.distance;
-    const line: boolean | Line = model.line;
+    const line: boolean | Line = model.line as boolean | Line;
     const drawParams: DrawTextParams = {
-      radius, location, content, style,
-      center, offset, line, scale, context
+      center, content, context, line, location,
+      offset, radius, scale, style,
     };
 
     switch (type) {
@@ -227,4 +227,4 @@ export class LabelComponent implements Renderable<Label, LabelDisplayConfig, boo
 
 }
 
-export default LabelComponent.prototype.render;
+export default new LabelComponent().render;

@@ -8,13 +8,13 @@ import {
   Marker,
   MarkerDisplayConfig,
   RenderModelMapper,
-  StringKeyValMap
+  StringKeyValMap,
 } from '../../models';
 import {
   normalizeToCanvas,
   parseStyle,
   toCartesianCoords,
-  squared
+  squared,
 } from '../../util';
 
 const defaultStyle: string = 'stroke: black; fill: gray;';
@@ -26,8 +26,8 @@ export type MarkerRenderModel = {
     outer: number;
   };
   anchorPositions: {
-    start: Array<Coord>;
-    end: Array<Coord>;
+    start: Coord[];
+    end: Coord[];
   };
   anglesInRadians: Location;
   style: StringKeyValMap;
@@ -41,7 +41,8 @@ function computeAnchorAngle(radius: number, halfAnchorHeight: number, anchorWidt
 
 type Mapper = RenderModelMapper<Marker, MarkerDisplayConfig, MarkerRenderModel, {}>;
 const MarkerRenderMapper: Mapper = (model: Marker, scale: ScaleLinear<number, number>): MarkerRenderModel => {
-  const centerX: number = 0, centerY: number = 0;
+  const centerX: number = 0;
+  const centerY: number = 0;
   const displayConfig: MarkerDisplayConfig = model.displayConfig;
   const anchorConfig: AnchorDisplayConfig = displayConfig.anchor;
   const direction: Direction = model.direction || Directions.NONE;
@@ -54,10 +55,10 @@ const MarkerRenderMapper: Mapper = (model: Marker, scale: ScaleLinear<number, nu
   const halfAnchorHeight: number = anchorConfig ? anchorConfig.height / 2 : halfWidth;
   let arcStartRad: number = normalizeToCanvas(scale(location.start));
   let arcEndRad: number = normalizeToCanvas(scale(location.end));
-  let anchorCoords: Array<Array<Coord>> = [];
-  let offsetRad: number = 0,
-      anchorStartRad: number = 0,
-      anchorEndRad: number = 0;
+  const anchorCoords: Coord[][] = [];
+  let offsetRad: number = 0;
+  let anchorStartRad: number = 0;
+  let anchorEndRad: number = 0;
 
   if (anchorConfig && direction !== Directions.NONE) {
     offsetRad = computeAnchorAngle(arcMidRadius, halfAnchorHeight, anchorConfig.width);
@@ -70,15 +71,15 @@ const MarkerRenderMapper: Mapper = (model: Marker, scale: ScaleLinear<number, nu
       anchorCoords.push(
         [
           toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcStartRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcStartRad)
+          toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcStartRad),
         ],
         [
           toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, anchorStartRad),
           toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorStartRad),
           toCartesianCoords(centerX, centerY, arcMidRadius, anchorEndRad),
           toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorStartRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, anchorStartRad)
-        ]
+          toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, anchorStartRad),
+        ],
       );
       break;
     case Directions.REVERSE:
@@ -95,8 +96,8 @@ const MarkerRenderMapper: Mapper = (model: Marker, scale: ScaleLinear<number, nu
         ],
         [
           toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcEndRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcEndRad)
-        ]
+          toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcEndRad),
+        ],
       );
       break;
     case Directions.BOTH:
@@ -110,7 +111,7 @@ const MarkerRenderMapper: Mapper = (model: Marker, scale: ScaleLinear<number, nu
           toCartesianCoords(centerX, centerY, arcMidRadius, anchorStartRad),
           toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorEndRad),
           toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, anchorEndRad),
-        ]
+        ],
       );
       arcStartRad = anchorEndRad;
       anchorStartRad = arcEndRad - offsetRad;
@@ -122,8 +123,8 @@ const MarkerRenderMapper: Mapper = (model: Marker, scale: ScaleLinear<number, nu
           toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorStartRad),
           toCartesianCoords(centerX, centerY, arcMidRadius, anchorEndRad),
           toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorStartRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, anchorStartRad)
-        ]
+          toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, anchorStartRad),
+        ],
       );
       break;
     case Directions.NONE:
@@ -131,12 +132,12 @@ const MarkerRenderMapper: Mapper = (model: Marker, scale: ScaleLinear<number, nu
       anchorCoords.push(
         [
           toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcStartRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcStartRad)
+          toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcStartRad),
         ],
         [
           toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcEndRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcEndRad)
-        ]
+          toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcEndRad),
+        ],
       );
       break;
   }
@@ -144,20 +145,20 @@ const MarkerRenderMapper: Mapper = (model: Marker, scale: ScaleLinear<number, nu
     style,
     center: {
       x: centerX,
-      y: centerY
+      y: centerY,
     },
     radii: {
       inner: arcInnerRad,
-      outer: arcOuterRad
+      outer: arcOuterRad,
     },
     anchorPositions: {
       start: anchorCoords[0],
-      end: anchorCoords[1]
+      end: anchorCoords[1],
     },
     anglesInRadians: {
       start: arcStartRad,
-      end: arcEndRad
-    }
+      end: arcEndRad,
+    },
   };
 };
 
