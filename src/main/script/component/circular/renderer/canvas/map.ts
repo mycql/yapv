@@ -46,28 +46,7 @@ function resolveStyle(styleProp: string, styleVal: string, context: CanvasRender
   }
 }
 
-export default function draw(canvas: HTMLCanvasElement, model: VectorMap): Promise<boolean> {
-  const { width, height }: HTMLCanvasElement = canvas;
-  const x: number = width / 2;
-  const y: number = height / 2;
-
-  const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
-  if (!context) {
-    return Promise.resolve(false);
-  }
-  context.save();
-  context.translate(x, y);
-  context.clearRect(-x, -y, width, height);
-
-  const measureText: TextMeasurer = (text: string, style: StringKeyValMap) => {
-    context.save();
-    updateContextStyle(context, style, resolveStyle);
-    const size: number = context.measureText(text).width;
-    context.restore();
-    return size;
-  };
-
-  const renderModel: MapRenderModel = translateModel(model, measureText);
+function orderModels(renderModel: MapRenderModel): OrderedModels {
   const orderedModels: OrderedModels = {
     axes: [], labels: [], markers: [], tracks: [],
   };
@@ -84,7 +63,10 @@ export default function draw(canvas: HTMLCanvasElement, model: VectorMap): Promi
     return acc;
   }, orderedModels);
   orderedModels.labels = orderedModels.labels.concat(renderModel.labels);
+  return orderedModels;
+}
 
+function pairRendererWithModels(orderedModels: OrderedModels): ModelRendererPair[] {
   const renderPairs: ModelRendererPair[] = [
     {
       render: renderTrack as ComponentObjectRenderer,
@@ -103,6 +85,48 @@ export default function draw(canvas: HTMLCanvasElement, model: VectorMap): Promi
       models: orderedModels.labels,
     },
   ];
+  return renderPairs;
+}
+
+function canvasContextTextMeasurer(context: CanvasRenderingContext2D): TextMeasurer {
+  return (text: string, style: StringKeyValMap) => {
+    context.save();
+    updateContextStyle(context, style, resolveStyle);
+    const size: number = context.measureText(text).width;
+    context.restore();
+    return size;
+  };
+}
+
+// function renderComponents(context: CanvasRenderingContext2D,
+//                           renderPairs: ModelRendererPair[],
+//                           index: number): void {
+//   if (index >= renderPairs.length) {
+//     return;
+//   }
+//   const renderPair: ModelRendererPair = renderPairs[index];
+//   Promise.all(renderPair.models.map((toRender: object) =>
+//     renderPair.render(toRender, context))).then(() =>
+//       renderComponents(context, renderPairs, index + 1));
+// }
+
+export default function draw(canvas: HTMLCanvasElement, model: VectorMap): Promise<boolean> {
+  const { width, height }: HTMLCanvasElement = canvas;
+  const x: number = width / 2;
+  const y: number = height / 2;
+
+  const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
+  if (!context) {
+    return Promise.resolve(false);
+  }
+  context.save();
+  context.translate(x, y);
+  context.clearRect(-x, -y, width, height);
+
+  const measureText: TextMeasurer = canvasContextTextMeasurer(context);
+  const renderModel: MapRenderModel = translateModel(model, measureText);
+  const orderedModels: OrderedModels = orderModels(renderModel);
+  const renderPairs: ModelRendererPair[] = pairRendererWithModels(orderedModels);
 
   renderPairs.forEach((renderPair: ModelRendererPair) => {
     renderPair.models.forEach((toRender: object) => {

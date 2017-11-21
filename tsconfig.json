@@ -21,7 +21,7 @@
     "strictNullChecks": true
   },
   "include": [
-    "./src/script/**/*.ts",
-    "./src/script/**/*.ts"
+    "./src/main/script/**/*.ts",
+    "./src/test/script/**/*.ts"
   ]
 }

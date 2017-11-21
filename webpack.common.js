@@ -2,8 +2,7 @@
 
 const DIR = {
   DIST: 'dist',
-  DIST_SCRIPT: 'scripts',
-  SRC_MAIN: 'src/'
+  SRC_MAIN: 'src/main/'
 };
 
 const path = require('path');
@@ -15,7 +14,7 @@ const packageInfo = require(path.resolve(__dirname, 'package.json'));
 const hashed = process.env.hashed || 'true';
 const doHash = hashed === 'true';
 const distName = doHash ? `${packageInfo.name}.[chunkhash]` : `${packageInfo.name}-${packageInfo.version}`;
-const entryBundleName = `${DIR.DIST_SCRIPT}/[name].${distName}.js`;
+const entryBundleName = `[name].${distName}.js`;
 
 const metadata = {
   title: 'Web Plasmid'
@@ -23,7 +22,7 @@ const metadata = {
 
 const config  = {
   entry: {
-    app: path.resolve(__dirname, `${DIR.SRC_MAIN}/script/main.ts`),
+    app: path.resolve(__dirname, `${DIR.SRC_MAIN}/script/index.ts`),
   },
   output: {
     path: path.resolve(__dirname, DIR.DIST),
