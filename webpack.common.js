@@ -29,7 +29,7 @@ const config  = {
     filename: entryBundleName,
     chunkFilename: entryBundleName,
     libraryTarget: 'umd',
-    library: 'CanvasPlasmid'
+    library: 'WebPlasmid'
   },
   devtool: 'inline-source-map',
   target: 'web',
