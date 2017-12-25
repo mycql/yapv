@@ -15,5 +15,13 @@
         }
       }
     ]
+  ],
+  "plugins": [
+    [
+      "transform-react-jsx",
+      {
+        "pragma": "h"
+      }
+    ]
   ]
 }

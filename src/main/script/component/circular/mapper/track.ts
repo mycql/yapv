@@ -8,7 +8,7 @@ import {
 } from '../../models';
 import { parseStyle } from '../../util';
 
-const defaultStyle: string = 'stroke: black; fill: white;';
+const defaultStyle: string = 'stroke: black; fill: transparent;';
 
 export type TrackRenderModel = {
   annulus: DefaultArcObject;

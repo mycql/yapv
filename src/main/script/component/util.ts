@@ -20,6 +20,19 @@ export function parseStyle(style: string): StringKeyValMap {
     }, {});
 }
 
+export function toCamelCaseKeys(pairs: StringKeyValMap): StringKeyValMap {
+  const result: StringKeyValMap = {};
+  for (const key in pairs) {
+    if (!pairs.hasOwnProperty(key)) {
+      continue;
+    }
+    const val: string = pairs[key];
+    const camelCased: string = key.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+    result[camelCased] = val;
+  }
+  return result;
+}
+
 export function updateContextStyle(context: CanvasRenderingContext2D,
                                    styles: StringKeyValMap,
                                    resolve?: StyleResolver): void {

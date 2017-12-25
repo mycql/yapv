@@ -1,6 +1,12 @@
-import { ComponentRenderer, StringKeyValMap, VectorMap } from '../../../models';
-import { TextMeasurer } from '../../mapper/label';
+import {
+  ComponentRenderer,
+  StringKeyValMap,
+  SizedDisplayConfig,
+  VectorMap,
+} from '../../../models';
 import { updateContextStyle } from '../../../util';
+
+import { TextMeasurer } from '../../mapper/label';
 import {
   AxisAndLabels,
   MapRenderModel,
@@ -12,6 +18,7 @@ import { TrackRenderModel } from '../../mapper/track';
 import { MarkerRenderModel } from '../../mapper/marker';
 import { AxisRenderModel } from '../../mapper/axis';
 import { LabelRenderModel } from '../../mapper/label';
+import { OrderedModels, orderModels } from '../../mapper/map';
 
 import translateModel from '../../mapper/map';
 
@@ -19,13 +26,6 @@ import renderTrack from './track';
 import renderMarker from './marker';
 import renderAxis from './axis';
 import renderLabel from './label';
-
-type OrderedModels = {
-  tracks: TrackRenderModel[];
-  axes: AxisRenderModel[];
-  markers: MarkerRenderModel[];
-  labels: LabelRenderModel[];
-};
 
 type ComponentObjectRenderer = ComponentRenderer<object, CanvasRenderingContext2D, boolean>;
 
@@ -44,26 +44,6 @@ function resolveStyle(styleProp: string, styleVal: string, context: CanvasRender
     default:
       break;
   }
-}
-
-function orderModels(renderModel: MapRenderModel): OrderedModels {
-  const orderedModels: OrderedModels = {
-    axes: [], labels: [], markers: [], tracks: [],
-  };
-  renderModel.tracks.reduce((acc: OrderedModels, trackComponents: TrackRenderModelComponents) => {
-    acc.tracks.push(trackComponents.track);
-    trackComponents.markers.forEach((markerAndLabels: MarkerAndLabels) => {
-      acc.markers.push(markerAndLabels.marker);
-      acc.labels = acc.labels.concat(markerAndLabels.labels);
-    });
-    (trackComponents.axes || []).forEach((axisAndLabels: AxisAndLabels) => {
-      acc.axes.push(axisAndLabels.axis);
-      acc.labels = acc.labels.concat(axisAndLabels.labels);
-    });
-    return acc;
-  }, orderedModels);
-  orderedModels.labels = orderedModels.labels.concat(renderModel.labels);
-  return orderedModels;
 }
 
 function pairRendererWithModels(orderedModels: OrderedModels): ModelRendererPair[] {
@@ -98,20 +78,12 @@ function canvasContextTextMeasurer(context: CanvasRenderingContext2D): TextMeasu
   };
 }
 
-// function renderComponents(context: CanvasRenderingContext2D,
-//                           renderPairs: ModelRendererPair[],
-//                           index: number): void {
-//   if (index >= renderPairs.length) {
-//     return;
-//   }
-//   const renderPair: ModelRendererPair = renderPairs[index];
-//   Promise.all(renderPair.models.map((toRender: object) =>
-//     renderPair.render(toRender, context))).then(() =>
-//       renderComponents(context, renderPairs, index + 1));
-// }
+export default function draw(container: HTMLElement, model: VectorMap): Promise<boolean> {
+  const { width, height }: SizedDisplayConfig = model.displayConfig;
+  const canvas: HTMLCanvasElement = document.createElement('canvas');
+  canvas.setAttribute('width', `${width}`);
+  canvas.setAttribute('height', `${height}`);
 
-export default function draw(canvas: HTMLCanvasElement, model: VectorMap): Promise<boolean> {
-  const { width, height }: HTMLCanvasElement = canvas;
   const x: number = width / 2;
   const y: number = height / 2;
 
@@ -135,5 +107,6 @@ export default function draw(canvas: HTMLCanvasElement, model: VectorMap): Promi
   });
 
   context.restore();
+  container.appendChild(canvas);
   return Promise.resolve(true);
 }

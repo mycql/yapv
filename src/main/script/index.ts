@@ -1,7 +1,3 @@
-// import * as Circular from './component/circular/components';
+import Canvas from './component/circular/renderer/canvas/map';
 
-// export { Circular };
-
-import circular from './component/circular/renderer/canvas/map';
-
-export { circular };
+export { Canvas };

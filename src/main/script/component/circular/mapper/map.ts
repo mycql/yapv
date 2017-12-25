@@ -39,6 +39,13 @@ export type MapRenderModel = {
   labels: LabelRenderModel[];
 };
 
+export type OrderedModels = {
+  tracks: TrackRenderModel[];
+  axes: AxisRenderModel[];
+  markers: MarkerRenderModel[];
+  labels: LabelRenderModel[];
+};
+
 function arrayOrEmpty<T>(array: T[] | undefined): T[] {
   return array || [];
 }
@@ -79,6 +86,26 @@ function toAxisModels(axes: Axis[] | undefined,
     }).reduce((acc: LabelRenderModel[], next: LabelRenderModel[]) => acc.concat(next), []);
     return { axis: axisModel, labels: labelModels };
   });
+}
+
+export function orderModels(renderModel: MapRenderModel): OrderedModels {
+  const orderedModels: OrderedModels = {
+    axes: [], labels: [], markers: [], tracks: [],
+  };
+  renderModel.tracks.reduce((acc: OrderedModels, trackComponents: TrackRenderModelComponents) => {
+    acc.tracks.push(trackComponents.track);
+    trackComponents.markers.forEach((markerAndLabels: MarkerAndLabels) => {
+      acc.markers.push(markerAndLabels.marker);
+      acc.labels = acc.labels.concat(markerAndLabels.labels);
+    });
+    (trackComponents.axes || []).forEach((axisAndLabels: AxisAndLabels) => {
+      acc.axes.push(axisAndLabels.axis);
+      acc.labels = acc.labels.concat(axisAndLabels.labels);
+    });
+    return acc;
+  }, orderedModels);
+  orderedModels.labels = orderedModels.labels.concat(renderModel.labels);
+  return orderedModels;
 }
 
 export default function map(model: VectorMap, measure: TextMeasurer): MapRenderModel {

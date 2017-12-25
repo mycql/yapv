@@ -17,6 +17,11 @@ export interface Location {
   end: number;
 }
 
+export interface Dimension {
+  width: number;
+  height: number;
+}
+
 export interface DisplayConfig {
   width: number;
   style: string;
@@ -32,8 +37,7 @@ export interface SpacedDispayConfig extends DisplayConfig {
   distance: number;
 }
 
-export interface SizedDisplayConfig extends DisplayConfig {
-  height: number;
+export interface SizedDisplayConfig extends DisplayConfig, Dimension {
 }
 
 export interface ComponentModel<T extends DisplayConfig> {
@@ -171,20 +175,6 @@ export interface VectorMap extends ComponentModel<VectorMapDisplayConfig> {
   sequenceConfig: VectorMapSeqConfig;
   tracks: Track[];
   labels?: Label[];
-}
-
-export interface Renderable<T extends ComponentModel<U>, U extends DisplayConfig, V extends any> {
-  render(model: T, scale: ScaleLinear<number, number>, context: CanvasRenderingContext2D): Promise<V>;
-}
-
-export type RenderWithLabelsResult = {
-  status: boolean;
-  renderLabels: () => Promise<boolean>;
-};
-
-export interface RenderableWithLabels<T extends ComponentModel<U>,
-                                      U extends DisplayConfig> extends Renderable<T, U, RenderWithLabelsResult> {
-
 }
 
 export type RenderModelMapper<T extends ComponentModel<U>,

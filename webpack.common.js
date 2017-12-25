@@ -22,14 +22,16 @@ const metadata = {
 
 const config  = {
   entry: {
-    app: path.resolve(__dirname, `${DIR.SRC_MAIN}/script/index.ts`),
+    Render: path.resolve(__dirname, `${DIR.SRC_MAIN}/script/index.ts`),
+    Canvas: path.resolve(__dirname, `${DIR.SRC_MAIN}/script/component/circular/renderer/canvas/index.ts`),
+    SVG: path.resolve(__dirname, `${DIR.SRC_MAIN}/script/component/circular/renderer/svg/index.tsx`)
   },
   output: {
     path: path.resolve(__dirname, DIR.DIST),
     filename: entryBundleName,
     chunkFilename: entryBundleName,
     libraryTarget: 'umd',
-    library: 'WebPlasmid'
+    library: ['WebPlasmid', '[name]']
   },
   devtool: 'inline-source-map',
   target: 'web',

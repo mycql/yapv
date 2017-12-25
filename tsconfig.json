@@ -18,10 +18,11 @@
     "noImplicitThis": true,
     "noImplicitReturns": true,
     "strict": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "jsx": "preserve"
   },
   "include": [
-    "./src/main/script/**/*.ts",
-    "./src/test/script/**/*.ts"
+    "./src/main/script/**/*.ts*",
+    "./src/test/script/**/*.ts*"
   ]
 }
