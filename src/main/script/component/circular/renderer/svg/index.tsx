@@ -71,23 +71,26 @@ function createLabels(labels: LabelRenderModel[]): JSX.Element[] {
   return labels.map((params: LabelRenderModel) => <Label {...params}></Label>);
 }
 
-export function render(container: HTMLElement, model: VectorMap): void {
+export function render(container: HTMLElement): (model: VectorMap) => Promise<boolean> {
   const context: CanvasRenderingContext2D = createCanvasContext();
   const textMeasure: TextMeasurer = canvasContextTextMeasurer(context);
-  app({
-    state: model,
-    view: (state: VectorMap) => {
-      const mapModel: MapRenderModel = translateModel(model, textMeasure);
-      const tracks: JSX.Element[] = createTracks(mapModel.tracks);
-      const labels: JSX.Element[] = createLabels(mapModel.labels);
-      return (
-        <PlasmidMap {...state.displayConfig}>
-          {tracks}
-          <g>
-            {labels}
-          </g>
-        </PlasmidMap>
-      );
-    },
-  }, container);
+  return (model: VectorMap): Promise<boolean> => {
+    app({
+      state: model,
+      view: (state: VectorMap) => {
+        const mapModel: MapRenderModel = translateModel(model, textMeasure);
+        const tracks: JSX.Element[] = createTracks(mapModel.tracks);
+        const labels: JSX.Element[] = createLabels(mapModel.labels);
+        return (
+          <PlasmidMap {...state.displayConfig}>
+            {tracks}
+            <g>
+              {labels}
+            </g>
+          </PlasmidMap>
+        );
+      },
+    }, container);
+    return Promise.resolve(true);
+  };
 }

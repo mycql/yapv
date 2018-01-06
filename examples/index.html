@@ -35,14 +35,14 @@
             text: 'PSB0011',
             displayConfig: {
               type: 'text',
-              style: 'text-align: center; text-anchor: middle; dominant-baseline: central; font: 40px "Arial", sans-serif; fill: blue;'
+              style: 'text-align: center; text-anchor: middle; font: 40px "Arial", sans-serif; fill: blue;'
             }
           },
           {
             text: 'CDS',
             displayConfig: {
               type: 'text',
-              style: 'text-align: center; text-anchor: middle; dominant-baseline: central; font: 20px "Courier", monotype; fill: orange;',
+              style: 'text-align: center; text-anchor: middle; font: 20px "Courier", monotype; fill: orange;',
               vOffset: 30,
               hOffset: 60
             }
@@ -69,7 +69,7 @@
                       style: 'stroke: green; stroke-width: 2;',
                       label: {
                         type: 'text',
-                        style: 'text-align: center; text-anchor: middle; dominant-baseline: central; font: 10px "Courier", monotype; fill: teal;',
+                        style: 'text-align: center; text-anchor: middle; font: 10px "Courier", monotype; fill: teal;',
                         distance: -15
                       }
                     }
@@ -126,7 +126,7 @@
                     text: 'CRISPR 002',
                     displayConfig: {
                       type: 'text',
-                      style: 'text-align: center; text-anchor: middle; dominant-baseline: central; font: 10px "Arial", sans-serif; fill: red;'
+                      style: 'text-align: center; text-anchor: middle; font: 10px "Arial", sans-serif; fill: red;'
                     }
                   }
                 ]
@@ -152,7 +152,7 @@
                       style: 'stroke: green; stroke-width: 2;',
                       label: {
                         type: 'path',
-                        style: 'text-align: center; text-anchor: middle; dominant-baseline: central; font: 10px "Arial", sans-serif; fill: red;',
+                        style: 'text-align: center; text-anchor: middle; font: 10px "Arial", sans-serif; fill: red;',
                         distance: 10
                       }
                     }
@@ -181,7 +181,7 @@
                       style: 'stroke: red; stroke-width: 4;',
                       label: {
                         type: 'text',
-                        style: 'text-align: center; text-anchor: middle; dominant-baseline: central; font: 10px "Arial", sans-serif; fill: red;',
+                        style: 'text-align: center; text-anchor: middle; font: 10px "Arial", sans-serif; fill: red;',
                         distance: -10
                       }
                     }
@@ -247,7 +247,7 @@
                     },
                     displayConfig: {
                       type: 'text',
-                      style: 'text-align: center; text-anchor: middle; dominant-baseline: central; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5px;',
+                      style: 'text-align: center; text-anchor: middle; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5px;',
                       vOffset: -200,
                       hOffset: -10
                     }
@@ -274,7 +274,7 @@
                     line: true,
                     displayConfig: {
                       type: 'text',
-                      style: 'text-align: center; text-anchor: middle; dominant-baseline: central; font: 10px "Courier New", monospace; fill: green; stroke: green; letter-spacing: 5px;',
+                      style: 'text-align: center; text-anchor: middle; font: 10px "Courier New", monospace; fill: green; stroke: green; letter-spacing: 5px;',
                       vOffset: 20,
                       hOffset: 100
                     }
@@ -301,7 +301,7 @@
                     line: true,
                     displayConfig: {
                       type: 'path',
-                      style: 'text-align: center; text-anchor: middle; dominant-baseline: central; font: 10px "Courier New", monospace; fill: green; stroke: orange; letter-spacing: 5px;',
+                      style: 'text-align: center; text-anchor: middle; font: 10px "Courier New", monospace; fill: green; stroke: orange; letter-spacing: 5px;',
                       vOffset: 30
                     }
                   }
@@ -318,9 +318,11 @@
       var location = model.tracks[0].markers[0].location;
       var origStart = location.start;
       var direction = '+';
+      var canvasRender= WebPlasmid.Canvas.render(canvas);
+      var svgRender= WebPlasmid.SVG.render(svg);
       function animate() {
         var colorIdx = Math.floor(Math.random() * 10);
-        var style = 'text-align: center; text-anchor: middle; dominant-baseline: central; font: 40px "Arial", sans-serif;';
+        var style = 'text-align: center; text-anchor: middle; font: 40px "Arial", sans-serif;';
         style = style + ' fill: ' + presets[colorIdx] + ';';
         model.labels[0].displayConfig.style = style;
         if(location.start >= location.end) {
@@ -334,10 +336,10 @@
         } else {
           location.start -= 1;
         }
-        WebPlasmid.Canvas.render(canvas, model).then(function() {
+        canvasRender(model).then(function() {
           // setTimeout(animate, 500 / 1000);
         });
-        WebPlasmid.SVG.render(svg, model);
+        svgRender(model);
       }
       animate();
     });

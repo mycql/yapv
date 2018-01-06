@@ -24,3 +24,7 @@ export function arcAsDonutPath(arc: DefaultArcObject): string {
   ].join(' ');
   return path;
 }
+
+export function generateId(): string {
+  return Math.random().toString(36).substring(2);
+}

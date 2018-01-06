@@ -50,7 +50,7 @@ function drawTextAlongArc(params: TextRenderModel, context: CanvasRenderingConte
       context.rotate(angles.rotation);
       context.save();
       context.translate(position.x, position.y);
-      context.rotate(angles.path);
+      context.rotate(angles.path.start);
       if (hasfill) {
         context.fillText(symbol, 0, 0);
       }

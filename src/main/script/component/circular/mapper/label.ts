@@ -24,11 +24,12 @@ export type TextMeasurer = (text: string, style: StringKeyValMap) => number;
 
 export type TextRenderModel = {
   content: string;
+  distance: number;
   position: Coord;
   style: StringKeyValMap;
   anglesInRadians?: {
     rotation: number;
-    path: number;
+    path: Location;
   };
 };
 
@@ -126,11 +127,15 @@ function textAlongArc(params: DrawTextModel): LabelRenderModel {
     type,
     label: {
       content,
+      distance: labelRadius,
       position: coord,
       style: styleObj,
       anglesInRadians: {
         rotation: rotateAngle,
-        path: angleRad,
+        path: {
+          start: angleRad,
+          end: angleRad + textArcRad,
+        },
       },
     },
   };
@@ -180,6 +185,7 @@ function textAlongAxis(params: DrawTextModel): LabelRenderModel {
     label: {
       content,
       position,
+      distance: Math.max(radius + offset.x, radius + offset.y),
       style: styleObj,
     },
   };

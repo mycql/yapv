@@ -78,35 +78,36 @@ function canvasContextTextMeasurer(context: CanvasRenderingContext2D): TextMeasu
   };
 }
 
-export default function draw(container: HTMLElement, model: VectorMap): Promise<boolean> {
-  const { width, height }: SizedDisplayConfig = model.displayConfig;
+export default function render(container: HTMLElement): (model: VectorMap) => Promise<boolean> {
   const canvas: HTMLCanvasElement = document.createElement('canvas');
-  canvas.setAttribute('width', `${width}`);
-  canvas.setAttribute('height', `${height}`);
-
-  const x: number = width / 2;
-  const y: number = height / 2;
-
-  const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
-  if (!context) {
-    return Promise.resolve(false);
-  }
-  context.save();
-  context.translate(x, y);
-  context.clearRect(-x, -y, width, height);
-
-  const measureText: TextMeasurer = canvasContextTextMeasurer(context);
-  const renderModel: MapRenderModel = translateModel(model, measureText);
-  const orderedModels: OrderedModels = orderModels(renderModel);
-  const renderPairs: ModelRendererPair[] = pairRendererWithModels(orderedModels);
-
-  renderPairs.forEach((renderPair: ModelRendererPair) => {
-    renderPair.models.forEach((toRender: object) => {
-      renderPair.render(toRender, context);
-    });
-  });
-
-  context.restore();
   container.appendChild(canvas);
-  return Promise.resolve(true);
+  return (model: VectorMap): Promise<boolean> => {
+    const { width, height }: SizedDisplayConfig = model.displayConfig;
+    canvas.setAttribute('width', `${width}`);
+    canvas.setAttribute('height', `${height}`);
+    const x: number = width / 2;
+    const y: number = height / 2;
+
+    const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
+    if (!context) {
+      return Promise.resolve(false);
+    }
+    context.save();
+    context.translate(x, y);
+    context.clearRect(-x, -y, width, height);
+
+    const measureText: TextMeasurer = canvasContextTextMeasurer(context);
+    const renderModel: MapRenderModel = translateModel(model, measureText);
+    const orderedModels: OrderedModels = orderModels(renderModel);
+    const renderPairs: ModelRendererPair[] = pairRendererWithModels(orderedModels);
+
+    renderPairs.forEach((renderPair: ModelRendererPair) => {
+      renderPair.models.forEach((toRender: object) => {
+        renderPair.render(toRender, context);
+      });
+    });
+
+    context.restore();
+    return Promise.resolve(true);
+  };
 }

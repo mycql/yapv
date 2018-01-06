@@ -2,7 +2,10 @@
 
 const DIR = {
   DIST: 'dist',
-  SRC_MAIN: 'src/main/'
+  SRC_MAIN: 'src/main'
+};
+DIR.SRC_RENDERER = {
+  CIRCULAR: `${DIR.SRC_MAIN}/script/component/circular/renderer`
 };
 
 const path = require('path');
@@ -22,9 +25,8 @@ const metadata = {
 
 const config  = {
   entry: {
-    Render: path.resolve(__dirname, `${DIR.SRC_MAIN}/script/index.ts`),
-    Canvas: path.resolve(__dirname, `${DIR.SRC_MAIN}/script/component/circular/renderer/canvas/index.ts`),
-    SVG: path.resolve(__dirname, `${DIR.SRC_MAIN}/script/component/circular/renderer/svg/index.tsx`)
+    Canvas: path.resolve(__dirname, `${DIR.SRC_RENDERER.CIRCULAR}/canvas/index.ts`),
+    SVG: path.resolve(__dirname, `${DIR.SRC_RENDERER.CIRCULAR}/svg/index.tsx`)
   },
   output: {
     path: path.resolve(__dirname, DIR.DIST),
