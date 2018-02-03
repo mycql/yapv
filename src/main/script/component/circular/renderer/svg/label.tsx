@@ -7,7 +7,7 @@ import {
   TextRenderModel,
 } from '../../mapper/label';
 import { Coord, LabelTypes, Location } from '../../../models';
-import { normalizeToCanvas, toCamelCaseKeys, toCartesianCoords } from '../../../util';
+import { toCamelCaseKeys, toCartesianCoords } from '../../../util';
 
 const { h } = core;
 
@@ -22,8 +22,8 @@ function textAlongPath(label: TextRenderModel, labelStyle: CSSProperties): JSX.E
     const centerX: number = 0;
     const centerY: number = 0;
     const pathLocation: Location = anglesInRadians.path;
-    const startAngle: number = normalizeToCanvas(pathLocation.start);
-    const endAngle: number = normalizeToCanvas(pathLocation.end);
+    const startAngle: number = pathLocation.start;
+    const endAngle: number = pathLocation.end;
     const start: Coord = toCartesianCoords(centerX, centerY, distance, startAngle);
     const end: Coord = toCartesianCoords(centerX, centerY, distance, endAngle);
     let arcSweep;

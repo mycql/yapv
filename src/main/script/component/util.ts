@@ -110,18 +110,6 @@ export function toDegrees(radians: number): number {
   return radians / (Math.PI / 180);
 }
 
-export function getQuadrant(degrees: number): Quadrant {
-  if (degrees >= 0 && degrees <= 90) {
-    return Quadrant.FIRST;
-  } else if (degrees > 90 && degrees <= 180) {
-    return Quadrant.SECOND;
-  } else if (degrees > 180 && degrees <= 270) {
-    return Quadrant.THIRD;
-  } else {
-    return Quadrant.FOURTH;
-  }
-}
-
 export function toCartesianCoords(centerX: number,
                                   centerY: number,
                                   radius: number,
@@ -134,14 +122,6 @@ export function toCartesianCoords(centerX: number,
 
 export function withAxisOffset(angleInRadians: number): number {
   return _AXIS_OFFSET_RADIANS + angleInRadians;
-}
-
-export function normalizeToCanvas(angleInRadians: number): number {
-  return angleInRadians;
-}
-
-export function deNormalizeFromCanvas(angleInRadians: number): number {
-  return angleInRadians;
 }
 
 export function angleRadInBetweenSides(adjacentSideA: number,

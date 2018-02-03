@@ -11,7 +11,7 @@ import {
   RenderModelMapper,
   StringKeyValMap,
 } from '../../models';
-import { normalizeToCanvas, parseStyle, toCartesianCoords } from '../../util';
+import { parseStyle, toCartesianCoords } from '../../util';
 
 const defaultStyle: string = 'stroke: black; fill: gray;';
 
@@ -88,8 +88,8 @@ function mapAxis(displayConfig: AxisDisplayConfig,
   const annulus: DefaultArcObject = {
     innerRadius: distanceFromTrack - halfWidth,
     outerRadius: distanceFromTrack + halfWidth,
-    startAngle: normalizeToCanvas(scale(location.start)),
-    endAngle: normalizeToCanvas(scale(location.end)),
+    startAngle: scale(location.start),
+    endAngle: scale(location.end),
     padAngle: 0,
   };
   return {
@@ -112,7 +112,7 @@ function mapScales(tickModels: TickModel[],
     const ticks: TickRenderModel[] = digits.map((digit: number) => {
       const innerRadius: number = tickDistance - halfWidth;
       const outerRadius: number = tickDistance + halfWidth;
-      const angleInRadians: number = normalizeToCanvas(scale(digit));
+      const angleInRadians: number = scale(digit);
       return [innerRadius, outerRadius].map((radius: number) => {
         return toCartesianCoords(centerX, centerY, radius, angleInRadians);
       });

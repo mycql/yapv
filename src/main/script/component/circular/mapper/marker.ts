@@ -11,7 +11,6 @@ import {
   StringKeyValMap,
 } from '../../models';
 import {
-  normalizeToCanvas,
   parseStyle,
   toCartesianCoords,
   squared,
@@ -53,8 +52,8 @@ const MarkerRenderMapper: Mapper = (model: Marker, scale: ScaleLinear<number, nu
   const arcInnerRad: number = arcMidRadius - halfWidth;
   const arcOuterRad: number = arcMidRadius + halfWidth;
   const halfAnchorHeight: number = anchorConfig ? anchorConfig.height / 2 : halfWidth;
-  let arcStartRad: number = normalizeToCanvas(scale(location.start));
-  let arcEndRad: number = normalizeToCanvas(scale(location.end));
+  let arcStartRad: number = scale(location.start);
+  let arcEndRad: number = scale(location.end);
   const anchorCoords: Coord[][] = [];
   let offsetRad: number = 0;
   let anchorStartRad: number = 0;

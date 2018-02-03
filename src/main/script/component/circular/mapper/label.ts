@@ -12,7 +12,6 @@ import {
   StringKeyValMap,
 } from '../../models';
 import {
-  normalizeToCanvas,
   toCartesianCoords,
   angleRadInBetweenSides,
   parseStyle,
@@ -78,7 +77,7 @@ function connector(params: DrawTextModel, end: Coord, lineRad: number, arcMidRad
     if (lineConfig && lineConfig.style) {
       lineStyle = lineConfig.style;
     }
-    from = toCartesianCoords(center.x, center.y, radius, normalizeToCanvas(arcMidRad));
+    from = toCartesianCoords(center.x, center.y, radius, arcMidRad);
     (lineModel.coords || []).forEach((lineOffset: Coord) => {
       to.push({ x: from.x + lineOffset.x, y: from.y + lineOffset.y });
     });
@@ -124,8 +123,7 @@ function textAlongArc(params: DrawTextModel): LabelRenderModel {
       break;
   }
   angleRad = angleRad + angleRadInBetweenSides(radius, radius, offset.x);
-  const normAngleRad: number = normalizeToCanvas(angleRad);
-  const coord: Coord = toCartesianCoords(center.x, center.y, labelRadius, normAngleRad);
+  const coord: Coord = toCartesianCoords(center.x, center.y, labelRadius, angleRad);
 
   const renderParams: LabelRenderModel = {
     type,
@@ -145,7 +143,7 @@ function textAlongArc(params: DrawTextModel): LabelRenderModel {
   };
 
   if (line) {
-    const lineRad: number = normAngleRad + textArcRadHalf;
+    const lineRad: number = angleRad + textArcRadHalf;
     const to: Coord = toCartesianCoords(center.x, center.y, labelRadius, lineRad);
     renderParams.connector = connector(params, to, lineRad, arcMidRad);
   }
@@ -186,8 +184,7 @@ function textAlongAxis(params: DrawTextModel): LabelRenderModel {
       break;
   }
 
-  const normAngleRad: number = normalizeToCanvas(angleRad);
-  const coord: Coord = toCartesianCoords(center.x, center.y, radius, normAngleRad);
+  const coord: Coord = toCartesianCoords(center.x, center.y, radius, angleRad);
   const x: number = coord.x + offset.x;
   const y: number = coord.y + offset.y;
   const position: Coord = { x, y };
@@ -207,7 +204,7 @@ function textAlongAxis(params: DrawTextModel): LabelRenderModel {
   };
 
   if (line) {
-    const lineRad: number = normalizeToCanvas(arcMidRad);
+    const lineRad: number = arcMidRad;
     const to: Coord = position;
     renderParams.connector = connector(params, to, lineRad, arcMidRad);
   }
