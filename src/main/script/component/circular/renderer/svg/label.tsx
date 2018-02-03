@@ -60,6 +60,16 @@ function textAlongAxis(label: TextRenderModel, labelStyle: CSSProperties): JSX.E
   );
 }
 
+function polyLines(params: ConnectorRenderModel): JSX.Element {
+  const style = { ...(params.style || {}), ...{ fill: 'transparent' }};
+  const cssProps: CSSProperties = toCamelCaseKeys(style);
+  const paths: string[] = [
+    `${params.from.x} ${params.from.y}`,
+    ...params.to.map((coord: Coord) => `${coord.x} ${coord.y}`),
+  ];
+  return (<polyline points={paths.join(', ')} style={cssProps} />);
+}
+
 export const Label = (params: LabelRenderModel) => {
   const { connector, label, type } = params;
   const { style } = label;
@@ -67,5 +77,17 @@ export const Label = (params: LabelRenderModel) => {
   const textAnchor: string = type === LabelTypes.TEXT ? 'middle' : 'start';
   const normLabelStyle = { ...labelStyle, ...{ 'text-anchor': textAnchor } };
   const cssProps: CSSProperties = toCamelCaseKeys(normLabelStyle);
-  return type === LabelTypes.TEXT ? textAlongAxis(label, cssProps) : textAlongPath(label, cssProps);
+  const labelComponent: JSX.Element = type === LabelTypes.TEXT ?
+    textAlongAxis(label, cssProps) : textAlongPath(label, cssProps);
+  if (connector) {
+    const connectorComponent: JSX.Element = polyLines(connector);
+    return (
+      <g>
+        {labelComponent}
+        {connectorComponent}
+      </g>
+    );
+  } else {
+    return labelComponent;
+  }
 };
