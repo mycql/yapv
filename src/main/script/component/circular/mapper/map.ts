@@ -8,7 +8,7 @@ import {
   Track,
   VectorMap,
 } from '../../models';
-import { scaleLinear, deepClone } from '../../util';
+import { scaleLinear, deepClone, withAxisOffset } from '../../util';
 import { TrackRenderModel } from './track';
 import { MarkerRenderModel } from './marker';
 import { AxisRenderModel } from './axis';
@@ -112,7 +112,10 @@ export default function map(model: VectorMap, measure: TextMeasurer): MapRenderM
   model = deepClone(model);
   const range: Location = model.sequenceConfig.range;
   const scale: ScaleLinear<number, number> = scaleLinear().domain([range.start, range.end])
-                                                          .range([0, Math.PI * 2]);
+                                                          .range([
+                                                            withAxisOffset(0),
+                                                            withAxisOffset(Math.PI * 2),
+                                                          ]);
 
   const trackMarkersAxes: TrackRenderModelComponents[] = arrayOrEmpty(model.tracks).map((track: Track) => {
     const trackDistance: number = track.displayConfig.distance;

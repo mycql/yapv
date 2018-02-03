@@ -6,7 +6,7 @@ export enum Quadrant {
   FIRST, SECOND, THIRD, FOURTH,
 }
 
-const _ANGLE_OFFSET: number = toRadians(-90);
+export const _AXIS_OFFSET_RADIANS: number = -(Math.PI / 2);
 
 export function parseStyle(style: string): StringKeyValMap {
   return style.split(';')
@@ -132,12 +132,16 @@ export function toCartesianCoords(centerX: number,
   };
 }
 
+export function withAxisOffset(angleInRadians: number): number {
+  return _AXIS_OFFSET_RADIANS + angleInRadians;
+}
+
 export function normalizeToCanvas(angleInRadians: number): number {
-  return _ANGLE_OFFSET + angleInRadians;
+  return angleInRadians;
 }
 
 export function deNormalizeFromCanvas(angleInRadians: number): number {
-  return angleInRadians - _ANGLE_OFFSET;
+  return angleInRadians;
 }
 
 export function angleRadInBetweenSides(adjacentSideA: number,

@@ -2,6 +2,7 @@ import core from './core';
 
 import { Axis } from './axis';
 import { Label } from './label';
+import { Marker } from './marker';
 import { Track } from './track';
 import { PlasmidMap } from './map';
 
@@ -9,7 +10,7 @@ import { SizedDisplayConfig, StringKeyValMap, VectorMap } from '../../../models'
 
 import { AxisRenderModel } from '../../mapper/axis';
 import { LabelRenderModel, TextMeasurer } from '../../mapper/label';
-import { AxisAndLabels, MapRenderModel, TrackRenderModelComponents } from '../../mapper/map';
+import { AxisAndLabels, MapRenderModel, MarkerAndLabels, TrackRenderModelComponents } from '../../mapper/map';
 import translateModel from '../../mapper/map';
 
 import { updateContextStyle } from '../../../util';
@@ -49,7 +50,7 @@ function createCanvasContext(): CanvasRenderingContext2D {
 
 function createTracks(trackComponents: TrackRenderModelComponents[]): JSX.Element[] {
   return trackComponents.map((componentMap: TrackRenderModelComponents) => {
-    const { axes, track } = componentMap;
+    const { axes, track, markers } = componentMap;
     const axisComponents = (axes || []).map((axisWithLabels: AxisAndLabels) => {
       const { axis, labels } = axisWithLabels;
       const labelComponents = createLabels(labels);
@@ -59,9 +60,19 @@ function createTracks(trackComponents: TrackRenderModelComponents[]): JSX.Elemen
         </Axis>
       );
     });
+    const markerComponents = (markers || []).map((markerWithLabels: MarkerAndLabels) => {
+      const { marker, labels } = markerWithLabels;
+      const labelComponents = createLabels(labels);
+      return (
+        <Marker {...marker}>
+          {labelComponents}
+        </Marker>
+      );
+    });
     return (
       <Track {...track}>
         {axisComponents}
+        {markerComponents}
       </Track>
     );
   });

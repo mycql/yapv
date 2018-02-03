@@ -7,6 +7,7 @@ import {
 import {
   pathDraw,
   updateContextStyle,
+  withAxisOffset,
 } from '../../../util';
 import {
   ConnectorRenderModel,
@@ -50,7 +51,7 @@ function drawTextAlongArc(params: TextRenderModel, context: CanvasRenderingConte
       context.rotate(angles.rotation);
       context.save();
       context.translate(position.x, position.y);
-      context.rotate(angles.path.start);
+      context.rotate(angles.path.start + withAxisOffset(Math.PI));
       if (hasfill) {
         context.fillText(symbol, 0, 0);
       }
@@ -64,17 +65,38 @@ function drawTextAlongArc(params: TextRenderModel, context: CanvasRenderingConte
 }
 
 function drawTextAlongAxis(params: TextRenderModel, context: CanvasRenderingContext2D): void {
-  const { content, position, style }: TextRenderModel = params;
+  type DrawText = (text: string, x: number, y: number, maxWidth?: number) => void;
+  const { content, position, style, charInfo }: TextRenderModel = params;
+  if (!charInfo) {
+    return;
+  }
+  const { widths, space } = charInfo;
   const hasStroke: boolean = typeof style['stroke'] === 'string';
   const hasfill: boolean = typeof style['fill'] === 'string';
+  if (!hasStroke && !hasfill) {
+    return;
+  }
+  const drawTextFn: DrawText = hasStroke ? context.strokeText : context.fillText;
   context.save();
   updateContextStyle(context, style, resolveStyle);
-  context.translate(position.x, position.y);
-  if (hasfill) {
-    context.fillText(content, 0, 0);
-  }
-  if (hasStroke) {
-    context.strokeText(content, 0, 0);
+  if (space > 0) {
+    const alignment: string = style['text-align'] || 'center';
+    const symbols: string[] = content.split('');
+    const spaceWidth: number = (content.length - 1) * space;
+    const textWidth: number = symbols.reduce((total: number, symbol: string) => {
+      return total + widths[symbol];
+    }, spaceWidth);
+    const xOffset: number = (alignment === 'center') ? -(textWidth / 2) :
+                            (alignment === 'right' ? textWidth : 0);
+    context.translate(position.x + xOffset, position.y);
+    symbols.reduce((prevCharX: number, symbol: string, index: number) => {
+      prevCharX = index !== 0 ? prevCharX + widths[symbols[index - 1]] + space : 0;
+      drawTextFn.call(context, symbol, prevCharX, 0);
+      return prevCharX;
+    }, 0);
+  } else {
+    context.translate(position.x, position.y);
+    drawTextFn.call(context, content, 0, 0);
   }
   context.restore();
 }

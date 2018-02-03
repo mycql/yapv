@@ -3,6 +3,7 @@ import {
   Axis,
   AxisDisplayConfig,
   AxisTickConfig,
+  Coord,
   DefaultArcObject,
   Location,
   Label,
@@ -10,7 +11,7 @@ import {
   RenderModelMapper,
   StringKeyValMap,
 } from '../../models';
-import { normalizeToCanvas, parseStyle } from '../../util';
+import { normalizeToCanvas, parseStyle, toCartesianCoords } from '../../util';
 
 const defaultStyle: string = 'stroke: black; fill: gray;';
 
@@ -19,8 +20,10 @@ export type AnnulusRenderModel = {
   style: StringKeyValMap;
 };
 
+export type TickRenderModel = Coord[];
+
 export type ScaleRenderModel = {
-  ticks: DefaultArcObject[];
+  ticks: TickRenderModel[];
   style: StringKeyValMap;
 };
 
@@ -98,20 +101,21 @@ function mapAxis(displayConfig: AxisDisplayConfig,
 function mapScales(tickModels: TickModel[],
                    scale: ScaleLinear<number, number>,
                    distanceFromTrack: number): ScaleRenderModel[] {
+  const centerX: number = 0;
+  const centerY: number = 0;
   return tickModels.map((tickModel: TickModel) => {
     const { config, ticks: digits }: TickModel = tickModel;
     const style: StringKeyValMap = parseStyle(config.style || defaultStyle);
     const halfWidth: number = config.width / 2;
     const distanceFromAxis: number = config.distance || 0;
     const tickDistance: number = distanceFromTrack + distanceFromAxis;
-    const ticks: DefaultArcObject[] = digits.map((digit: number) => {
-      return {
-        innerRadius: tickDistance - halfWidth,
-        outerRadius: tickDistance + halfWidth,
-        startAngle: normalizeToCanvas(scale(digit)),
-        endAngle: normalizeToCanvas(scale(digit)),
-        padAngle: 0,
-      };
+    const ticks: TickRenderModel[] = digits.map((digit: number) => {
+      const innerRadius: number = tickDistance - halfWidth;
+      const outerRadius: number = tickDistance + halfWidth;
+      const angleInRadians: number = normalizeToCanvas(scale(digit));
+      return [innerRadius, outerRadius].map((radius: number) => {
+        return toCartesianCoords(centerX, centerY, radius, angleInRadians);
+      });
     });
     return {
       ticks,

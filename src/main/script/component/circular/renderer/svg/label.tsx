@@ -38,13 +38,15 @@ function textAlongPath(label: TextRenderModel, labelStyle: CSSProperties): JSX.E
     ].join(' ');
   }
   const pathId: string = `tpath${generateId()}`;
+  const pathRef: string = `#${pathId}`;
   const attrs = {
-    'xlink:href': `#${pathId}`,
+    'xlink:href': pathRef,
+    'href': pathRef,
   };
   return (
     <g>
       <path id={pathId} style={pathStyle} d={path}></path>
-      <text dx='0.5ex' dy='0.5ex' style={labelStyle}>
+      <text dy='0.5ex' style={labelStyle}>
         <textPath {...attrs}>{content}</textPath>
       </text>
     </g>
@@ -62,7 +64,8 @@ export const Label = (params: LabelRenderModel) => {
   const { connector, label, type } = params;
   const { style } = label;
   const labelStyle = style || {};
-  const normLabelStyle = { ...labelStyle, ...{ 'text-anchor': 'middle' } };
+  const textAnchor: string = type === LabelTypes.TEXT ? 'middle' : 'start';
+  const normLabelStyle = { ...labelStyle, ...{ 'text-anchor': textAnchor } };
   const cssProps: CSSProperties = toCamelCaseKeys(normLabelStyle);
   return type === LabelTypes.TEXT ? textAlongAxis(label, cssProps) : textAlongPath(label, cssProps);
 };

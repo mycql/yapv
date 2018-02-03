@@ -1,6 +1,6 @@
-import { ComponentRenderer, DefaultArcObject } from '../../../models';
+import { ComponentRenderer, Coord } from '../../../models';
 import { arc, pathDraw } from '../../../util';
-import { AxisRenderModel, AnnulusRenderModel, ScaleRenderModel } from '../../mapper/axis';
+import { AxisRenderModel, AnnulusRenderModel, ScaleRenderModel, TickRenderModel } from '../../mapper/axis';
 
 function drawAxis(params: AnnulusRenderModel, context: CanvasRenderingContext2D): void {
   const { annulus, style }: AnnulusRenderModel = params;
@@ -12,11 +12,17 @@ function drawAxis(params: AnnulusRenderModel, context: CanvasRenderingContext2D)
 
 function drawScales(params: ScaleRenderModel, context: CanvasRenderingContext2D): void {
   const { style, ticks }: ScaleRenderModel = params;
-  ticks.forEach((tick: DefaultArcObject) => {
+  ticks.forEach((coords: TickRenderModel) => {
     context.beginPath();
-    arc(context, tick);
+    coords.forEach((coord: Coord, index: number) => {
+      if (index === 0) {
+        context.moveTo(coord.x, coord.y);
+      } else {
+        context.lineTo(coord.x, coord.y);
+      }
+    });
     context.closePath();
-    pathDraw(context, style);
+    pathDraw(context, style, false);
   });
 }
 
