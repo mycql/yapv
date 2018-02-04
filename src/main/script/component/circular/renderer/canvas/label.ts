@@ -6,6 +6,7 @@ import {
 } from '../../../models';
 import {
   pathDraw,
+  textContentWidth,
   updateContextStyle,
   withAxisOffset,
 } from '../../../util';
@@ -82,10 +83,7 @@ function drawTextAlongAxis(params: TextRenderModel, context: CanvasRenderingCont
   if (space > 0) {
     const alignment: string = style['text-align'] || 'center';
     const symbols: string[] = content.split('');
-    const spaceWidth: number = (content.length - 1) * space;
-    const textWidth: number = symbols.reduce((total: number, symbol: string) => {
-      return total + widths[symbol];
-    }, spaceWidth);
+    const textWidth: number = textContentWidth(symbols, charInfo);
     const xOffset: number = (alignment === 'center') ? -(textWidth / 2) :
                             (alignment === 'right' ? textWidth : 0);
     context.translate(position.x + xOffset, position.y);

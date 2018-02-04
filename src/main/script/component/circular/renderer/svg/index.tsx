@@ -1,3 +1,5 @@
+import '../../../polyfills';
+
 import core from './core';
 
 import { Axis } from './axis';

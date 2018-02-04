@@ -7,12 +7,12 @@ import {
   TextRenderModel,
 } from '../../mapper/label';
 import { Coord, LabelTypes, Location } from '../../../models';
-import { toCamelCaseKeys, toCartesianCoords } from '../../../util';
+import { textContentWidth, toCamelCaseKeys, toCartesianCoords } from '../../../util';
 
 const { h } = core;
 
 function textAlongPath(label: TextRenderModel, labelStyle: CSSProperties): JSX.Element {
-  const { anglesInRadians, content, distance } = label;
+  const { anglesInRadians, charInfo, content, distance } = label;
   const pathStyle: CSSProperties = {
     fill: 'none',
     stroke: 'none',
@@ -43,10 +43,13 @@ function textAlongPath(label: TextRenderModel, labelStyle: CSSProperties): JSX.E
     'xlink:href': pathRef,
     'href': pathRef,
   };
+  // non-chrome like browsers do not implement 'letter-spacing'
+  // svg style, so use 'textLength' attribute instead
+  const textLength: number = textContentWidth(content.split(''), charInfo);
   return (
     <g>
       <path id={pathId} style={pathStyle} d={path}></path>
-      <text dy='0.5ex' style={labelStyle}>
+      <text dy='0.5ex' style={labelStyle} textLength={textLength}>
         <textPath {...attrs}>{content}</textPath>
       </text>
     </g>
@@ -54,9 +57,12 @@ function textAlongPath(label: TextRenderModel, labelStyle: CSSProperties): JSX.E
 }
 
 function textAlongAxis(label: TextRenderModel, labelStyle: CSSProperties): JSX.Element {
-  const { content, position } = label;
+  const { charInfo, content, position } = label;
+  // non-chrome like browsers do not implement 'letter-spacing'
+  // svg style, so use 'textLength' attribute instead
+  const textLength: number = textContentWidth(content.split(''), charInfo);
   return (
-    <text dy='0.5ex' x={position.x} y={position.y} style={labelStyle}>{content}</text>
+    <text dy='0.5ex' x={position.x} y={position.y} style={labelStyle} textLength={textLength}>{content}</text>
   );
 }
 

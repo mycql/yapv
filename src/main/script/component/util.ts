@@ -1,5 +1,5 @@
 import { scaleLinear } from 'd3-scale';
-import { Coord, DefaultArcObject, StringKeyValMap } from './models';
+import { CharInfo, Coord, DefaultArcObject, StringKeyValMap } from './models';
 
 export type StyleResolver = (styleProp: string, styleVal: string, context: CanvasRenderingContext2D) => void;
 export enum Quadrant {
@@ -149,6 +149,14 @@ export function arc(context: CanvasRenderingContext2D, config: DefaultArcObject)
   context.arc(0, 0, outerRadius, endAngle, startAngle, true);
   const connector2: Coord = toCartesianCoords(0, 0, innerRadius, startAngle);
   context.lineTo(connector2.x, connector2.y);
+}
+
+export function textContentWidth(symbols: string[], charInfo: CharInfo) {
+  const { space, widths } = charInfo;
+  const spaceWidth: number = (symbols.length - 1) * space;
+  return symbols.reduce((total: number, symbol: string) => {
+    return total + widths[symbol];
+  }, spaceWidth);
 }
 
 export {

@@ -2,6 +2,13 @@ import { ScaleLinear } from 'd3-scale';
 
 export type StringKeyValMap = { [key: string]: string };
 
+export type StringKeyNumValMap = { [key: string]: number };
+
+export type CharInfo = {
+  widths: StringKeyNumValMap;
+  space: number;
+};
+
 export interface DefaultArcObject {
   innerRadius: number;
   outerRadius: number;

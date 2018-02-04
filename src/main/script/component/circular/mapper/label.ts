@@ -1,5 +1,6 @@
 import { ScaleLinear } from 'd3-scale';
 import {
+  CharInfo,
   Coord,
   DisplayConfig,
   Label,
@@ -9,9 +10,11 @@ import {
   Line,
   Location,
   RenderModelMapper,
+  StringKeyNumValMap,
   StringKeyValMap,
 } from '../../models';
 import {
+  textContentWidth,
   toCartesianCoords,
   angleRadInBetweenSides,
   parseStyle,
@@ -30,10 +33,7 @@ export type TextRenderModel = {
     rotation: number;
     path: Location;
   };
-  charInfo?: {
-    widths: { [key: string]: number };
-    space: number;
-  };
+  charInfo: CharInfo;
 };
 
 export type ConnectorRenderModel = {
@@ -60,6 +60,19 @@ type DrawTextModel = {
   scale: ScaleLinear<number, number>;
   measure: TextMeasurer | undefined;
 };
+
+function getCharWidths(symbols: string[],
+                       styleObj: StringKeyValMap,
+                       measure?: TextMeasurer): StringKeyNumValMap {
+  const charWidths: StringKeyNumValMap = {};
+  symbols.forEach((symbol: string) => {
+    const width: number = charWidths[symbol];
+    if (!width && measure) {
+      charWidths[symbol] = measure(symbol, styleObj);
+    }
+  });
+  return charWidths;
+}
 
 function connector(params: DrawTextModel, end: Coord, lineRad: number, arcMidRad: number): ConnectorRenderModel {
   const { radius, style, center, line }: DrawTextModel = params;
@@ -102,13 +115,14 @@ function textAlongArc(params: DrawTextModel): LabelRenderModel {
   const styleObj: StringKeyValMap = parseStyle(style);
   const alignment: string = styleObj['text-align'] || 'center';
   const charSpace: number = parseInt(styleObj['letter-spacing'] || '0', 10);
+  const symbols: string[] = content.split('');
+  const charWidths: StringKeyNumValMap = getCharWidths(symbols, styleObj, measure);
+  const charInfo: CharInfo = { widths: charWidths, space: charSpace };
+  const textWidth: number = textContentWidth(symbols, charInfo);
   const labelRadius: number = radius + offset.y;
-  const contentWidth: number = measure ? measure(content, styleObj) : 0;
-  const textWidth: number = contentWidth + ((content.length - 1) * charSpace);
   const textArcRad: number = angleRadInBetweenSides(radius, radius, textWidth);
   const textArcRadHalf: number = textArcRad / 2;
-  const charWidth: number = textWidth / content.length;
-  const rotateAngle: number = charWidth / radius;
+  const rotateAngle: number = (textWidth / content.length) / radius;
   let angleRad: number = arcStartRad;
   switch (alignment) {
     case 'left':
@@ -128,6 +142,7 @@ function textAlongArc(params: DrawTextModel): LabelRenderModel {
   const renderParams: LabelRenderModel = {
     type,
     label: {
+      charInfo,
       content,
       distance: labelRadius,
       position: coord,
@@ -163,13 +178,9 @@ function textAlongAxis(params: DrawTextModel): LabelRenderModel {
   const styleObj: StringKeyValMap = parseStyle(style);
   const alignment: string = styleObj['text-align'] || 'center';
   const charSpace: number = parseInt(styleObj['letter-spacing'] || '0', 10);
-  const charWidths: { [key: string]: number } = {};
-  content.split('').forEach((symbol: string) => {
-    const width: number = charWidths[symbol];
-    if (!width && measure) {
-      charWidths[symbol] = measure(symbol, styleObj);
-    }
-  });
+  const symbols: string[] = content.split('');
+  const charWidths: StringKeyNumValMap = getCharWidths(symbols, styleObj, measure);
+  const charInfo: CharInfo = { widths: charWidths, space: charSpace };
   let angleRad: number = 0;
   switch (alignment) {
     case 'left':
@@ -192,10 +203,7 @@ function textAlongAxis(params: DrawTextModel): LabelRenderModel {
   const renderParams: LabelRenderModel = {
     type,
     label: {
-      charInfo: {
-        widths: charWidths,
-        space: charSpace,
-      },
+      charInfo,
       content,
       position,
       distance: Math.max(radius + offset.x, radius + offset.y),
