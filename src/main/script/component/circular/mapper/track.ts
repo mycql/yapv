@@ -1,7 +1,7 @@
-import { ScaleLinear } from 'd3-scale';
 import {
   DefaultArcObject,
   RenderModelMapper,
+  ScaleLinear,
   StringKeyValMap,
   Track,
   TrackDisplayConfig,

@@ -1,10 +1,10 @@
-import { ScaleLinear } from 'd3-scale';
 import {
   Axis,
   AxisTickConfig,
   Label,
   Location,
   Marker,
+  ScaleLinear,
   Track,
   VectorMap,
 } from '../../models';
@@ -112,10 +112,7 @@ export default function map(model: VectorMap, measure: TextMeasurer): MapRenderM
   model = deepClone(model);
   const range: Location = model.sequenceConfig.range;
   const scale: ScaleLinear<number, number> = scaleLinear().domain([range.start, range.end])
-                                                          .range([
-                                                            withAxisOffset(0),
-                                                            withAxisOffset(Math.PI * 2),
-                                                          ]);
+    .range([withAxisOffset(0), withAxisOffset(Math.PI * 2)]);
 
   const trackMarkersAxes: TrackRenderModelComponents[] = arrayOrEmpty(model.tracks).map((track: Track) => {
     const trackDistance: number = track.displayConfig.distance;

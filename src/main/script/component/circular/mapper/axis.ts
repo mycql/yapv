@@ -1,4 +1,3 @@
-import { ScaleLinear } from 'd3-scale';
 import {
   Axis,
   AxisDisplayConfig,
@@ -9,6 +8,7 @@ import {
   Label,
   LabelDisplayConfig,
   RenderModelMapper,
+  ScaleLinear,
   StringKeyValMap,
 } from '../../models';
 import { parseStyle, toCartesianCoords } from '../../util';

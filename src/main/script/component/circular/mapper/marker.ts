@@ -1,4 +1,3 @@
-import { ScaleLinear } from 'd3-scale';
 import {
   AnchorDisplayConfig,
   Coord,
@@ -8,6 +7,7 @@ import {
   Marker,
   MarkerDisplayConfig,
   RenderModelMapper,
+  ScaleLinear,
   StringKeyValMap,
 } from '../../models';
 import {

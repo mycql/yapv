@@ -1,4 +1,3 @@
-import { ScaleLinear } from 'd3-scale';
 import {
   CharInfo,
   Coord,
@@ -10,6 +9,7 @@ import {
   Line,
   Location,
   RenderModelMapper,
+  ScaleLinear,
   StringKeyNumValMap,
   StringKeyValMap,
 } from '../../models';

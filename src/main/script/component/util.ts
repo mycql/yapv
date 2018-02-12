@@ -1,12 +1,38 @@
-import { scaleLinear } from 'd3-scale';
-import { CharInfo, Coord, DefaultArcObject, StringKeyValMap } from './models';
+import { CharInfo, Coord, DefaultArcObject, ScaleLinear, StringKeyValMap } from './models';
 
 export type StyleResolver = (styleProp: string, styleVal: string, context: CanvasRenderingContext2D) => void;
-export enum Quadrant {
-  FIRST, SECOND, THIRD, FOURTH,
-}
 
 export const _AXIS_OFFSET_RADIANS: number = -(Math.PI / 2);
+
+// https://en.wikipedia.org/wiki/Linear_interpolation
+export function scaleLinear(): ScaleLinear<number, number> {
+  return (() => {
+
+    let domain: number[] = [];
+    let range: number[] = [];
+    let answers: { [key: string]: number } = {};
+
+    const scale: any = (value: number): number => {
+      let answer: number = answers[value.toString()];
+      if (!answer) {
+        answer = range[0] + ((range[1] - range[0]) * ((value - domain[0]) / (domain[1] - domain[0])));
+        answers[value.toString()] = answer;
+      }
+      return answer;
+    };
+    scale.domain = (values: number[]): ScaleLinear<number, number> => {
+      answers = {};
+      domain = values;
+      return scale;
+    };
+    scale.range = (values: number[]): ScaleLinear<number, number> => {
+      answers = {};
+      range = values;
+      return scale;
+    };
+    return scale;
+  })();
+}
 
 export function parseStyle(style: string): StringKeyValMap {
   return style.split(';')
@@ -159,6 +185,4 @@ export function textContentWidth(symbols: string[], charInfo: CharInfo) {
   }, spaceWidth);
 }
 
-export {
-  scaleLinear,
-};
+// export { scaleLinear };

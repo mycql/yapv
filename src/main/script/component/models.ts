@@ -1,4 +1,8 @@
-import { ScaleLinear } from 'd3-scale';
+export interface ScaleLinear<T, U> {
+  (value: T): U;
+  domain(values: T[]): ScaleLinear<T, U>;
+  range(values: U[]): ScaleLinear<T, U>;
+}
 
 export type StringKeyValMap = { [key: string]: string };
 
