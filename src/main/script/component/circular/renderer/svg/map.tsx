@@ -10,6 +10,10 @@ export const PlasmidMap = (params: SizedDisplayConfig, children: ReactNode[]) =>
   const attrs = {
     height,
     width,
+    'viewBox': `0 0 ${width} ${height}`,
+    'preserveAspectRatio': 'xMidYMid meet',
+    'shape-rendering': 'geometricPrecision ',
+    'text-rendering': 'optimizeLegibility',
     'version': '1.1',
     'xmlns': 'http://www.w3.org/2000/svg',
     'xmlns:xlink': 'http://www.w3.org/1999/xlink',

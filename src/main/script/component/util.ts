@@ -4,7 +4,6 @@ export type StyleResolver = (styleProp: string, styleVal: string, context: Canva
 
 export const _AXIS_OFFSET_RADIANS: number = -(Math.PI / 2);
 
-// https://en.wikipedia.org/wiki/Linear_interpolation
 export function scaleLinear(): ScaleLinear<number, number> {
   return (() => {
 
