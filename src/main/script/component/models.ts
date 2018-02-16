@@ -188,9 +188,9 @@ export interface VectorMap extends ComponentModel<VectorMapDisplayConfig> {
   labels?: Label[];
 }
 
-export type RenderModelMapper<T extends ComponentModel<U>,
-                              U extends DisplayConfig,
-                              V extends object, W extends object> =
+export type RenderModelTransformer<T extends ComponentModel<U>,
+                                   U extends DisplayConfig,
+                                   V extends object, W extends object> =
   (model: T, scale: ScaleLinear<number, number>, params?: W) => V;
 export type ComponentRenderer<T extends object,
                               U extends object,

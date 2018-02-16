@@ -10,10 +10,10 @@ import { PlasmidMap } from './map';
 
 import { SizedDisplayConfig, StringKeyValMap, VectorMap } from '../../../models';
 
-import { AxisRenderModel } from '../../mapper/axis';
-import { LabelRenderModel, TextMeasurer } from '../../mapper/label';
-import { AxisAndLabels, MapRenderModel, MarkerAndLabels, TrackRenderModelComponents } from '../../mapper/map';
-import translateModel from '../../mapper/map';
+import { AxisRenderModel } from '../../transformer/axis';
+import { LabelRenderModel, TextMeasurer } from '../../transformer/label';
+import { AxisAndLabels, MapRenderModel, MarkerAndLabels, TrackRenderModelComponents } from '../../transformer/map';
+import translateModel from '../../transformer/map';
 
 import { updateContextStyle } from '../../../util';
 
@@ -91,7 +91,7 @@ export function render(container: HTMLElement): (model: VectorMap) => Promise<bo
     app({
       state: model,
       view: (state: VectorMap) => {
-        const mapModel: MapRenderModel = translateModel(model, textMeasure);
+        const mapModel: MapRenderModel = translateModel(state, textMeasure);
         const tracks: JSX.Element[] = createTracks(mapModel.tracks);
         const labels: JSX.Element[] = createLabels(mapModel.labels);
         return (

@@ -5,7 +5,7 @@ import {
   ConnectorRenderModel,
   LabelRenderModel,
   TextRenderModel,
-} from '../../mapper/label';
+} from '../../transformer/label';
 import { Coord, LabelTypes, Location } from '../../../models';
 import { textContentWidth, toCamelCaseKeys, toCartesianCoords } from '../../../util';
 

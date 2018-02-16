@@ -1,6 +1,6 @@
 import { ComponentRenderer, Coord } from '../../../models';
 import { arc, pathDraw } from '../../../util';
-import { AxisRenderModel, AnnulusRenderModel, ScaleRenderModel, TickRenderModel } from '../../mapper/axis';
+import { AxisRenderModel, AnnulusRenderModel, ScaleRenderModel, TickRenderModel } from '../../transformer/axis';
 
 function drawAxis(params: AnnulusRenderModel, context: CanvasRenderingContext2D): void {
   const { annulus, style }: AnnulusRenderModel = params;

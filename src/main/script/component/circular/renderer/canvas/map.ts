@@ -6,21 +6,21 @@ import {
 } from '../../../models';
 import { updateContextStyle } from '../../../util';
 
-import { TextMeasurer } from '../../mapper/label';
+import { TextMeasurer } from '../../transformer/label';
 import {
   AxisAndLabels,
   MapRenderModel,
   MarkerAndLabels,
   TrackRenderModelComponents,
-} from '../../mapper/map';
+} from '../../transformer/map';
 
-import { TrackRenderModel } from '../../mapper/track';
-import { MarkerRenderModel } from '../../mapper/marker';
-import { AxisRenderModel } from '../../mapper/axis';
-import { LabelRenderModel } from '../../mapper/label';
-import { OrderedModels, orderModels } from '../../mapper/map';
+import { TrackRenderModel } from '../../transformer/track';
+import { MarkerRenderModel } from '../../transformer/marker';
+import { AxisRenderModel } from '../../transformer/axis';
+import { LabelRenderModel } from '../../transformer/label';
+import { OrderedModels, orderModels } from '../../transformer/map';
 
-import translateModel from '../../mapper/map';
+import translateModel from '../../transformer/map';
 
 import renderTrack from './track';
 import renderMarker from './marker';

@@ -1,6 +1,6 @@
 import { ComponentRenderer, Coord, Location } from '../../../models';
 import { pathDraw } from '../../../util';
-import { MarkerRenderModel } from '../../mapper/marker';
+import { MarkerRenderModel } from '../../transformer/marker';
 
 function drawLine(context: CanvasRenderingContext2D): (coord: Coord) => void {
   return (coord: Coord) => {

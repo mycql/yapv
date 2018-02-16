@@ -1,6 +1,6 @@
 import {
   DefaultArcObject,
-  RenderModelMapper,
+  RenderModelTransformer,
   ScaleLinear,
   StringKeyValMap,
   Track,
@@ -15,8 +15,8 @@ export type TrackRenderModel = {
   style: StringKeyValMap;
 };
 
-type Mapper = RenderModelMapper<Track, TrackDisplayConfig, TrackRenderModel, {}>;
-const TrackRenderMapper: Mapper = (model: Track, scale: ScaleLinear<number, number>): TrackRenderModel => {
+type Transformer = RenderModelTransformer<Track, TrackDisplayConfig, TrackRenderModel, {}>;
+const TrackModelTransformer: Transformer = (model: Track, scale: ScaleLinear<number, number>): TrackRenderModel => {
   const { width, distance, style: styleStr }: TrackDisplayConfig = model.displayConfig;
   const halfWidth: number = width / 2;
   const style: StringKeyValMap = parseStyle(styleStr || defaultStyle);
@@ -30,4 +30,4 @@ const TrackRenderMapper: Mapper = (model: Track, scale: ScaleLinear<number, numb
   return { annulus, style };
 };
 
-export default TrackRenderMapper;
+export default TrackModelTransformer;

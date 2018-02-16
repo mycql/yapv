@@ -14,7 +14,7 @@ import {
   ConnectorRenderModel,
   LabelRenderModel,
   TextRenderModel,
-} from '../../mapper/label';
+} from '../../transformer/label';
 
 type RenderLabel = (params: TextRenderModel, context: CanvasRenderingContext2D) => void;
 

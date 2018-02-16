@@ -6,7 +6,7 @@ import {
   Location,
   Marker,
   MarkerDisplayConfig,
-  RenderModelMapper,
+  RenderModelTransformer,
   ScaleLinear,
   StringKeyValMap,
 } from '../../models';
@@ -38,8 +38,9 @@ function computeAnchorAngle(radius: number, halfAnchorHeight: number, anchorWidt
   return halfAngle * 2;
 }
 
-type Mapper = RenderModelMapper<Marker, MarkerDisplayConfig, MarkerRenderModel, {}>;
-const MarkerRenderMapper: Mapper = (model: Marker, scale: ScaleLinear<number, number>): MarkerRenderModel => {
+type Transformer = RenderModelTransformer<Marker, MarkerDisplayConfig, MarkerRenderModel, {}>;
+const MarkerModelTransformer: Transformer = (model: Marker,
+                                             scale: ScaleLinear<number, number>): MarkerRenderModel => {
   const centerX: number = 0;
   const centerY: number = 0;
   const displayConfig: MarkerDisplayConfig = model.displayConfig;
@@ -161,4 +162,4 @@ const MarkerRenderMapper: Mapper = (model: Marker, scale: ScaleLinear<number, nu
   };
 };
 
-export default MarkerRenderMapper;
+export default MarkerModelTransformer;

@@ -1,6 +1,6 @@
 import { ComponentRenderer } from '../../../models';
 import { arc, pathDraw } from '../../../util';
-import { TrackRenderModel } from '../../mapper/track';
+import { TrackRenderModel } from '../../transformer/track';
 
 type Renderer = ComponentRenderer<TrackRenderModel, CanvasRenderingContext2D, boolean>;
 const TrackRenderer: Renderer = (params: TrackRenderModel, context: CanvasRenderingContext2D): Promise<boolean> => {

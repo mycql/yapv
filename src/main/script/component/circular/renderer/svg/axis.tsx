@@ -1,7 +1,7 @@
 import { CSSProperties, ReactNode } from 'react';
 import core from './core';
 import { arcAsDonutPaths } from './common';
-import { AxisRenderModel, ScaleRenderModel, TickRenderModel } from '../../mapper/axis';
+import { AxisRenderModel, ScaleRenderModel, TickRenderModel } from '../../transformer/axis';
 import { toCamelCaseKeys } from '../../../util';
 import { Coord } from '../../../models';
 

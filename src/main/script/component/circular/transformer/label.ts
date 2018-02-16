@@ -8,7 +8,7 @@ import {
   LabelTypes,
   Line,
   Location,
-  RenderModelMapper,
+  RenderModelTransformer,
   ScaleLinear,
   StringKeyNumValMap,
   StringKeyValMap,
@@ -220,10 +220,10 @@ function textAlongAxis(params: DrawTextModel): LabelRenderModel {
   return renderParams;
 }
 
-type Mapper = RenderModelMapper<Label, LabelDisplayConfig, LabelRenderModel, TextMeasurer>;
-const LabelRenderMapper: Mapper = (model: Label,
-                                   scale: ScaleLinear<number, number>,
-                                   measure?: TextMeasurer): LabelRenderModel => {
+type Transformer = RenderModelTransformer<Label, LabelDisplayConfig, LabelRenderModel, TextMeasurer>;
+const LabelModelTransformer: Transformer = (model: Label,
+                                            scale: ScaleLinear<number, number>,
+                                            measure?: TextMeasurer): LabelRenderModel => {
   const content: string = model.text;
   const displayConfig: LabelDisplayConfig = model.displayConfig;
   const center: Coord = { x: 0, y: 0 };
@@ -247,4 +247,4 @@ const LabelRenderMapper: Mapper = (model: Label,
   return renderParams;
 };
 
-export default LabelRenderMapper;
+export default LabelModelTransformer;

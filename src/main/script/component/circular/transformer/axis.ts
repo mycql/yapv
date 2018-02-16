@@ -7,7 +7,7 @@ import {
   Location,
   Label,
   LabelDisplayConfig,
-  RenderModelMapper,
+  RenderModelTransformer,
   ScaleLinear,
   StringKeyValMap,
 } from '../../models';
@@ -150,8 +150,8 @@ function ticksAsLabels(config: LabelDisplayConfig,
   };
 }
 
-type Mapper = RenderModelMapper<Axis, AxisDisplayConfig, AxisRenderModel, {}>;
-const AxisRenderMapper: Mapper = (model: Axis, scale: ScaleLinear<number, number>): AxisRenderModel => {
+type Transformer = RenderModelTransformer<Axis, AxisDisplayConfig, AxisRenderModel, {}>;
+const AxisModelTransformer: Transformer = (model: Axis, scale: ScaleLinear<number, number>): AxisRenderModel => {
   const { displayConfig, location: mapLocation }: Axis = model;
   const { distance: distanceFromTrack, scales: scalesConfig }: AxisDisplayConfig = displayConfig;
   const ticks: TickModel[] = createTicks(scalesConfig, mapLocation);
@@ -161,4 +161,4 @@ const AxisRenderMapper: Mapper = (model: Axis, scale: ScaleLinear<number, number
   return { axis, scales, labels };
 };
 
-export default AxisRenderMapper;
+export default AxisModelTransformer;
