@@ -1,12 +1,12 @@
 {
-  "name": "web-plasmid",
+  "name": "yapv",
   "version": "0.1.0",
-  "description": "A DNA plasmid viewer in using web technologies",
-  "main": "dist/index.js",
+  "description": "Yet Another Plasmid Viewer: A DNA plasmid viewer using web technologies",
+  "main": "dist/Canvas.yapv-0.1.0.js",
   "scripts": {
     "lint": "yarn run lint:ts",
     "lint:ts": "tslint --project tsconfig.json",
-    "build": "yarn run clean && yarn run lint && webpack --config webpack.common.js",
+    "build": "yarn run clean && yarn run lint && webpack --config webpack.prod.js",
     "clean": "rimraf dist"
   },
   "keywords": [
@@ -39,11 +39,5 @@
     "typescript": "^2.6.1",
     "webpack": "^3.8.1",
     "webpack-merge": "^4.1.1"
-  },
-  "dependencies": {
-    "@types/d3-scale": "^1.0.4",
-    "@types/d3-shape": "^1.0.5",
-    "d3-scale": "^1.0.3",
-    "d3-shape": "^1.0.3"
   }
 }

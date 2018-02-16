@@ -14,13 +14,13 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const packageInfo = require(path.resolve(__dirname, 'package.json'));
-const hashed = process.env.hashed || 'true';
+const hashed = process.env.hashed || 'false';
 const doHash = hashed === 'true';
 const distName = doHash ? `${packageInfo.name}.[chunkhash]` : `${packageInfo.name}-${packageInfo.version}`;
 const entryBundleName = `[name].${distName}.js`;
 
 const metadata = {
-  title: 'Web Plasmid'
+  title: 'Yet Another Plasmid Viewer'
 };
 
 const config  = {
@@ -33,7 +33,8 @@ const config  = {
     filename: entryBundleName,
     chunkFilename: entryBundleName,
     libraryTarget: 'umd',
-    library: ['WebPlasmid', '[name]']
+    libraryExport: 'default',
+    library: ['YAPV', '[name]']
   },
   devtool: 'inline-source-map',
   target: 'web',

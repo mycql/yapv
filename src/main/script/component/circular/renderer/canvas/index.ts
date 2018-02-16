@@ -2,4 +2,4 @@ import '../../../polyfills';
 
 import render from './map';
 
-export { render };
+export default render;

@@ -84,7 +84,7 @@ function createLabels(labels: LabelRenderModel[]): JSX.Element[] {
   return labels.map((params: LabelRenderModel) => <Label {...params}></Label>);
 }
 
-export function render(container: HTMLElement): (model: VectorMap) => Promise<boolean> {
+function render(container: HTMLElement): (model: VectorMap) => Promise<boolean> {
   const context: CanvasRenderingContext2D = createCanvasContext();
   const textMeasure: TextMeasurer = canvasContextTextMeasurer(context);
   return (model: VectorMap): Promise<boolean> => {
@@ -107,3 +107,5 @@ export function render(container: HTMLElement): (model: VectorMap) => Promise<bo
     return Promise.resolve(true);
   };
 }
+
+export default render;

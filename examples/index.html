@@ -1,6 +1,7 @@
 <!doctype html>
 <head>
   <meta charset="UTF-8">
+  <title><%= htmlWebpackPlugin.options.metadata.title %></title>
   <style>
     body {
       display: flex;
@@ -318,8 +319,8 @@
       var location = model.tracks[0].markers[0].location;
       var origStart = location.start;
       var direction = '+';
-      var canvasRender= WebPlasmid.Canvas.render(canvas);
-      var svgRender= WebPlasmid.SVG.render(svg);
+      var canvasRender = YAPV.Canvas(canvas);
+      var svgRender = YAPV.SVG(svg);
       function animate() {
         var colorIdx = Math.floor(Math.random() * 10);
         var style = 'text-align: center; text-anchor: middle; font: 40px "Arial", sans-serif;';

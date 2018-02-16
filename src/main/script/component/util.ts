@@ -183,5 +183,3 @@ export function textContentWidth(symbols: string[], charInfo: CharInfo) {
     return total + widths[symbol];
   }, spaceWidth);
 }
-
-// export { scaleLinear };
