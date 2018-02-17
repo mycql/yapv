@@ -5,7 +5,6 @@ import {
   LabelTypes,
 } from '../../../models';
 import {
-  pathDraw,
   textContentWidth,
   updateContextStyle,
   withAxisOffset,
@@ -15,6 +14,8 @@ import {
   LabelRenderModel,
   TextRenderModel,
 } from '../../transformer/label';
+
+import { pathDraw } from './common';
 
 type RenderLabel = (params: TextRenderModel, context: CanvasRenderingContext2D) => void;
 

@@ -97,36 +97,6 @@ export function updateContextStyle(context: CanvasRenderingContext2D,
   });
 }
 
-export function pathDraw(context: CanvasRenderingContext2D,
-                         style: string | StringKeyValMap,
-                         fill: boolean = true): void {
-  const styles: StringKeyValMap = typeof style === 'string' ? parseStyle(style) : style;
-  const fillRule: string = styles['fill-rule'];
-  const strokeOpacity: string = styles['stroke-opacity'];
-  const fillOpacity: string = styles['fill-opacity'];
-  context.save();
-  updateContextStyle(context, styles);
-  if (strokeOpacity) {
-    context.globalAlpha = parseFloat(strokeOpacity);
-  } else {
-    context.globalAlpha = 1;
-  }
-  context.stroke();
-  if (fill) {
-    if (fillOpacity) {
-      context.globalAlpha = parseFloat(fillOpacity);
-    } else {
-      context.globalAlpha = 1;
-    }
-    if (fillRule) {
-      context.fill(fillRule as CanvasFillRule);
-    } else {
-      context.fill();
-    }
-  }
-  context.restore();
-}
-
 export function toRadians(degrees: number): number {
   return degrees * (Math.PI / 180);
 }
@@ -164,16 +134,6 @@ export function deepClone<T extends object>(target: T): T {
 
 export function squared(value: number): number {
   return Math.pow(value, 2);
-}
-
-export function arc(context: CanvasRenderingContext2D, config: DefaultArcObject): void {
-  const { innerRadius, outerRadius, startAngle, endAngle }: DefaultArcObject = config;
-  context.arc(0, 0, innerRadius, startAngle, endAngle);
-  const connector1: Coord = toCartesianCoords(0, 0, outerRadius, endAngle);
-  context.lineTo(connector1.x, connector1.y);
-  context.arc(0, 0, outerRadius, endAngle, startAngle, true);
-  const connector2: Coord = toCartesianCoords(0, 0, innerRadius, startAngle);
-  context.lineTo(connector2.x, connector2.y);
 }
 
 export function textContentWidth(symbols: string[], charInfo: CharInfo) {

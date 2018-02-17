@@ -116,7 +116,7 @@ export default function map(model: VectorMap, measure: TextMeasurer): MapRenderM
 
   const trackMarkersAxes: TrackRenderModelComponents[] = arrayOrEmpty(model.tracks).map((track: Track) => {
     const trackDistance: number = track.displayConfig.distance;
-    const trackModel: TrackRenderModel = mapTrack(track, scale);
+    const trackModel: TrackRenderModel = mapTrack(track, scale, range);
     const markers: MarkerAndLabels[] = toMarkerModels(track.markers, scale, measure, trackDistance);
     const axes: AxisAndLabels[] = toAxisModels(track.axes, range, scale, measure, trackDistance);
     return { track: trackModel, markers, axes };
