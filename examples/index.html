@@ -36,14 +36,14 @@
             text: 'PSB0011',
             displayConfig: {
               type: 'text',
-              style: 'text-align: center; text-anchor: middle; font: 40px "Arial", sans-serif; fill: blue;'
+              style: 'text-anchor: middle; font: 40px "Arial", sans-serif; fill: blue;'
             }
           },
           {
             text: 'CDS',
             displayConfig: {
               type: 'text',
-              style: 'text-align: center; text-anchor: middle; font: 20px "Courier", monotype; fill: orange;',
+              style: 'text-anchor: middle; font: 20px "Courier", monotype; fill: orange;',
               vOffset: 30,
               hOffset: 60
             }
@@ -70,7 +70,7 @@
                       style: 'stroke: green; stroke-width: 2;',
                       label: {
                         type: 'text',
-                        style: 'text-align: center; text-anchor: middle; font: 10px "Courier", monotype; fill: teal;',
+                        style: 'text-anchor: middle; font: 10px "Courier", monotype; fill: teal;',
                         distance: -15
                       }
                     }
@@ -94,14 +94,14 @@
                     text: 'CRISPR 001',
                     displayConfig: {
                       type: 'path',
-                      style: 'text-align: left; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5;'
+                      style: 'text-anchor: start; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5;'
                     }
                   },
                   {
                     text: 'gene',
                     displayConfig: {
                       type: 'path',
-                      style: 'text-align: left; font: 10px "Courier New", monospace; fill: gray;',
+                      style: 'text-anchor: start; font: 10px "Courier New", monospace; fill: gray;',
                       vOffset: -5,
                       hOffset: 20
                     }
@@ -127,7 +127,7 @@
                     text: 'CRISPR 002',
                     displayConfig: {
                       type: 'text',
-                      style: 'text-align: center; text-anchor: middle; font: 10px "Arial", sans-serif; fill: red;'
+                      style: 'text-anchor: middle; font: 10px "Arial", sans-serif; fill: red;'
                     }
                   }
                 ]
@@ -153,7 +153,7 @@
                       style: 'stroke: green; stroke-width: 2;',
                       label: {
                         type: 'path',
-                        style: 'text-align: center; text-anchor: middle; font: 10px "Arial", sans-serif; fill: red;',
+                        style: 'text-anchor: middle; font: 10px "Arial", sans-serif; fill: red;',
                         distance: 10
                       }
                     }
@@ -182,7 +182,7 @@
                       style: 'stroke: red; stroke-width: 4;',
                       label: {
                         type: 'text',
-                        style: 'text-align: center; text-anchor: middle; font: 10px "Arial", sans-serif; fill: red;',
+                        style: 'text-anchor: middle; font: 10px "Arial", sans-serif; fill: red;',
                         distance: -10
                       }
                     }
@@ -218,7 +218,7 @@
                     },
                     displayConfig: {
                       type: 'path',
-                      style: 'text-align: right; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5;',
+                      style: 'text-align: right; text-anchor: end; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5;',
                       vOffset: 30
                     }
                   }
@@ -248,7 +248,7 @@
                     },
                     displayConfig: {
                       type: 'text',
-                      style: 'text-align: center; text-anchor: middle; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5;',
+                      style: 'text-anchor: middle; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5;',
                       vOffset: -200,
                       hOffset: -10
                     }
@@ -275,7 +275,7 @@
                     line: true,
                     displayConfig: {
                       type: 'text',
-                      style: 'text-align: center; text-anchor: middle; font: 10px "Courier New", monospace; fill: green; stroke: green; letter-spacing: 5;',
+                      style: 'text-anchor: middle; font: 10px "Courier New", monospace; fill: green; stroke: green; letter-spacing: 5;',
                       vOffset: 20,
                       hOffset: 100
                     }
@@ -302,7 +302,7 @@
                     line: true,
                     displayConfig: {
                       type: 'path',
-                      style: 'text-align: center; text-anchor: middle; font: 10px "Courier New", monospace; fill: green; stroke: orange; letter-spacing: 5;',
+                      style: 'text-anchor: middle; font: 10px "Courier New", monospace; fill: green; stroke: orange; letter-spacing: 5;',
                       vOffset: 30
                     }
                   }
@@ -322,15 +322,14 @@
       var canvasRender = YAPV.Canvas(canvas);
       var svgRender = YAPV.SVG(svg);
       function animate() {
+        var colorIdx = Math.floor(Math.random() * 10);
+        var style = 'text-anchor: middle; font: 40px "Arial", sans-serif;';
+        style = style + ' fill: ' + presets[colorIdx] + ';';
+        model.labels[0].displayConfig.style = style;
         canvasRender(model).then(function() {
           // setTimeout(animate, 500 / 1000);
         });
         svgRender(model);
-
-        var colorIdx = Math.floor(Math.random() * 10);
-        var style = 'text-align: center; text-anchor: middle; font: 40px "Arial", sans-serif;';
-        style = style + ' fill: ' + presets[colorIdx] + ';';
-        model.labels[0].displayConfig.style = style;
         if(location.start >= location.end) {
           direction = '-';
         }

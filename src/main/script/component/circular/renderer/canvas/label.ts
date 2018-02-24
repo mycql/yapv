@@ -5,6 +5,7 @@ import {
   LabelTypes,
 } from '../../../models';
 import {
+  resolveTextStyle,
   textContentWidth,
   updateContextStyle,
   withAxisOffset,
@@ -18,18 +19,6 @@ import {
 import { pathDraw } from './common';
 
 type RenderLabel = (params: TextRenderModel, context: CanvasRenderingContext2D) => void;
-
-function resolveStyle(styleProp: string, styleVal: string, context: CanvasRenderingContext2D): void {
-  context.textAlign = 'center';
-  context.textBaseline = 'middle';
-  switch (styleProp) {
-    case 'font':
-      context.font = styleVal;
-      break;
-    default:
-      break;
-  }
-}
 
 function drawLine(params: ConnectorRenderModel, context: CanvasRenderingContext2D): void {
   context.save();
@@ -47,7 +36,7 @@ function drawTextAlongArc(params: TextRenderModel, context: CanvasRenderingConte
   const hasStroke: boolean = typeof style['stroke'] === 'string';
   const hasfill: boolean = typeof style['fill'] === 'string';
   context.save();
-  updateContextStyle(context, style, resolveStyle);
+  updateContextStyle(context, style, resolveTextStyle);
   if (angles) {
     content.split('').forEach((symbol: string) => {
       context.rotate(angles.rotation);
@@ -80,13 +69,11 @@ function drawTextAlongAxis(params: TextRenderModel, context: CanvasRenderingCont
   }
   const drawTextFn: DrawText = hasStroke ? context.strokeText : context.fillText;
   context.save();
-  updateContextStyle(context, style, resolveStyle);
+  updateContextStyle(context, style, resolveTextStyle);
   if (space > 0) {
-    const alignment: string = style['text-align'] || 'center';
     const symbols: string[] = content.split('');
     const textWidth: number = textContentWidth(symbols, charInfo);
-    const xOffset: number = (alignment === 'center') ? -(textWidth / 2) :
-                            (alignment === 'right' ? textWidth : 0);
+    const xOffset: number = -(textWidth / 2);
     context.translate(position.x + xOffset, position.y);
     symbols.reduce((prevCharX: number, symbol: string, index: number) => {
       prevCharX = index !== 0 ? prevCharX + widths[symbols[index - 1]] + space : 0;

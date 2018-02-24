@@ -113,7 +113,7 @@ function textAlongArc(params: DrawTextModel): LabelRenderModel {
     (2 * Math.PI - arcStartRad) + arcEndRad : Math.abs(arcEndRad - arcStartRad);
   const arcMidRad: number = arcStartRad + (arcDiffRad / 2);
   const styleObj: StringKeyValMap = parseStyle(style);
-  const alignment: string = styleObj['text-align'] || 'center';
+  const alignment: string = styleObj['text-anchor'] || 'middle';
   const charSpace: number = parseInt(styleObj['letter-spacing'] || '0', 10);
   const symbols: string[] = content.split('');
   const charWidths: StringKeyNumValMap = getCharWidths(symbols, styleObj, measure);
@@ -125,13 +125,13 @@ function textAlongArc(params: DrawTextModel): LabelRenderModel {
   const rotateAngle: number = (textWidth / content.length) / radius;
   let angleRad: number = arcStartRad;
   switch (alignment) {
-    case 'left':
+    case 'start':
       angleRad = arcStartRad;
       break;
-    case 'right':
+    case 'end':
       angleRad = arcEndRad - textArcRad;
       break;
-    case 'center':
+    case 'middle':
     default:
       angleRad = arcMidRad - textArcRadHalf;
       break;
@@ -176,20 +176,20 @@ function textAlongAxis(params: DrawTextModel): LabelRenderModel {
     (2 * Math.PI - arcStartRad) + arcEndRad : Math.abs(arcEndRad - arcStartRad);
   const arcMidRad: number = arcStartRad + (arcDiffRad / 2);
   const styleObj: StringKeyValMap = parseStyle(style);
-  const alignment: string = styleObj['text-align'] || 'center';
+  const alignment: string = styleObj['text-anchor'] || 'middle';
   const charSpace: number = parseInt(styleObj['letter-spacing'] || '0', 10);
   const symbols: string[] = content.split('');
   const charWidths: StringKeyNumValMap = getCharWidths(symbols, styleObj, measure);
   const charInfo: CharInfo = { widths: charWidths, space: charSpace };
   let angleRad: number = 0;
   switch (alignment) {
-    case 'left':
+    case 'start':
       angleRad = arcStartRad;
       break;
-    case 'right':
+    case 'end':
       angleRad = arcEndRad;
       break;
-    case 'center':
+    case 'middle':
     default:
       angleRad = arcMidRad;
       break;

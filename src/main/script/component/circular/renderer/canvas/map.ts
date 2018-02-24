@@ -4,7 +4,7 @@ import {
   SizedDisplayConfig,
   VectorMap,
 } from '../../../models';
-import { updateContextStyle } from '../../../util';
+import { resolveTextStyle, updateContextStyle } from '../../../util';
 
 import { TextMeasurer } from '../../transformer/label';
 import {
@@ -34,18 +34,6 @@ type ModelRendererPair = {
   models: object[];
 };
 
-function resolveStyle(styleProp: string, styleVal: string, context: CanvasRenderingContext2D): void {
-  context.textAlign = 'center';
-  context.textBaseline = 'middle';
-  switch (styleProp) {
-    case 'font':
-      context.font = styleVal;
-      break;
-    default:
-      break;
-  }
-}
-
 function pairRendererWithModels(orderedModels: OrderedModels): ModelRendererPair[] {
   const renderPairs: ModelRendererPair[] = [
     {
@@ -71,7 +59,7 @@ function pairRendererWithModels(orderedModels: OrderedModels): ModelRendererPair
 function canvasContextTextMeasurer(context: CanvasRenderingContext2D): TextMeasurer {
   return (text: string, style: StringKeyValMap) => {
     context.save();
-    updateContextStyle(context, style, resolveStyle);
+    updateContextStyle(context, style, resolveTextStyle);
     const size: number = context.measureText(text).width;
     context.restore();
     return size;

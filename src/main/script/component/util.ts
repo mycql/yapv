@@ -4,6 +4,15 @@ export type StyleResolver = (styleProp: string, styleVal: string, context: Canva
 
 export const _AXIS_OFFSET_RADIANS: number = -(Math.PI / 2);
 
+export function roundOffTo(precision: number): (value: number) => number {
+  const factor = Math.pow(10, precision);
+  return (value: number) => {
+    return Math.round(value * factor) / factor;
+  };
+}
+
+export const round10 = roundOffTo(2);
+
 export function scaleLinear(): ScaleLinear<number, number> {
   return (() => {
 
@@ -95,6 +104,18 @@ export function updateContextStyle(context: CanvasRenderingContext2D,
       resolve(styleProp, styleVal, context);
     }
   });
+}
+
+export function resolveTextStyle(styleProp: string, styleVal: string, context: CanvasRenderingContext2D): void {
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  switch (styleProp) {
+    case 'font':
+      context.font = styleVal;
+      break;
+    default:
+      break;
+  }
 }
 
 export function toRadians(degrees: number): number {

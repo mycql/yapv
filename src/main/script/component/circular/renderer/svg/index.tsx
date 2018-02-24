@@ -15,26 +15,14 @@ import { LabelRenderModel, TextMeasurer } from '../../transformer/label';
 import { AxisAndLabels, MapRenderModel, MarkerAndLabels, TrackRenderModelComponents } from '../../transformer/map';
 import translateModel from '../../transformer/map';
 
-import { updateContextStyle } from '../../../util';
+import { resolveTextStyle, updateContextStyle } from '../../../util';
 
 const { h, app } = core;
-
-function resolveStyle(styleProp: string, styleVal: string, context: CanvasRenderingContext2D): void {
-  context.textAlign = 'center';
-  context.textBaseline = 'middle';
-  switch (styleProp) {
-    case 'font':
-      context.font = styleVal;
-      break;
-    default:
-      break;
-  }
-}
 
 function canvasContextTextMeasurer(context: CanvasRenderingContext2D): TextMeasurer {
   return (text: string, style: StringKeyValMap) => {
     context.save();
-    updateContextStyle(context, style, resolveStyle);
+    updateContextStyle(context, style, resolveTextStyle);
     const size: number = context.measureText(text).width;
     context.restore();
     return size;
