@@ -4,15 +4,6 @@ export type StyleResolver = (styleProp: string, styleVal: string, context: Canva
 
 export const _AXIS_OFFSET_RADIANS: number = -(Math.PI / 2);
 
-export function roundOffTo(precision: number): (value: number) => number {
-  const factor = Math.pow(10, precision);
-  return (value: number) => {
-    return Math.round(value * factor) / factor;
-  };
-}
-
-export const round10 = roundOffTo(2);
-
 export function scaleLinear(): ScaleLinear<number, number> {
   return (() => {
 
@@ -130,9 +121,18 @@ export function toCartesianCoords(centerX: number,
                                   centerY: number,
                                   radius: number,
                                   angleInRadians: number): Coord {
+  const defaultIfTooSmall = (value: number): number => {
+    if (value < 0 && value > -0.001) {
+      return -0.001;
+    }
+    if (value > 0 && value < 0.001) {
+      return 0.001;
+    }
+    return value;
+  };
   return {
-    x: centerX + (radius * Math.cos(angleInRadians)),
-    y: centerY + (radius * Math.sin(angleInRadians)),
+    x: defaultIfTooSmall(centerX + (radius * Math.cos(angleInRadians))),
+    y: defaultIfTooSmall(centerY + (radius * Math.sin(angleInRadians))),
   };
 }
 

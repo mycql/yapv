@@ -44,14 +44,22 @@ const MarkerModelTransformer: Transformer = (model: Marker,
   const centerX: number = 0;
   const centerY: number = 0;
   const displayConfig: MarkerDisplayConfig = model.displayConfig;
-  const anchorConfig: AnchorDisplayConfig = displayConfig.anchor;
   const direction: Direction = model.direction || Directions.NONE;
   const location: Location = model.location;
   const halfWidth: number = displayConfig.width / 2;
-  const style: StringKeyValMap = parseStyle(displayConfig.style || defaultStyle);
+  const styleString: string = displayConfig.style || defaultStyle;
+  const style: StringKeyValMap = parseStyle(styleString);
   const arcMidRadius: number = displayConfig.distance;
   const arcInnerRad: number = arcMidRadius - halfWidth;
   const arcOuterRad: number = arcMidRadius + halfWidth;
+  let anchorConfig: AnchorDisplayConfig = displayConfig.anchor;
+  if (!anchorConfig && direction !== Directions.NONE) {
+    anchorConfig = {
+      width: displayConfig.width,
+      height: displayConfig.width,
+      style: styleString,
+    };
+  }
   const halfAnchorHeight: number = anchorConfig ? anchorConfig.height / 2 : halfWidth;
   let arcStartRad: number = scale(location.start);
   let arcEndRad: number = scale(location.end);
