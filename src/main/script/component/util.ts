@@ -1,8 +1,8 @@
-import { CharInfo, Coord, DefaultArcObject, ScaleLinear, StringKeyValMap } from './models';
+import { CharInfo, Coord, DefaultArcObject, PI, ScaleLinear, StringKeyValMap } from './models';
 
 export type StyleResolver = (styleProp: string, styleVal: string, context: CanvasRenderingContext2D) => void;
 
-export const _AXIS_OFFSET_RADIANS: number = -(Math.PI / 2);
+export const _AXIS_OFFSET_RADIANS: number = -PI.HALF;
 
 export function scaleLinear(): ScaleLinear<number, number> {
   return (() => {
@@ -110,11 +110,11 @@ export function resolveTextStyle(styleProp: string, styleVal: string, context: C
 }
 
 export function toRadians(degrees: number): number {
-  return degrees * (Math.PI / 180);
+  return degrees * (PI.WHOLE / 180);
 }
 
 export function toDegrees(radians: number): number {
-  return radians / (Math.PI / 180);
+  return radians / (PI.WHOLE / 180);
 }
 
 export function toCartesianCoords(centerX: number,

@@ -1,6 +1,7 @@
 import {
   DefaultArcObject,
   Location,
+  PI,
   RenderModelTransformer,
   ScaleLinear,
   StringKeyValMap,
@@ -27,7 +28,7 @@ const TrackModelTransformer: Transformer = (model: Track,
     innerRadius: distance - halfWidth,
     outerRadius: distance + halfWidth,
     startAngle: range ? scale(range.start) : 0,
-    endAngle: range ? scale(range.end) : Math.PI * 2,
+    endAngle: range ? scale(range.end) : PI.TWICE,
     padAngle: 0,
   };
   return { annulus, style };

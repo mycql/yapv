@@ -4,6 +4,7 @@ import {
   Label,
   Location,
   Marker,
+  PI,
   ScaleLinear,
   Track,
   VectorMap,
@@ -112,7 +113,7 @@ export default function map(model: VectorMap, measure: TextMeasurer): MapRenderM
   model = deepClone(model);
   const range: Location = model.sequenceConfig.range;
   const scale: ScaleLinear<number, number> = scaleLinear().domain([range.start, range.end])
-    .range([withAxisOffset(0), withAxisOffset(Math.PI * 2)]);
+    .range([withAxisOffset(0), withAxisOffset(PI.TWICE)]);
 
   const trackMarkersAxes: TrackRenderModelComponents[] = arrayOrEmpty(model.tracks).map((track: Track) => {
     const trackDistance: number = track.displayConfig.distance;

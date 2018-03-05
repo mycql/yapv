@@ -6,7 +6,7 @@ import {
   LabelRenderModel,
   TextRenderModel,
 } from '../../transformer/label';
-import { Coord, LabelTypes, Location } from '../../../models';
+import { Coord, LabelTypes, Location, PI } from '../../../models';
 import { textContentWidth, toCamelCaseKeys, toCartesianCoords } from '../../../util';
 
 const { h } = core;
@@ -28,9 +28,9 @@ function textAlongPath(label: TextRenderModel, labelStyle: CSSProperties): JSX.E
     const end: Coord = toCartesianCoords(centerX, centerY, distance, endAngle);
     let arcSweep;
     if (startAngle < endAngle) {
-      arcSweep = endAngle - startAngle <= Math.PI ? '0' : '1';
+      arcSweep = endAngle - startAngle <= PI.WHOLE ? '0' : '1';
     } else {
-      arcSweep = endAngle - startAngle <= Math.PI ? '1' : '0';
+      arcSweep = endAngle - startAngle <= PI.WHOLE ? '1' : '0';
     }
     path = [
       `M ${start.x} ${start.y}`,

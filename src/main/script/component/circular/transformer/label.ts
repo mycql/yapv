@@ -8,6 +8,7 @@ import {
   LabelTypes,
   Line,
   Location,
+  PI,
   RenderModelTransformer,
   ScaleLinear,
   StringKeyNumValMap,
@@ -110,7 +111,7 @@ function textAlongArc(params: DrawTextModel): LabelRenderModel {
   const arcStartRad: number = scale(location.start);
   const arcEndRad: number = scale(location.end);
   const arcDiffRad: number = crossesOver ?
-    (2 * Math.PI - arcStartRad) + arcEndRad : Math.abs(arcEndRad - arcStartRad);
+    (PI.TWICE - arcStartRad) + arcEndRad : Math.abs(arcEndRad - arcStartRad);
   const arcMidRad: number = arcStartRad + (arcDiffRad / 2);
   const styleObj: StringKeyValMap = parseStyle(style);
   const alignment: string = styleObj['text-anchor'] || 'middle';
@@ -173,7 +174,7 @@ function textAlongAxis(params: DrawTextModel): LabelRenderModel {
   const arcStartRad: number = scale(location.start);
   const arcEndRad: number = scale(location.end);
   const arcDiffRad: number = crossesOver ?
-    (2 * Math.PI - arcStartRad) + arcEndRad : Math.abs(arcEndRad - arcStartRad);
+    (PI.TWICE - arcStartRad) + arcEndRad : Math.abs(arcEndRad - arcStartRad);
   const arcMidRad: number = arcStartRad + (arcDiffRad / 2);
   const styleObj: StringKeyValMap = parseStyle(style);
   const alignment: string = styleObj['text-anchor'] || 'middle';

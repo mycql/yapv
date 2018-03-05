@@ -1,3 +1,13 @@
+export const PI: {
+  WHOLE: number;
+  HALF: number;
+  TWICE: number;
+} = {
+  WHOLE: Math.PI,
+  HALF: Math.PI / 2,
+  TWICE: Math.PI * 2,
+};
+
 export interface ScaleLinear<T, U> {
   (value: T): U;
   domain(values: T[]): ScaleLinear<T, U>;

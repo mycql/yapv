@@ -3,6 +3,7 @@ import {
   Coord,
   LabelType,
   LabelTypes,
+  PI,
 } from '../../../models';
 import {
   resolveTextStyle,
@@ -42,7 +43,7 @@ function drawTextAlongArc(params: TextRenderModel, context: CanvasRenderingConte
       context.rotate(angles.rotation);
       context.save();
       context.translate(position.x, position.y);
-      context.rotate(angles.path.start + withAxisOffset(Math.PI));
+      context.rotate(angles.path.start + withAxisOffset(PI.WHOLE));
       if (hasfill) {
         context.fillText(symbol, 0, 0);
       }
