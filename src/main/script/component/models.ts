@@ -109,7 +109,7 @@ export const Directions: {
 export type AnchorDisplayConfig = SizedDisplayConfig;
 
 export interface MarkerDisplayConfig extends SpacedDispayConfig {
-  anchor: AnchorDisplayConfig;
+  anchor?: AnchorDisplayConfig;
 }
 
 /**

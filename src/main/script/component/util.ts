@@ -149,6 +149,14 @@ export function angleRadInBetweenSides(adjacentSideA: number,
   return Math.acos(squaredTotal / (2 * adjacentSideA * adjacentSideB));
 }
 
+export function arcLength(radius: number, angleInRad: number): number {
+  return radius * angleInRad;
+}
+
+export function arcAngleRad(radius: number, lengthOfArc: number): number {
+  return lengthOfArc / radius;
+}
+
 export function deepClone<T extends object>(target: T): T {
   return JSON.parse(JSON.stringify(target));
 }

@@ -114,7 +114,6 @@ function textAlongArc(params: DrawTextModel): LabelRenderModel {
     (PI.TWICE - arcStartRad) + arcEndRad : Math.abs(arcEndRad - arcStartRad);
   const arcMidRad: number = arcStartRad + (arcDiffRad / 2);
   const styleObj: StringKeyValMap = parseStyle(style);
-  const alignment: string = styleObj['text-anchor'] || 'middle';
   const charSpace: number = parseInt(styleObj['letter-spacing'] || '0', 10);
   const symbols: string[] = content.split('');
   const charWidths: StringKeyNumValMap = getCharWidths(symbols, styleObj, measure);
@@ -124,6 +123,7 @@ function textAlongArc(params: DrawTextModel): LabelRenderModel {
   const textArcRad: number = angleRadInBetweenSides(radius, radius, textWidth);
   const textArcRadHalf: number = textArcRad / 2;
   const rotateAngle: number = (textWidth / content.length) / radius;
+  const alignment: string = arcDiffRad < textArcRad ? 'middle' : styleObj['text-anchor'] || 'middle';
   let angleRad: number = arcStartRad;
   switch (alignment) {
     case 'start':

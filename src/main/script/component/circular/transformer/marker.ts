@@ -6,16 +6,21 @@ import {
   Location,
   Marker,
   MarkerDisplayConfig,
+  PI,
   RenderModelTransformer,
   ScaleLinear,
   StringKeyValMap,
 } from '../../models';
 import {
+  angleRadInBetweenSides,
+  arcLength,
+  arcAngleRad,
   parseStyle,
   toCartesianCoords,
   squared,
 } from '../../util';
 
+const MIN_ARC_LENGTH: number = 1;
 const defaultStyle: string = 'stroke: black; fill: gray;';
 
 export type MarkerRenderModel = {
@@ -38,13 +43,17 @@ function computeAnchorAngle(radius: number, halfAnchorHeight: number, anchorWidt
   return halfAngle * 2;
 }
 
+function arcLengthGivenSide(radius: number, width: number): number {
+  return arcLength(radius, angleRadInBetweenSides(radius, radius, width));
+}
+
 type Transformer = RenderModelTransformer<Marker, MarkerDisplayConfig, MarkerRenderModel, {}>;
 const MarkerModelTransformer: Transformer = (model: Marker,
                                              scale: ScaleLinear<number, number>): MarkerRenderModel => {
   const centerX: number = 0;
   const centerY: number = 0;
   const displayConfig: MarkerDisplayConfig = model.displayConfig;
-  const direction: Direction = model.direction || Directions.NONE;
+  let direction: Direction = model.direction || Directions.NONE;
   const location: Location = model.location;
   const halfWidth: number = displayConfig.width / 2;
   const styleString: string = displayConfig.style || defaultStyle;
@@ -52,7 +61,7 @@ const MarkerModelTransformer: Transformer = (model: Marker,
   const arcMidRadius: number = displayConfig.distance;
   const arcInnerRad: number = arcMidRadius - halfWidth;
   const arcOuterRad: number = arcMidRadius + halfWidth;
-  let anchorConfig: AnchorDisplayConfig = displayConfig.anchor;
+  let anchorConfig: AnchorDisplayConfig | undefined = displayConfig.anchor;
   if (!anchorConfig && direction !== Directions.NONE) {
     anchorConfig = {
       width: displayConfig.width,
@@ -61,8 +70,40 @@ const MarkerModelTransformer: Transformer = (model: Marker,
     };
   }
   const halfAnchorHeight: number = anchorConfig ? anchorConfig.height / 2 : halfWidth;
+  const crossesOver: boolean = location.start > location.end;
   let arcStartRad: number = scale(location.start);
   let arcEndRad: number = scale(location.end);
+  const arcDiffRad: number = crossesOver ?
+    (PI.TWICE - arcStartRad) + arcEndRad : Math.abs(arcEndRad - arcStartRad);
+  const arcMidRad: number = arcStartRad + (arcDiffRad / 2);
+  const arcLen: number = arcLength(arcMidRadius, arcDiffRad);
+  if (anchorConfig) {
+    let isLessThanAnchor: boolean = false;
+    switch (direction) {
+      case Directions.FORWARD:
+      case Directions.REVERSE:
+        isLessThanAnchor = arcLen <
+          arcLengthGivenSide(arcMidRadius, anchorConfig.width);
+        break;
+      case Directions.BOTH:
+        isLessThanAnchor = arcLen <
+          arcLengthGivenSide(arcMidRadius, 2 * anchorConfig.width);
+        break;
+      case Directions.NONE:
+      default:
+        break;
+    }
+    if (isLessThanAnchor) {
+      direction = Directions.NONE;
+    }
+  }
+  const isLessThanMin: boolean = arcLen <= MIN_ARC_LENGTH;
+  if (isLessThanMin) {
+    const arcLengthRad: number = arcAngleRad(arcMidRadius, MIN_ARC_LENGTH);
+    arcStartRad = arcMidRad - (arcLengthRad / 2);
+    arcEndRad = arcStartRad + arcLengthRad;
+    direction = Directions.NONE;
+  }
   const anchorCoords: Coord[][] = [];
   let offsetRad: number = 0;
   let anchorStartRad: number = 0;
