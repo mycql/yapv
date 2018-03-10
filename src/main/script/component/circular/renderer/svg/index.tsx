@@ -1,6 +1,7 @@
 import '../../../polyfills';
 
 import core from './core';
+import { Actions, App, View} from './core';
 
 import { Axis } from './axis';
 import { Label } from './label';
@@ -18,6 +19,20 @@ import translateModel from '../../transformer/map';
 import { resolveTextStyle, updateContextStyle } from '../../../util';
 
 const { h, app } = core;
+
+const DEFAULT_STATE: VectorMap = {
+  displayConfig: {
+    height: 0,
+    style: '',
+    width: 0,
+  },
+  sequenceConfig: {
+    range: {
+      end: 0, start: 0,
+    },
+  },
+  tracks: [],
+};
 
 function canvasContextTextMeasurer(context: CanvasRenderingContext2D): TextMeasurer {
   return (text: string, style: StringKeyValMap) => {
@@ -75,23 +90,26 @@ function createLabels(labels: LabelRenderModel[]): JSX.Element[] {
 function render(container: HTMLElement): (model: VectorMap) => Promise<boolean> {
   const context: CanvasRenderingContext2D = createCanvasContext();
   const textMeasure: TextMeasurer = canvasContextTextMeasurer(context);
+  const application: App = app as App;
+  const actions: Actions = {
+    render: (value: VectorMap) => value,
+  };
+  const view = (state: VectorMap = DEFAULT_STATE) => {
+    const mapModel: MapRenderModel = translateModel(state, textMeasure);
+    const tracks: JSX.Element[] = createTracks(mapModel.tracks);
+    const labels: JSX.Element[] = createLabels(mapModel.labels);
+    return (
+      <PlasmidMap {...state.displayConfig}>
+        {tracks}
+        <g>
+          {labels}
+        </g>
+      </PlasmidMap>
+    );
+  };
+  const actionables = application(DEFAULT_STATE, actions, view, container);
   return (model: VectorMap): Promise<boolean> => {
-    app({
-      state: model,
-      view: (state: VectorMap) => {
-        const mapModel: MapRenderModel = translateModel(state, textMeasure);
-        const tracks: JSX.Element[] = createTracks(mapModel.tracks);
-        const labels: JSX.Element[] = createLabels(mapModel.labels);
-        return (
-          <PlasmidMap {...state.displayConfig}>
-            {tracks}
-            <g>
-              {labels}
-            </g>
-          </PlasmidMap>
-        );
-      },
-    }, container);
+    actionables.render(model);
     return Promise.resolve(true);
   };
 }

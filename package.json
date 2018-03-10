@@ -7,7 +7,8 @@
     "lint": "yarn run lint:ts",
     "lint:ts": "tslint --project tsconfig.json",
     "build": "yarn run clean && yarn run lint && webpack --config webpack.prod.js",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "start": "yarn run clean && yarn run lint && webpack-dev-server --config webpack.dev.js --color --progress"
   },
   "keywords": [
     "DNA",
@@ -31,13 +32,14 @@
     "clean-webpack-plugin": "^0.1.17",
     "core-js": "^2.5.3",
     "html-webpack-plugin": "^2.30.1",
-    "hyperapp": "^0.16.2",
+    "hyperapp": "^1.1.2",
     "rimraf": "^2.6.2",
     "ts-loader": "^3.1.1",
     "tslint": "^5.8.0",
     "tslint-loader": "^3.5.3",
     "typescript": "^2.6.1",
     "webpack": "^3.8.1",
+    "webpack-dev-server": "^2.11.1",
     "webpack-merge": "^4.1.1"
   }
 }
