@@ -1,16 +1,17 @@
 import { ReactNode } from 'react';
 import core from './core';
-import { SizedDisplayConfig } from '../../../models';
+import { ViewDisplayConfig } from '../../../models';
 
 const { h } = core;
 
-export const PlasmidMap = (params: SizedDisplayConfig, children: ReactNode[]) => {
-  const transform: string = `translate(${params.width / 2}, ${params.height / 2})`;
+export const PlasmidMap = (params: ViewDisplayConfig, children: ReactNode[]) => {
   const { width, height } = params;
+  const { width: viewWidth, height: viewHeight } = params.viewBox;
+  const transform: string = `translate(${viewWidth / 2}, ${viewHeight / 2})`;
   const attrs = {
     height,
     width,
-    'viewBox': `0 0 ${width} ${height}`,
+    'viewBox': `0 0 ${viewWidth} ${viewHeight}`,
     'preserveAspectRatio': 'xMidYMid meet',
     'shape-rendering': 'geometricPrecision ',
     'text-rendering': 'optimizeLegibility',

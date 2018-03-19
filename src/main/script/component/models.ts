@@ -61,6 +61,10 @@ export interface SpacedDispayConfig extends DisplayConfig {
 export interface SizedDisplayConfig extends DisplayConfig, Dimension {
 }
 
+export interface ViewDisplayConfig extends SizedDisplayConfig {
+  viewBox: Dimension;
+}
+
 export interface ComponentModel<T extends DisplayConfig> {
   displayConfig: T;
   // parent?: ComponentModel<DisplayConfig>;
@@ -184,7 +188,7 @@ export interface Track extends ComponentModel<TrackDisplayConfig> {
   axes?: Axis[];
 }
 
-export type VectorMapDisplayConfig = SizedDisplayConfig;
+export type VectorMapDisplayConfig = ViewDisplayConfig;
 
 export interface VectorMapSeqConfig {
   range: Location;

@@ -5,344 +5,402 @@
   <style>
     body {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
+      margin: 0;
+    }
+    #editor {
+      width: 100%;
+      height: 200px;
+    }
+    #renderers {
+      overflow: auto;
+      display: flex;
+      flex: 1 1 auto;
     }
     #canvas {
-      flex: 1 1 0;
+      display: flex;
+      flex: 1 1 auto;
+      justify-content: center;
     }
     #svg {
-      flex: 1 1 0;
+      display: flex;
+      flex: 1 1 auto;
+      justify-content: center;
     }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.1/ace.js"></script>
 </head>
 <body>
-  <div id="canvas"></div>
-  <div id="svg"></div>
+  <div id="editor"></div>
+  <div id="renderers">
+    <div id="canvas"></div>
+    <div id="svg"></div>
+  </div>
   <script>
-    window.addEventListener('load', function() {
-      var model = {
-        displayConfig: {
-          height: 600,
-          width: 600
-        },
-        sequenceConfig: {
-          range: {
-            start: 1,
-            end: 201
-          }
-        },
-        labels: [
-          {
-            text: 'PSB0011',
-            displayConfig: {
-              type: 'text',
-              style: 'text-anchor: middle; font: 40px "Arial", sans-serif; fill: blue;'
+    (function() {
+      function buildEditor(model, canvasRender, svgRender) {
+        var editor = ace.edit('editor');
+        editor.setTheme('ace/theme/textmate');
+        editor.session.setMode('ace/mode/javascript');
+        editor.setValue(JSON.stringify(model, null, 2), -1);
+        setTimeout(function() {
+          editor.resize();
+        }, 300);
+
+        window.addEventListener('resize', function() {
+          editor.resize();
+        });
+
+        setInterval((function() {
+          var prevValue = '';
+          return function() {
+            try {
+              var newValue = editor.getValue();
+              if(newValue === prevValue) {
+                return;
+              }
+              prevValue = newValue;
+              var state = JSON.parse(newValue);
+              canvasRender(state);
+              svgRender(state);
+            } catch(e) {
+              console.error(e);
+            }
+          };
+        })(), 200);
+      }
+
+      window.addEventListener('load', function() {
+        var model = {
+          displayConfig: {
+            height: 600,
+            width: 600,
+            viewBox: {
+              height: 600,
+              width: 600
             }
           },
-          {
-            text: 'CDS',
-            displayConfig: {
-              type: 'text',
-              style: 'text-anchor: middle; font: 20px "Courier", monotype; fill: orange;',
-              vOffset: 30,
-              hOffset: 60
+          sequenceConfig: {
+            range: {
+              start: 1,
+              end: 201
             }
-          }
-        ],
-        tracks: [
-          {
-            displayConfig: {
-              distance: 200,
-              width: 10,
-              style: 'stroke: blue; fill: transparent;'
+          },
+          labels: [
+            {
+              text: 'PSB0011',
+              displayConfig: {
+                type: 'text',
+                style: 'text-anchor: middle; font: 40px "Arial", sans-serif; fill: blue;'
+              }
             },
-            axes: [
-              {
-                displayConfig: {
-                  distance: -15,
-                  width: 2,
-                  style: 'stroke: orange; fill: brown;',
-                  scales: [
+            {
+              text: 'CDS',
+              displayConfig: {
+                type: 'text',
+                style: 'text-anchor: middle; font: 20px "Courier", monotype; fill: orange;',
+                vOffset: 30,
+                hOffset: 60
+              }
+            }
+          ],
+          tracks: [
+            {
+              displayConfig: {
+                distance: 200,
+                width: 10,
+                style: 'stroke: blue; fill: transparent;'
+              },
+              axes: [
+                {
+                  displayConfig: {
+                    distance: -15,
+                    width: 2,
+                    style: 'stroke: orange; fill: brown;',
+                    scales: [
+                      {
+                        width: 4,
+                        distance: -4,
+                        total: 10,
+                        style: 'stroke: green; stroke-width: 2;',
+                        label: {
+                          type: 'text',
+                          style: 'text-anchor: middle; font: 10px "Courier", monotype; fill: teal;',
+                          distance: -15
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              markers: [
+                {
+                  displayConfig: {
+                    width: 14,
+                    style: 'stroke: red; fill: yellow; stroke-opacity: 0.4; stroke-width: 2; stroke-dasharray: 5,10,5; stroke-linejoin: round;'
+                  },
+                  location: {
+                    start: 1,
+                    end: 101
+                  },
+                  direction: '#',
+                  labels: [
                     {
-                      width: 4,
-                      distance: -4,
-                      total: 10,
-                      style: 'stroke: green; stroke-width: 2;',
-                      label: {
-                        type: 'text',
-                        style: 'text-anchor: middle; font: 10px "Courier", monotype; fill: teal;',
-                        distance: -15
+                      text: 'CRISPR 001',
+                      displayConfig: {
+                        type: 'path',
+                        style: 'text-anchor: start; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5px;'
+                      }
+                    },
+                    {
+                      text: 'gene',
+                      displayConfig: {
+                        type: 'path',
+                        style: 'text-anchor: start; font: 10px "Courier New", monospace; fill: gray;',
+                        vOffset: -5,
+                        hOffset: 20
                       }
                     }
                   ]
-                }
-              }
-            ],
-            markers: [
-              {
-                displayConfig: {
-                  width: 14,
-                  style: 'stroke: red; fill: yellow; stroke-opacity: 0.4; stroke-width: 2; stroke-dasharray: 5,10,5; stroke-linejoin: round;'
                 },
-                location: {
-                  start: 1,
-                  end: 101
-                },
-                direction: '#',
-                labels: [
-                  {
-                    text: 'CRISPR 001',
-                    displayConfig: {
-                      type: 'path',
-                      style: 'text-anchor: start; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5px;'
+                {
+                  displayConfig: {
+                    width: 10,
+                    style: 'stroke: green; fill: purple; fill-opacity: 0.2;',
+                    anchor: {
+                      width: 18,
+                      height: 30
                     }
                   },
-                  {
-                    text: 'gene',
-                    displayConfig: {
-                      type: 'path',
-                      style: 'text-anchor: start; font: 10px "Courier New", monospace; fill: gray;',
-                      vOffset: -5,
-                      hOffset: 20
-                    }
-                  }
-                ]
-              },
-              {
-                displayConfig: {
-                  width: 10,
-                  style: 'stroke: green; fill: purple; fill-opacity: 0.2;',
-                  anchor: {
-                    width: 18,
-                    height: 30
-                  }
-                },
-                location: {
-                  start: 121,
-                  end: 171
-                },
-                direction: '*',
-                labels: [
-                  {
-                    text: 'CRISPR 002',
-                    displayConfig: {
-                      type: 'text',
-                      style: 'text-anchor: middle; font: 10px "Arial", sans-serif; fill: red;'
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            displayConfig: {
-              distance: 235,
-              width: 10
-            },
-            axes: [
-              {
-                displayConfig: {
-                  distance: -15,
-                  width: 2,
-                  style: 'stroke: red; fill: violet;',
-                  scales: [
+                  location: {
+                    start: 121,
+                    end: 171
+                  },
+                  direction: '*',
+                  labels: [
                     {
-                      width: 4,
-                      distance: -4,
-                      interval: 10,
-                      style: 'stroke: green; stroke-width: 2;',
-                      label: {
-                        type: 'path',
-                        style: 'text-anchor: middle; font: 10px "Arial", sans-serif; fill: red;',
-                        distance: 10
-                      }
-                    }
-                  ]
-                }
-              }
-            ],
-            markers: []
-          },
-          {
-            displayConfig: {
-              distance: 260,
-              width: 10
-            },
-            axes: [
-              {
-                displayConfig: {
-                  distance: 14,
-                  width: 2,
-                  style: 'stroke: green; fill: yellow;',
-                  scales: [
-                    {
-                      width: 10,
-                      distance: 4,
-                      ticks: [50, 100, 150, 200],
-                      style: 'stroke: red; stroke-width: 4;',
-                      label: {
-                        type: 'text',
-                        style: 'text-anchor: middle; font: 10px "Arial", sans-serif; fill: red;',
-                        distance: -10
-                      }
-                    }
-                  ]
-                }
-              }
-            ],
-            markers: [
-              {
-                displayConfig: {
-                  width: 14,
-                  style: 'stroke: red; fill: limegreen; fill-opacity: 0.2; stroke-width: 1; stroke-linejoin: round;',
-                  anchor: {
-                    width: 18,
-                    height: 30
-                  }
-                },
-                location: {
-                  start: 180,
-                  end: 20
-                },
-                direction: '+',
-                labels: [
-                  {
-                    text: 'CRISPR 003',
-                    line: {
-                      coords: [
-                        { x: 10, y: -20 }
-                      ],
+                      text: 'CRISPR 002',
                       displayConfig: {
-                        style: 'stroke: red;'
+                        type: 'text',
+                        style: 'text-anchor: middle; font: 10px "Arial", sans-serif; fill: red;'
                       }
-                    },
-                    displayConfig: {
-                      type: 'path',
-                      style: 'text-anchor: end; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5px;',
-                      vOffset: 30
                     }
-                  }
-                ]
+                  ]
+                }
+              ]
+            },
+            {
+              displayConfig: {
+                distance: 235,
+                width: 10
               },
-              {
-                displayConfig: {
-                  width: 14,
-                  style: 'stroke: limegreen; fill: red; fill-opacity: 0.2; stroke-width: 1; stroke-linejoin: round;',
-                  anchor: {
-                    width: 18,
-                    height: 30
+              axes: [
+                {
+                  displayConfig: {
+                    distance: -15,
+                    width: 2,
+                    style: 'stroke: red; fill: violet;',
+                    scales: [
+                      {
+                        width: 4,
+                        distance: -4,
+                        interval: 10,
+                        style: 'stroke: green; stroke-width: 2;',
+                        label: {
+                          type: 'path',
+                          style: 'text-anchor: middle; font: 10px "Arial", sans-serif; fill: red;',
+                          distance: 10
+                        }
+                      }
+                    ]
                   }
-                },
-                location: {
-                  start: 130,
-                  end: 170
-                },
-                direction: '+',
-                labels: [
-                  {
-                    text: 'CRISPR 006',
-                    line: {
-                      coords: [
-                        { x: -20, y: -20 }
-                      ]
-                    },
-                    displayConfig: {
-                      type: 'text',
-                      style: 'text-anchor: middle; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5px;',
-                      vOffset: -200,
-                      hOffset: -10
-                    }
-                  }
-                ]
+                }
+              ],
+              markers: []
+            },
+            {
+              displayConfig: {
+                distance: 260,
+                width: 10
               },
-              {
-                displayConfig: {
-                  width: 14,
-                  style: 'stroke: blue; fill: orange; fill-opacity: 0.2; stroke-width: 1;',
-                  anchor: {
-                    width: 18,
-                    height: 30
+              axes: [
+                {
+                  displayConfig: {
+                    distance: 14,
+                    width: 2,
+                    style: 'stroke: green; fill: yellow;',
+                    scales: [
+                      {
+                        width: 10,
+                        distance: 4,
+                        ticks: [50, 100, 150, 200],
+                        style: 'stroke: red; stroke-width: 4;',
+                        label: {
+                          type: 'text',
+                          style: 'text-anchor: middle; font: 10px "Arial", sans-serif; fill: red;',
+                          distance: -10
+                        }
+                      }
+                    ]
                   }
-                },
-                location: {
-                  start: 80,
-                  end: 120
-                },
-                direction: '-',
-                labels: [
-                  {
-                    text: 'CRISPR 004',
-                    line: true,
-                    displayConfig: {
-                      type: 'text',
-                      style: 'text-anchor: middle; font: 10px "Courier New", monospace; fill: green; stroke: green; letter-spacing: 5px;',
-                      vOffset: 20,
-                      hOffset: 100
+                }
+              ],
+              markers: [
+                {
+                  displayConfig: {
+                    width: 14,
+                    style: 'stroke: red; fill: limegreen; fill-opacity: 0.2; stroke-width: 1; stroke-linejoin: round;',
+                    anchor: {
+                      width: 18,
+                      height: 30
                     }
-                  }
-                ]
-              },
-              {
-                displayConfig: {
-                  width: 14,
-                  style: 'stroke: blue; fill: orange; fill-opacity: 0.2; stroke-width: 1;',
-                  anchor: {
-                    width: 18,
-                    height: 30
-                  }
-                },
-                location: {
-                  start: 30,
-                  end: 70
-                },
-                direction: '-',
-                labels: [
-                  {
-                    text: 'CRISPR 005',
-                    line: true,
-                    displayConfig: {
-                      type: 'path',
-                      style: 'text-anchor: middle; font: 10px "Courier New", monospace; fill: green; stroke: orange; letter-spacing: 5px;',
-                      vOffset: 30
+                  },
+                  location: {
+                    start: 180,
+                    end: 20
+                  },
+                  direction: '+',
+                  labels: [
+                    {
+                      text: 'CRISPR 003',
+                      line: {
+                        coords: [
+                          { x: 10, y: -20 }
+                        ],
+                        displayConfig: {
+                          style: 'stroke: red;'
+                        }
+                      },
+                      displayConfig: {
+                        type: 'path',
+                        style: 'text-anchor: end; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5px;',
+                        vOffset: 30
+                      }
                     }
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      };
+                  ]
+                },
+                {
+                  displayConfig: {
+                    width: 14,
+                    style: 'stroke: limegreen; fill: red; fill-opacity: 0.2; stroke-width: 1; stroke-linejoin: round;',
+                    anchor: {
+                      width: 18,
+                      height: 30
+                    }
+                  },
+                  location: {
+                    start: 130,
+                    end: 170
+                  },
+                  direction: '+',
+                  labels: [
+                    {
+                      text: 'CRISPR 006',
+                      line: {
+                        coords: [
+                          { x: -20, y: -20 }
+                        ]
+                      },
+                      displayConfig: {
+                        type: 'text',
+                        style: 'text-anchor: middle; font: 10px "Courier New", monospace; fill: red; stroke: blue; letter-spacing: 5px;',
+                        vOffset: -200,
+                        hOffset: -10
+                      }
+                    }
+                  ]
+                },
+                {
+                  displayConfig: {
+                    width: 14,
+                    style: 'stroke: blue; fill: orange; fill-opacity: 0.2; stroke-width: 1;',
+                    anchor: {
+                      width: 18,
+                      height: 30
+                    }
+                  },
+                  location: {
+                    start: 80,
+                    end: 120
+                  },
+                  direction: '-',
+                  labels: [
+                    {
+                      text: 'CRISPR 004',
+                      line: true,
+                      displayConfig: {
+                        type: 'text',
+                        style: 'text-anchor: middle; font: 10px "Courier New", monospace; fill: green; stroke: green; letter-spacing: 5px;',
+                        vOffset: 20,
+                        hOffset: 100
+                      }
+                    }
+                  ]
+                },
+                {
+                  displayConfig: {
+                    width: 14,
+                    style: 'stroke: blue; fill: orange; fill-opacity: 0.2; stroke-width: 1;',
+                    anchor: {
+                      width: 18,
+                      height: 30
+                    }
+                  },
+                  location: {
+                    start: 30,
+                    end: 70
+                  },
+                  direction: '-',
+                  labels: [
+                    {
+                      text: 'CRISPR 005',
+                      line: true,
+                      displayConfig: {
+                        type: 'path',
+                        style: 'text-anchor: middle; font: 10px "Courier New", monospace; fill: green; stroke: orange; letter-spacing: 5px;',
+                        vOffset: 30
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        };
 
-      var canvas = document.querySelector('#canvas');
-      var svg = document.querySelector('#svg');
-      var presets = ['purple', 'red', 'green', 'orange', 'violet', 'blue', 'brown', 'yellow', 'maroon', 'pink'];
-      var location = model.tracks[0].markers[0].location;
-      var origStart = location.start;
-      var direction = '+';
-      var canvasRender = YAPV.Canvas(canvas);
-      var svgRender = YAPV.SVG(svg);
-      function animate() {
-        var colorIdx = Math.floor(Math.random() * 10);
-        var style = 'text-anchor: middle; font: 40px "Arial", sans-serif;';
-        style = style + ' fill: ' + presets[colorIdx] + ';';
-        model.labels[0].displayConfig.style = style;
-        canvasRender(model).then(function() {
-          // setTimeout(animate, 500 / 1000);
-        });
-        svgRender(model);
-        if(location.start >= location.end) {
-          direction = '-';
-        }
-        if(location.start <= origStart) {
-          direction = '+';
-        }
-        if (direction === '+') {
-          location.start += 1;
-        } else {
-          location.start -= 1;
-        }
-      }
-      animate();
-    });
+        var canvas = document.querySelector('#canvas');
+        var svg = document.querySelector('#svg');
+        var presets = ['purple', 'red', 'green', 'orange', 'violet', 'blue', 'brown', 'yellow', 'maroon', 'pink'];
+        var location = model.tracks[0].markers[0].location;
+        var origStart = location.start;
+        var direction = '+';
+        var canvasRender = YAPV.Canvas(canvas);
+        var svgRender = YAPV.SVG(svg);
+
+        buildEditor(model, canvasRender, svgRender);
+        // function animate() {
+        //   var colorIdx = Math.floor(Math.random() * 10);
+        //   var style = 'text-anchor: middle; font: 40px "Arial", sans-serif;';
+        //   style = style + ' fill: ' + presets[colorIdx] + ';';
+        //   model.labels[0].displayConfig.style = style;
+        //   canvasRender(model).then(function() {
+        //     // setTimeout(animate, 500 / 1000);
+        //   });
+        //   svgRender(model);
+        //   if(location.start >= location.end) {
+        //     direction = '-';
+        //   }
+        //   if(location.start <= origStart) {
+        //     direction = '+';
+        //   }
+        //   if (direction === '+') {
+        //     location.start += 1;
+        //   } else {
+        //     location.start -= 1;
+        //   }
+        // }
+        // animate();
+      });
+    })();
   </script>
 </body>

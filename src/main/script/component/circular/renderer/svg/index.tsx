@@ -9,9 +9,8 @@ import { Marker } from './marker';
 import { Track } from './track';
 import { PlasmidMap } from './map';
 
-import { SizedDisplayConfig, StringKeyValMap, VectorMap } from '../../../models';
+import { StringKeyValMap, VectorMap } from '../../../models';
 
-import { AxisRenderModel } from '../../transformer/axis';
 import { LabelRenderModel, TextMeasurer } from '../../transformer/label';
 import { AxisAndLabels, MapRenderModel, MarkerAndLabels, TrackRenderModelComponents } from '../../transformer/map';
 import translateModel from '../../transformer/map';
@@ -25,6 +24,10 @@ const DEFAULT_STATE: VectorMap = {
     height: 0,
     style: '',
     width: 0,
+    viewBox: {
+      height: 0,
+      width: 0,
+    },
   },
   sequenceConfig: {
     range: {
@@ -95,11 +98,21 @@ function render(container: HTMLElement): (model: VectorMap) => Promise<boolean> 
     render: (value: VectorMap) => value,
   };
   const view = (state: VectorMap = DEFAULT_STATE) => {
+    let { displayConfig } = state;
+    displayConfig = {
+      ...{
+        viewBox: {
+          height: displayConfig.width,
+          width: displayConfig.width,
+        },
+      },
+      ...displayConfig,
+    };
     const mapModel: MapRenderModel = translateModel(state, textMeasure);
     const tracks: JSX.Element[] = createTracks(mapModel.tracks);
     const labels: JSX.Element[] = createLabels(mapModel.labels);
     return (
-      <PlasmidMap {...state.displayConfig}>
+      <PlasmidMap {...displayConfig}>
         {tracks}
         <g>
           {labels}

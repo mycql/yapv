@@ -1,23 +1,10 @@
-import {
-  ComponentRenderer,
-  StringKeyValMap,
-  SizedDisplayConfig,
-  VectorMap,
-} from '../../../models';
+import { ComponentRenderer, StringKeyValMap, VectorMap } from '../../../models';
 import { resolveTextStyle, updateContextStyle } from '../../../util';
+import { preserveAspectRatio } from './common';
 
 import { TextMeasurer } from '../../transformer/label';
-import {
-  AxisAndLabels,
-  MapRenderModel,
-  MarkerAndLabels,
-  TrackRenderModelComponents,
-} from '../../transformer/map';
+import { MapRenderModel } from '../../transformer/map';
 
-import { TrackRenderModel } from '../../transformer/track';
-import { MarkerRenderModel } from '../../transformer/marker';
-import { AxisRenderModel } from '../../transformer/axis';
-import { LabelRenderModel } from '../../transformer/label';
 import { OrderedModels, orderModels } from '../../transformer/map';
 
 import translateModel from '../../transformer/map';
@@ -70,9 +57,24 @@ export default function render(container: HTMLElement): (model: VectorMap) => Pr
   const canvas: HTMLCanvasElement = document.createElement('canvas');
   container.appendChild(canvas);
   return (model: VectorMap): Promise<boolean> => {
-    const { width, height }: SizedDisplayConfig = model.displayConfig;
+    let { displayConfig } = model;
+    displayConfig = {
+      ...{
+        viewBox: {
+          height: displayConfig.width,
+          width: displayConfig.width,
+        },
+      },
+      ...displayConfig,
+    };
+    displayConfig.viewBox = preserveAspectRatio(displayConfig,
+      displayConfig.viewBox, 'xMidYMid meet').dest;
+    const { viewBox, width: viewWidth, height: viewHeight } = displayConfig;
+    const { width, height } = viewBox;
     canvas.setAttribute('width', `${width}`);
     canvas.setAttribute('height', `${height}`);
+    canvas.style.width = `${viewWidth}px`;
+    canvas.style.height = `${viewHeight}px`;
     const x: number = width / 2;
     const y: number = height / 2;
 
