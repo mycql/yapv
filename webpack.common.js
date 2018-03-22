@@ -16,8 +16,8 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const packageInfo = require(path.resolve(__dirname, 'package.json'));
 const hashed = process.env.hashed || 'false';
 const doHash = hashed === 'true';
-const distName = doHash ? `${packageInfo.name}.[chunkhash]` : `${packageInfo.name}-${packageInfo.version}`;
-const entryBundleName = `[name].${distName}.js`;
+const distName = doHash ? `${packageInfo.name}.[name].[chunkhash]` : `${packageInfo.name}.[name]-${packageInfo.version}`;
+const entryBundleName = `${distName}.js`;
 
 const metadata = {
   title: 'Yet Another Plasmid Viewer'
@@ -25,8 +25,8 @@ const metadata = {
 
 const config  = {
   entry: {
-    Canvas: path.resolve(__dirname, `${DIR.SRC_RENDERER.CIRCULAR}/canvas/index.ts`),
-    SVG: path.resolve(__dirname, `${DIR.SRC_RENDERER.CIRCULAR}/svg/index.tsx`)
+    ccanvas: path.resolve(__dirname, `${DIR.SRC_RENDERER.CIRCULAR}/canvas/index.ts`),
+    csvg: path.resolve(__dirname, `${DIR.SRC_RENDERER.CIRCULAR}/svg/index.tsx`)
   },
   output: {
     path: path.resolve(__dirname, DIR.DIST),

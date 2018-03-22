@@ -374,8 +374,8 @@
         var location = model.tracks[0].markers[0].location;
         var origStart = location.start;
         var direction = '+';
-        var canvasRender = YAPV.Canvas(canvas);
-        var svgRender = YAPV.SVG(svg);
+        var canvasRender = YAPV.ccanvas(canvas);
+        var svgRender = YAPV.csvg(svg);
 
         buildEditor(model, canvasRender, svgRender);
         // function animate() {
