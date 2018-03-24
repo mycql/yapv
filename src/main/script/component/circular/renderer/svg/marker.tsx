@@ -1,9 +1,9 @@
 import { CSSProperties, ReactNode } from 'react';
 import core from './core';
-import { arcEndsCoords, Positioned, Quadrants } from './common';
+import { arcEndsCoords, Positioned } from './common';
 import { MarkerRenderModel } from '../../transformer/marker';
 import { Coord, DefaultArcObject } from '../../../models';
-import { toCamelCaseKeys } from '../../../util';
+import { toCamelCaseKeys, Quadrants } from '../../../util';
 
 const { h } = core;
 

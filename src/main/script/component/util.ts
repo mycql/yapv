@@ -1,8 +1,68 @@
-import { CharInfo, Coord, DefaultArcObject, PI, ScaleLinear, StringKeyValMap } from './models';
+import { CharInfo, Coord, DefaultArcObject, PI, ScaleLinear, StringKeyValMap, PolarCoord } from './models';
 
 export type StyleResolver = (styleProp: string, styleVal: string, context: CanvasRenderingContext2D) => void;
 
 export const _AXIS_OFFSET_RADIANS: number = -PI.HALF;
+
+export type Quadrant = {
+  start: number;
+  end: number;
+};
+
+export const Quadrants: {
+  FIRST: Quadrant;
+  SECOND: Quadrant;
+  THIRD: Quadrant;
+  FOURTH: Quadrant;
+  fromCoord: (coord: Coord) => Quadrant;
+  from: (angle: number) => Quadrant;
+  same: (angle1: number, angle2: number) => boolean;
+} = {
+  FIRST: {
+    start: 0,
+    end: PI.HALF,
+  },
+  SECOND: {
+    start: PI.HALF,
+    end: PI.WHOLE,
+  },
+  THIRD: {
+    start: PI.WHOLE,
+    end: PI.WHOLE + PI.HALF,
+  },
+  FOURTH: {
+    start: PI.WHOLE + PI.HALF,
+    end: PI.TWICE,
+  },
+  fromCoord: (coord: Coord) => {
+    const { x, y } = coord;
+    if (x < 0 && y >= 0) {
+      return Quadrants.SECOND;
+    } else if (x >= 0 && y < 0) {
+      return Quadrants.FOURTH;
+    } else if (x < 0 && y < 0) {
+      return Quadrants.THIRD;
+    } else {
+      return Quadrants.FIRST;
+    }
+  },
+  from: (angle: number) => {
+    let found: Quadrant = Quadrants.FIRST;
+    for (const key in Quadrants) {
+      if (Quadrants[key]) {
+        const value: Quadrant = Quadrants[key];
+        const inside: boolean = angle >= value.start && angle < value.end;
+        if (inside) {
+          found = value;
+        }
+      }
+    }
+    return found;
+  },
+  same: (angle1: number, angle2: number) => {
+    return Quadrants.from(angle1) === Quadrants.from(angle2);
+  },
+};
 
 export function scaleLinear(): ScaleLinear<number, number> {
   return (() => {
@@ -117,8 +177,7 @@ export function toDegrees(radians: number): number {
   return radians / (PI.WHOLE / 180);
 }
 
-export function toCartesianCoords(centerX: number,
-                                  centerY: number,
+export function toCartesianCoords(center: Coord,
                                   radius: number,
                                   angleInRadians: number): Coord {
   const defaultIfTooSmall = (value: number): number => {
@@ -131,9 +190,35 @@ export function toCartesianCoords(centerX: number,
     return value;
   };
   return {
-    x: defaultIfTooSmall(centerX + (radius * Math.cos(angleInRadians))),
-    y: defaultIfTooSmall(centerY + (radius * Math.sin(angleInRadians))),
+    x: defaultIfTooSmall(center.x + (radius * Math.cos(angleInRadians))),
+    y: defaultIfTooSmall(center.y + (radius * Math.sin(angleInRadians))),
   };
+}
+
+/**
+ * Converts the cartesian coordinates to polar coordinates
+ * in the counter clockwise direction
+ * @param target the cartesian coordinate to convert from
+ * @param center the cartesian coordinate of the axis of rotation
+ */
+export function toPolarCoords(target: Coord, center?: Coord): PolarCoord {
+  const normalizedTarget: Coord = center ? {
+    x: target.x - center.x,
+    y: target.y - center.y,
+  } : target;
+  const { x, y } = normalizedTarget;
+  const radius = Math.sqrt(squared(x) + squared(y));
+  const angleInRadians = ((computedAngle: number) => {
+    const quadrant = Quadrants.fromCoord(normalizedTarget);
+    const coordsSameSign = quadrant === Quadrants.FIRST ||
+                           quadrant === Quadrants.THIRD;
+    let angleOffset = quadrant.end;
+    if (coordsSameSign) {
+      angleOffset = quadrant.start;
+    }
+    return computedAngle + (coordsSameSign ? quadrant.start : quadrant.end);
+  })(Math.atan(y / x));
+  return { radius, angleInRadians };
 }
 
 export function withAxisOffset(angleInRadians: number): number {
@@ -171,4 +256,23 @@ export function textContentWidth(symbols: string[], charInfo: CharInfo) {
   return symbols.reduce((total: number, symbol: string) => {
     return total + widths[symbol];
   }, spaceWidth);
+}
+
+export function debounce(func: (...args: any[]) => any, wait: number, immediate?: boolean) {
+  let timeout: number | null;
+  return (...args: any[]) => {
+    const context = null; // this?
+    const later = () => {
+      timeout = null;
+      if (!immediate) {
+        func.apply(context, args);
+      }
+    };
+    const callNow = immediate && !timeout;
+    clearTimeout(timeout as number);
+    timeout = (window || self).setTimeout(later, wait);
+    if (callNow) {
+      func.apply(context, args);
+    }
+  };
 }

@@ -3,10 +3,9 @@ import { parseStyle, toCartesianCoords, updateContextStyle } from '../../../util
 
 function startsAndEndsAtSameCoord(config: DefaultArcObject): boolean {
   const { outerRadius, startAngle, endAngle } = config;
-  const centerX: number = 0;
-  const centerY: number = 0;
-  const coord1: Coord = toCartesianCoords(centerX, centerY, outerRadius, startAngle);
-  const coord2: Coord = toCartesianCoords(centerX, centerY, outerRadius, endAngle);
+  const center: Coord = { x: 0, y: 0 };
+  const coord1: Coord = toCartesianCoords(center, outerRadius, startAngle);
+  const coord2: Coord = toCartesianCoords(center, outerRadius, endAngle);
   const xRatio: number = Math.floor(coord1.x / coord2.x);
   const yRatio: number = Math.floor(coord1.y / coord2.y);
   return xRatio === 1 || yRatio === 1;
@@ -15,16 +14,15 @@ function startsAndEndsAtSameCoord(config: DefaultArcObject): boolean {
 export function donut(context: CanvasRenderingContext2D, config: DefaultArcObject): void {
   const startAndEndIsSame: boolean = startsAndEndsAtSameCoord(config);
   const { innerRadius, outerRadius, startAngle, endAngle }: DefaultArcObject = config;
-  const centerX: number = 0;
-  const centerY: number = 0;
-  context.arc(centerX, centerY, innerRadius, startAngle, endAngle);
+  const center: Coord = { x: 0, y: 0 };
+  context.arc(center.x, center.y, innerRadius, startAngle, endAngle);
   if (!startAndEndIsSame) {
-    const connector1: Coord = toCartesianCoords(centerX, centerY, outerRadius, endAngle);
+    const connector1: Coord = toCartesianCoords(center, outerRadius, endAngle);
     context.lineTo(connector1.x, connector1.y);
   }
-  context.arc(centerX, centerY, outerRadius, endAngle, startAngle, true);
+  context.arc(center.x, center.y, outerRadius, endAngle, startAngle, true);
   if (!startAndEndIsSame) {
-    const connector2: Coord = toCartesianCoords(centerX, centerY, innerRadius, startAngle);
+    const connector2: Coord = toCartesianCoords(center, innerRadius, startAngle);
     context.lineTo(connector2.x, connector2.y);
   }
 }

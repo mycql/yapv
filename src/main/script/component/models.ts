@@ -18,6 +18,16 @@ export type StringKeyValMap = { [key: string]: string };
 
 export type StringKeyNumValMap = { [key: string]: number };
 
+export type CollisionState = 1 | 0;
+export const CollisionStates: {
+  HIT: CollisionState;
+  NO_HIT: CollisionState
+} = {
+  HIT: 1,
+  NO_HIT: 0,
+};
+export type CollisionIndicator<T extends object, U extends object> = (model: T, target: U) => CollisionState;
+
 export type CharInfo = {
   widths: StringKeyNumValMap;
   space: number;
@@ -32,6 +42,7 @@ export interface DefaultArcObject {
 }
 
 export type Coord = { x: number, y: number };
+export type PolarCoord = { radius: number, angleInRadians: number; };
 
 export interface Location {
   start: number;

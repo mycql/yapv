@@ -101,8 +101,7 @@ function mapAxis(displayConfig: AxisDisplayConfig,
 function mapScales(tickModels: TickModel[],
                    scale: ScaleLinear<number, number>,
                    distanceFromTrack: number): ScaleRenderModel[] {
-  const centerX: number = 0;
-  const centerY: number = 0;
+  const center: Coord = { x: 0, y: 0 };
   return tickModels.map((tickModel: TickModel) => {
     const { config, ticks: digits }: TickModel = tickModel;
     const style: StringKeyValMap = parseStyle(config.style || defaultStyle);
@@ -114,7 +113,7 @@ function mapScales(tickModels: TickModel[],
       const outerRadius: number = tickDistance + halfWidth;
       const angleInRadians: number = scale(digit);
       return [innerRadius, outerRadius].map((radius: number) => {
-        return toCartesianCoords(centerX, centerY, radius, angleInRadians);
+        return toCartesianCoords(center, radius, angleInRadians);
       });
     });
     return {

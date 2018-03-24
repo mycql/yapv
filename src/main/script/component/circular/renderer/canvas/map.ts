@@ -1,5 +1,5 @@
-import { ComponentRenderer, StringKeyValMap, VectorMap } from '../../../models';
-import { resolveTextStyle, updateContextStyle } from '../../../util';
+import { ComponentRenderer, PI, StringKeyValMap, VectorMap } from '../../../models';
+import { resolveTextStyle, scaleLinear, updateContextStyle } from '../../../util';
 import { preserveAspectRatio } from './common';
 
 import { TextMeasurer } from '../../transformer/label';
@@ -55,8 +55,12 @@ function canvasContextTextMeasurer(context: CanvasRenderingContext2D): TextMeasu
 
 export default function render(container: HTMLElement): (model: VectorMap) => Promise<boolean> {
   const canvas: HTMLCanvasElement = document.createElement('canvas');
+  const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
   container.appendChild(canvas);
   return (model: VectorMap): Promise<boolean> => {
+    if (!context) {
+      return Promise.resolve(false);
+    }
     let { displayConfig } = model;
     displayConfig = {
       ...{
@@ -78,10 +82,6 @@ export default function render(container: HTMLElement): (model: VectorMap) => Pr
     const x: number = width / 2;
     const y: number = height / 2;
 
-    const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
-    if (!context) {
-      return Promise.resolve(false);
-    }
     context.save();
     context.translate(x, y);
     context.clearRect(-x, -y, width, height);

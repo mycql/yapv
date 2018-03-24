@@ -83,7 +83,7 @@ function connector(params: DrawTextModel, end: Coord, lineRad: number, arcMidRad
   const to: Coord[] = [];
   let from: Coord = { x: center.x, y: center.y };
   if (useDefaultLine) {
-    from = toCartesianCoords(center.x, center.y, radius, lineRad);
+    from = toCartesianCoords(center, radius, lineRad);
     to.push(end);
   } else if (useCustomLine) {
     const lineModel: Line = line as Line;
@@ -91,7 +91,7 @@ function connector(params: DrawTextModel, end: Coord, lineRad: number, arcMidRad
     if (lineConfig && lineConfig.style) {
       lineStyle = lineConfig.style;
     }
-    from = toCartesianCoords(center.x, center.y, radius, arcMidRad);
+    from = toCartesianCoords(center, radius, arcMidRad);
     (lineModel.coords || []).forEach((lineOffset: Coord) => {
       to.push({ x: from.x + lineOffset.x, y: from.y + lineOffset.y });
     });
@@ -138,7 +138,7 @@ function textAlongArc(params: DrawTextModel): LabelRenderModel {
       break;
   }
   angleRad = angleRad + angleRadInBetweenSides(radius, radius, offset.x);
-  const coord: Coord = toCartesianCoords(center.x, center.y, labelRadius, angleRad);
+  const coord: Coord = toCartesianCoords(center, labelRadius, angleRad);
 
   const renderParams: LabelRenderModel = {
     type,
@@ -160,7 +160,7 @@ function textAlongArc(params: DrawTextModel): LabelRenderModel {
 
   if (line) {
     const lineRad: number = angleRad + textArcRadHalf;
-    const to: Coord = toCartesianCoords(center.x, center.y, labelRadius, lineRad);
+    const to: Coord = toCartesianCoords(center, labelRadius, lineRad);
     renderParams.connector = connector(params, to, lineRad, arcMidRad);
   }
 
@@ -196,7 +196,7 @@ function textAlongAxis(params: DrawTextModel): LabelRenderModel {
       break;
   }
 
-  const coord: Coord = toCartesianCoords(center.x, center.y, radius, angleRad);
+  const coord: Coord = toCartesianCoords(center, radius, angleRad);
   const x: number = coord.x + offset.x;
   const y: number = coord.y + offset.y;
   const position: Coord = { x, y };

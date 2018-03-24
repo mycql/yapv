@@ -19,13 +19,12 @@ function textAlongPath(label: TextRenderModel, labelStyle: CSSProperties): JSX.E
   };
   let path: string = '';
   if (anglesInRadians) {
-    const centerX: number = 0;
-    const centerY: number = 0;
+    const center: Coord = { x: 0, y: 0 };
     const pathLocation: Location = anglesInRadians.path;
     const startAngle: number = pathLocation.start;
     const endAngle: number = pathLocation.end;
-    const start: Coord = toCartesianCoords(centerX, centerY, distance, startAngle);
-    const end: Coord = toCartesianCoords(centerX, centerY, distance, endAngle);
+    const start: Coord = toCartesianCoords(center, distance, startAngle);
+    const end: Coord = toCartesianCoords(center, distance, endAngle);
     let arcSweep;
     if (startAngle < endAngle) {
       arcSweep = endAngle - startAngle <= PI.WHOLE ? '0' : '1';

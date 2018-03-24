@@ -50,8 +50,7 @@ function arcLengthGivenSide(radius: number, width: number): number {
 type Transformer = RenderModelTransformer<Marker, MarkerDisplayConfig, MarkerRenderModel, {}>;
 const MarkerModelTransformer: Transformer = (model: Marker,
                                              scale: ScaleLinear<number, number>): MarkerRenderModel => {
-  const centerX: number = 0;
-  const centerY: number = 0;
+  const center: Coord = { x: 0, y: 0 };
   const displayConfig: MarkerDisplayConfig = model.displayConfig;
   let direction: Direction = model.direction || Directions.NONE;
   const location: Location = model.location;
@@ -119,15 +118,15 @@ const MarkerModelTransformer: Transformer = (model: Marker,
       arcEndRad = anchorStartRad;
       anchorCoords.push(
         [
-          toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcStartRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcStartRad),
+          toCartesianCoords(center, arcMidRadius + halfWidth, arcStartRad),
+          toCartesianCoords(center, arcMidRadius - halfWidth, arcStartRad),
         ],
         [
-          toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, anchorStartRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorStartRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius, anchorEndRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorStartRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, anchorStartRad),
+          toCartesianCoords(center, arcMidRadius - halfWidth, anchorStartRad),
+          toCartesianCoords(center, arcMidRadius - halfAnchorHeight, anchorStartRad),
+          toCartesianCoords(center, arcMidRadius, anchorEndRad),
+          toCartesianCoords(center, arcMidRadius + halfAnchorHeight, anchorStartRad),
+          toCartesianCoords(center, arcMidRadius + halfWidth, anchorStartRad),
         ],
       );
       break;
@@ -137,15 +136,15 @@ const MarkerModelTransformer: Transformer = (model: Marker,
       arcStartRad = anchorEndRad;
       anchorCoords.push(
         [
-          toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, anchorEndRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorEndRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius, anchorStartRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorEndRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, anchorEndRad),
+          toCartesianCoords(center, arcMidRadius + halfWidth, anchorEndRad),
+          toCartesianCoords(center, arcMidRadius + halfAnchorHeight, anchorEndRad),
+          toCartesianCoords(center, arcMidRadius, anchorStartRad),
+          toCartesianCoords(center, arcMidRadius - halfAnchorHeight, anchorEndRad),
+          toCartesianCoords(center, arcMidRadius - halfWidth, anchorEndRad),
         ],
         [
-          toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcEndRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcEndRad),
+          toCartesianCoords(center, arcMidRadius - halfWidth, arcEndRad),
+          toCartesianCoords(center, arcMidRadius + halfWidth, arcEndRad),
         ],
       );
       break;
@@ -155,11 +154,11 @@ const MarkerModelTransformer: Transformer = (model: Marker,
       arcStartRad = anchorEndRad;
       anchorCoords.push(
         [
-          toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, anchorEndRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorEndRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius, anchorStartRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorEndRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, anchorEndRad),
+          toCartesianCoords(center, arcMidRadius + halfWidth, anchorEndRad),
+          toCartesianCoords(center, arcMidRadius + halfAnchorHeight, anchorEndRad),
+          toCartesianCoords(center, arcMidRadius, anchorStartRad),
+          toCartesianCoords(center, arcMidRadius - halfAnchorHeight, anchorEndRad),
+          toCartesianCoords(center, arcMidRadius - halfWidth, anchorEndRad),
         ],
       );
       arcStartRad = anchorEndRad;
@@ -168,11 +167,11 @@ const MarkerModelTransformer: Transformer = (model: Marker,
       arcEndRad = anchorStartRad;
       anchorCoords.push(
         [
-          toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, anchorStartRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius - halfAnchorHeight, anchorStartRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius, anchorEndRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius + halfAnchorHeight, anchorStartRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, anchorStartRad),
+          toCartesianCoords(center, arcMidRadius - halfWidth, anchorStartRad),
+          toCartesianCoords(center, arcMidRadius - halfAnchorHeight, anchorStartRad),
+          toCartesianCoords(center, arcMidRadius, anchorEndRad),
+          toCartesianCoords(center, arcMidRadius + halfAnchorHeight, anchorStartRad),
+          toCartesianCoords(center, arcMidRadius + halfWidth, anchorStartRad),
         ],
       );
       break;
@@ -180,22 +179,19 @@ const MarkerModelTransformer: Transformer = (model: Marker,
     default:
       anchorCoords.push(
         [
-          toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcStartRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcStartRad),
+          toCartesianCoords(center, arcMidRadius + halfWidth, arcStartRad),
+          toCartesianCoords(center, arcMidRadius - halfWidth, arcStartRad),
         ],
         [
-          toCartesianCoords(centerX, centerY, arcMidRadius - halfWidth, arcEndRad),
-          toCartesianCoords(centerX, centerY, arcMidRadius + halfWidth, arcEndRad),
+          toCartesianCoords(center, arcMidRadius - halfWidth, arcEndRad),
+          toCartesianCoords(center, arcMidRadius + halfWidth, arcEndRad),
         ],
       );
       break;
   }
   return {
     style,
-    center: {
-      x: centerX,
-      y: centerY,
-    },
+    center,
     radii: {
       inner: arcInnerRad,
       outer: arcOuterRad,
