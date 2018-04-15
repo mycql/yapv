@@ -2,6 +2,8 @@ import { ComponentRenderer, PI, StringKeyValMap, VectorMap } from '../../../mode
 import { resolveTextStyle, scaleLinear, updateContextStyle } from '../../../util';
 import { preserveAspectRatio } from './common';
 
+import { MouseEventsListener } from '../../renderer/common';
+
 import { TextMeasurer } from '../../transformer/label';
 import { MapRenderModel } from '../../transformer/map';
 
@@ -57,6 +59,10 @@ export default function render(container: HTMLElement): (model: VectorMap) => Pr
   const canvas: HTMLCanvasElement = document.createElement('canvas');
   const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
   container.appendChild(canvas);
+
+  const mouseEventsListener: MouseEventsListener = new MouseEventsListener();
+  canvas.addEventListener('mousemove', mouseEventsListener);
+  // TODO add cleanup of listener when element gets detached
   return (model: VectorMap): Promise<boolean> => {
     if (!context) {
       return Promise.resolve(false);
@@ -98,6 +104,13 @@ export default function render(container: HTMLElement): (model: VectorMap) => Pr
     });
 
     context.restore();
+    mouseEventsListener.data = {
+      model: renderModel,
+      scale: {
+        x: scaleLinear().domain([0, viewWidth]).range([-x, x]),
+        y: scaleLinear().domain([0, viewHeight]).range([y, -y]),
+      },
+    };
     return Promise.resolve(true);
   };
 }

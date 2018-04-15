@@ -14,7 +14,8 @@ export function arcEndsCoords(radius: number, startAngle: number, endAngle: numb
 export function arcAsDonutPaths(arc: DefaultArcObject,
                                 startAngle: number = PI.TWICE,
                                 endAngle: number = 0): string[] {
-  const { innerRadius, outerRadius } = arc;
+  const { radii } = arc;
+  const { inner: innerRadius, outer: outerRadius } = radii;
   const innerRing: Positioned = arcEndsCoords(innerRadius, startAngle, endAngle);
   const outerRing: Positioned = arcEndsCoords(outerRadius, startAngle, endAngle);
   const paths = [

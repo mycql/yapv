@@ -9,6 +9,11 @@ export type Quadrant = {
   end: number;
 };
 
+/**
+ * Enum that reflects where in the coordinate
+ * plane, a coordinate (either cartesian or polar),
+ * exists in the clockwise direction
+ */
 export const Quadrants: {
   FIRST: Quadrant;
   SECOND: Quadrant;
@@ -18,19 +23,19 @@ export const Quadrants: {
   from: (angle: number) => Quadrant;
   same: (angle1: number, angle2: number) => boolean;
 } = {
-  FIRST: {
+  FOURTH: {
     start: 0,
     end: PI.HALF,
   },
-  SECOND: {
+  THIRD: {
     start: PI.HALF,
     end: PI.WHOLE,
   },
-  THIRD: {
+  SECOND: {
     start: PI.WHOLE,
     end: PI.WHOLE + PI.HALF,
   },
-  FOURTH: {
+  FIRST: {
     start: PI.WHOLE + PI.HALF,
     end: PI.TWICE,
   },
@@ -197,7 +202,7 @@ export function toCartesianCoords(center: Coord,
 
 /**
  * Converts the cartesian coordinates to polar coordinates
- * in the counter clockwise direction
+ * in the clockwise direction
  * @param target the cartesian coordinate to convert from
  * @param center the cartesian coordinate of the axis of rotation
  */
@@ -217,7 +222,7 @@ export function toPolarCoords(target: Coord, center?: Coord): PolarCoord {
       angleOffset = quadrant.start;
     }
     return computedAngle + (coordsSameSign ? quadrant.start : quadrant.end);
-  })(Math.atan(y / x));
+  })(Math.atan(x / y));
   return { radius, angleInRadians };
 }
 

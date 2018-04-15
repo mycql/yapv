@@ -2,7 +2,9 @@ import { Coord, DefaultArcObject, Dimension, StringKeyValMap } from '../../../mo
 import { parseStyle, toCartesianCoords, updateContextStyle } from '../../../util';
 
 function startsAndEndsAtSameCoord(config: DefaultArcObject): boolean {
-  const { outerRadius, startAngle, endAngle } = config;
+  const { anglesInRadians, radii } = config;
+  const { outer: outerRadius } = radii;
+  const { start: startAngle, end: endAngle } = anglesInRadians;
   const center: Coord = { x: 0, y: 0 };
   const coord1: Coord = toCartesianCoords(center, outerRadius, startAngle);
   const coord2: Coord = toCartesianCoords(center, outerRadius, endAngle);
@@ -12,8 +14,10 @@ function startsAndEndsAtSameCoord(config: DefaultArcObject): boolean {
 }
 
 export function donut(context: CanvasRenderingContext2D, config: DefaultArcObject): void {
+  const { anglesInRadians, radii } = config;
+  const { inner: innerRadius, outer: outerRadius } = radii;
+  const { start: startAngle, end: endAngle } = anglesInRadians;
   const startAndEndIsSame: boolean = startsAndEndsAtSameCoord(config);
-  const { innerRadius, outerRadius, startAngle, endAngle }: DefaultArcObject = config;
   const center: Coord = { x: 0, y: 0 };
   context.arc(center.x, center.y, innerRadius, startAngle, endAngle);
   if (!startAndEndIsSame) {

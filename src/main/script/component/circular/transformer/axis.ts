@@ -86,11 +86,14 @@ function mapAxis(displayConfig: AxisDisplayConfig,
   const style: StringKeyValMap = parseStyle(displayConfig.style || defaultStyle);
   const halfWidth: number = displayConfig.width / 2;
   const annulus: DefaultArcObject = {
-    innerRadius: distanceFromTrack - halfWidth,
-    outerRadius: distanceFromTrack + halfWidth,
-    startAngle: scale(location.start),
-    endAngle: scale(location.end),
-    padAngle: 0,
+    anglesInRadians: {
+      start: scale(location.start),
+      end: scale(location.end),
+    },
+    radii: {
+      inner: distanceFromTrack - halfWidth,
+      outer: distanceFromTrack + halfWidth,
+    },
   };
   return {
     annulus,

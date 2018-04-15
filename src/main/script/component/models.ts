@@ -34,11 +34,11 @@ export type CharInfo = {
 };
 
 export interface DefaultArcObject {
-  innerRadius: number;
-  outerRadius: number;
-  startAngle: number;
-  endAngle: number;
-  padAngle: number;
+  anglesInRadians: Location;
+  radii: {
+    inner: number;
+    outer: number;
+  };
 }
 
 export type Coord = { x: number, y: number };

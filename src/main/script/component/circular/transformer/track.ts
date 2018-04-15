@@ -25,11 +25,14 @@ const TrackModelTransformer: Transformer = (model: Track,
   const halfWidth: number = width / 2;
   const style: StringKeyValMap = parseStyle(styleStr || defaultStyle);
   const annulus: DefaultArcObject = {
-    innerRadius: distance - halfWidth,
-    outerRadius: distance + halfWidth,
-    startAngle: range ? scale(range.start) : 0,
-    endAngle: range ? scale(range.end) : PI.TWICE,
-    padAngle: 0,
+    anglesInRadians: {
+      start: range ? scale(range.start) : 0,
+      end: range ? scale(range.end) : PI.TWICE,
+    },
+    radii: {
+      inner: distance - halfWidth,
+      outer: distance + halfWidth,
+    },
   };
   return { annulus, style };
 };
