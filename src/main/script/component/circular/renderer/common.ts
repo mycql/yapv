@@ -14,6 +14,7 @@ import {
 } from '../../models';
 
 import {
+  createEvent,
   debounce,
   Quadrants,
   scaleLinear,
@@ -26,6 +27,7 @@ import {
 
 import { MapRenderModel } from '../../circular/transformer/map';
 import { TextRenderModel, LabelRenderModel } from '../transformer/label';
+import { MarkerRenderModel } from '../transformer/marker';
 
 type ScaledDimension = {
   x: ScaleLinear<number, number> | null;
@@ -48,6 +50,14 @@ type TextMetricsResolver = {
 };
 
 const CENTER: Coord = { x: 0, y: 0 };
+
+const Events: { HOVER: string; } = {
+  HOVER: 'yapv-hover',
+};
+
+function notEmpty(list: object[]): boolean {
+  return list && list.length > 0;
+}
 
 function textHeightMetricsSVG(container: HTMLElement): TextMetricsResolver {
   const spanEl: HTMLSpanElement = document.createElement('span');
@@ -172,7 +182,7 @@ export class MouseEventsListener implements EventListenerObject {
 
   private state?: MouseEventsState | null;
 
-  constructor() {
+  constructor(element: HTMLElement) {
     const textMetricsResolver: TextMetricsResolver = textRectMetricsCanvas(document.body);
 
     const rotateAngleLeft = (() => {
@@ -208,16 +218,23 @@ export class MouseEventsListener implements EventListenerObject {
       const onLabelCollision = collidesLabel(mouseCartesian, mousePolar,
         onArcCollision, onRectCollision, textMetricsResolver);
       const collidedLabels: LabelRenderModel[] = labels.filter(onLabelCollision);
+      const collidedModels: object[] = [];
       tracks.forEach((trackModel) => {
         trackModel.markers.forEach((marker) => {
           if (onArcCollision(marker.marker, mousePolar) === CollisionStates.HIT) {
-            console.error(JSON.stringify(marker.marker));
+            collidedModels.push(marker.marker);
           }
-          Array.prototype.push.apply(collidedLabels, marker.labels.filter(onLabelCollision));
+          const collidedMarkerLabels: LabelRenderModel[] = marker.labels.filter(onLabelCollision);
+          if (notEmpty(collidedMarkerLabels)) {
+            Array.prototype.push.apply(collidedLabels, collidedMarkerLabels);
+          }
         });
       });
-      if (collidedLabels.length > 0) {
-        console.error(JSON.stringify(collidedLabels));
+      if (notEmpty(collidedLabels)) {
+        Array.prototype.push.apply(collidedModels, collidedLabels);
+      }
+      if (notEmpty(collidedModels)) {
+        element.dispatchEvent(createEvent(Events.HOVER, collidedModels));
       }
     }, 1000 / 60, false);
   }
@@ -269,9 +286,6 @@ export const collidesLabel = (mouseCartesian: Coord,
         break;
       default:
         break;
-    }
-    if (collisionState === CollisionStates.HIT) {
-      console.error(JSON.stringify(textRect));
     }
     return collisionState === CollisionStates.HIT;
   };

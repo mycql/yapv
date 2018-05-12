@@ -281,3 +281,20 @@ export function debounce(func: (...args: any[]) => any, wait: number, immediate?
     }
   };
 }
+
+export function createEvent(eventType: string, params: object): CustomEvent {
+  const ua: string = window.navigator.userAgent;
+  const msie = ua.indexOf('MSIE ');
+  const trident = ua.indexOf('Trident');
+  const edge = ua.indexOf('Edge');
+  let event = null;
+  if (msie > 0 || trident > 0 || edge > 0) {
+    event = document.createEvent('CustomEvent');
+    event.initCustomEvent(eventType, true, true, params);
+  } else {
+    event = new CustomEvent(eventType, {
+      detail: params,
+    });
+  }
+  return event;
+}

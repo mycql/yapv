@@ -60,7 +60,7 @@ export default function render(container: HTMLElement): (model: VectorMap) => Pr
   const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
   container.appendChild(canvas);
 
-  const mouseEventsListener: MouseEventsListener = new MouseEventsListener();
+  const mouseEventsListener: MouseEventsListener = new MouseEventsListener(container);
   canvas.addEventListener('mousemove', mouseEventsListener);
   // TODO add cleanup of listener when element gets detached
   return (model: VectorMap): Promise<boolean> => {
