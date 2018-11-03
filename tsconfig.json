@@ -6,8 +6,12 @@
     "suppressImplicitAnyIndexErrors": true,
     "removeComments": true,
     "preserveConstEnums": true,
+    "lib": [
+      "dom", "es2015"
+    ],
     "module": "es2015",
-    "target": "es2015",
+    "moduleResolution": "node",
+    "target": "es5",
     "pretty": true,
     "allowJs": false,
     "charset": "utf8",
@@ -19,7 +23,8 @@
     "noImplicitReturns": true,
     "strict": true,
     "strictNullChecks": true,
-    "jsx": "preserve"
+    "jsx": "react",
+    "jsxFactory": "h",
   },
   "include": [
     "./src/main/script/**/*.ts*",

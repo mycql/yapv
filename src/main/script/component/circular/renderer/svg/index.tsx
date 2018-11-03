@@ -1,7 +1,5 @@
-import '../../../polyfills';
-
 import core from './core';
-import { Actions, App, View} from './core';
+import { Actions, App } from './core';
 
 import { Axis } from './axis';
 import { Label } from './label';

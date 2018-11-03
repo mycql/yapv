@@ -1,4 +1,4 @@
-/* tslint:disable:no-var-requires */
+import * as hyperapp from 'hyperapp';
 import { VectorMap } from '../../../models';
 
 export type Actions = {
@@ -9,5 +9,4 @@ export type View = (state: VectorMap, actions: Actions) => JSX.Element;
 
 export type App = (state: VectorMap, actions: Actions, view: View, container: HTMLElement) => Actions;
 
-const hyperapp = require('hyperapp');
 export default hyperapp;

@@ -139,10 +139,10 @@ export function updateContextStyle(context: CanvasRenderingContext2D,
         context.lineWidth = parseFloat(styleVal);
         break;
       case 'stroke-linecap':
-        context.lineCap = styleVal;
+        context.lineCap = styleVal as CanvasLineCap;
         break;
       case 'stroke-linejoin':
-        context.lineJoin = styleVal;
+        context.lineJoin = styleVal as CanvasLineJoin;
         break;
       case 'stroke-miterlimit':
         context.miterLimit = parseFloat(styleVal);

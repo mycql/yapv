@@ -4,11 +4,16 @@
   "description": "Yet Another Plasmid Viewer: A DNA plasmid viewer using web technologies",
   "main": "dist/Canvas.yapv-0.1.0.js",
   "scripts": {
-    "lint": "yarn run lint:ts",
-    "lint:ts": "tslint --project tsconfig.json",
-    "build": "yarn run clean && yarn run lint && webpack --config webpack.prod.js",
     "clean": "rimraf dist",
-    "start": "yarn run clean && yarn run lint && webpack-dev-server --config webpack.dev.js --color --progress"
+    "lint:ts": "tslint --project tsconfig.json",
+    "lint": "npm run lint:ts",
+    "prep": "npm run clean && npm run lint",
+    "build": "npm run prep && rollup -c --environment INCLUDE_DEPS,BUILD:development",
+    "bundle": "npm run build --environment BUILD:production",
+    "serve:watch": "rollup -c --watch --environment INCLUDE_DEPS,BUILD:development",
+    "serve:browse": "browser-sync start --server --startPath 'examples/index.html' --files 'examples' 'dist'",
+    "serve": "npm run prep && concurrently --kill-others \"npm run serve:watch\" \"npm run serve:browse\"",
+    "start": "npm run serve"
   },
   "keywords": [
     "DNA",
@@ -21,25 +26,18 @@
   "author": "Christopher Luna",
   "license": "MIT",
   "devDependencies": {
-    "@types/core-js": "^0.9.46",
-    "@types/node": "^8.0.54",
-    "@types/react": "^16.0.27",
-    "@types/react-dom": "^16.0.3",
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
-    "babel-plugin-transform-react-jsx": "^6.24.1",
-    "babel-preset-env": "^1.6.1",
-    "clean-webpack-plugin": "^0.1.17",
-    "core-js": "^2.5.3",
-    "html-webpack-plugin": "^2.30.1",
-    "hyperapp": "^1.1.2",
+    "@types/react": "^16.4.16",
+    "@types/react-dom": "^16.0.9",
+    "browser-sync": "^2.26.3",
+    "concurrently": "^4.0.1",
+    "hyperapp": "^1.2.9",
     "rimraf": "^2.6.2",
-    "ts-loader": "^3.1.1",
-    "tslint": "^5.8.0",
-    "tslint-loader": "^3.5.3",
-    "typescript": "^2.6.1",
-    "webpack": "^3.8.1",
-    "webpack-dev-server": "^2.11.1",
-    "webpack-merge": "^4.1.1"
+    "rollup": "^0.66.6",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-typescript": "^1.0.0",
+    "rollup-plugin-uglify": "^6.0.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.3"
   }
 }
