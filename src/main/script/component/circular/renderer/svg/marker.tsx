@@ -2,8 +2,8 @@ import { CSSProperties, ReactNode } from 'react';
 import core from './core';
 import { arcEndsCoords, Positioned } from './common';
 import { MarkerRenderModel } from '../../transformer/marker';
-import { Coord, DefaultArcObject } from '../../../models';
-import { toCamelCaseKeys, Quadrants } from '../../../util';
+import { Coord, PI } from '../../../models';
+import { toCamelCaseKeys } from '../../../util';
 
 const { h } = core;
 
@@ -15,23 +15,23 @@ function anchorPaths(coords: Coord[], isBeginning: boolean): string[] {
 }
 
 export const Marker = (params: MarkerRenderModel, children: ReactNode[]) => {
-  const { center, style, anchorPositions, radii, anglesInRadians} = params;
+  const { style, anchorPositions, radii, anglesInRadians} = params;
   const { start: startAngle, end: endAngle } = anglesInRadians;
   const { inner: innerRadius, outer: outerRadius } = radii;
 
   const markerStyle = {...style, ...{ 'fill-rule' : 'evenodd' }};
   const cssProps: CSSProperties = toCamelCaseKeys(markerStyle);
   const crossesOver: boolean = startAngle > endAngle;
-  const sameQuadrant: boolean = Quadrants.same(startAngle, endAngle);
-  const sweep: number = crossesOver && sameQuadrant ? 1 : 0;
+  const arcLength: number = crossesOver ? (PI.TWICE - startAngle) + endAngle : endAngle - startAngle;
+  const largeArcFlag: number = arcLength > PI.WHOLE ? 1 : 0;
 
   const innerRing: Positioned = arcEndsCoords(innerRadius, startAngle, endAngle);
   const outerRing: Positioned = arcEndsCoords(outerRadius, endAngle, startAngle);
   const paths = [
     ...anchorPaths(anchorPositions.start, true),
-    `A ${innerRadius} ${innerRadius} 0 ${sweep} 1 ${innerRing.end.x} ${innerRing.end.y}`,
+    `A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 1 ${innerRing.end.x} ${innerRing.end.y}`,
     ...anchorPaths(anchorPositions.end, false),
-    `A ${outerRadius} ${outerRadius} 0 ${sweep} 0 ${outerRing.end.x} ${outerRing.end.y}`,
+    `A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 0 ${outerRing.end.x} ${outerRing.end.y}`,
   ];
 
   const path: string = paths.join(' ');
