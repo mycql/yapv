@@ -1,7 +1,7 @@
 import { CSSProperties, ReactNode } from 'react';
 import core from './core';
 import { arcEndsCoords, Positioned } from './common';
-import { MarkerRenderModel } from '../../transformer/marker';
+import { MarkerRenderModel } from '../../../transformer/circular/marker';
 import { Coord, PI } from '../../../models';
 import { toCamelCaseKeys } from '../../../util';
 

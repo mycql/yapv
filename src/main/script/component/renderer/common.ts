@@ -11,7 +11,7 @@ import {
   ScaleLinear,
   StringKeyValMap,
   CollisionState,
-} from '../../models';
+} from '../models';
 
 import {
   createEvent,
@@ -23,11 +23,11 @@ import {
   toPolarCoords,
   withAxisOffset,
   textContentWidth,
-} from '../../util';
+} from '../util';
 
-import { MapRenderModel } from '../../circular/transformer/map';
-import { TextRenderModel, LabelRenderModel } from '../transformer/label';
-import { MarkerRenderModel } from '../transformer/marker';
+import { MapRenderModel } from '../transformer/circular/map';
+import { TextRenderModel, LabelRenderModel } from '../transformer/circular/label';
+import { MarkerRenderModel } from '../transformer/circular/marker';
 
 type ScaledDimension = {
   x: ScaleLinear<number, number> | null;

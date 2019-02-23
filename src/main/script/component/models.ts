@@ -221,3 +221,5 @@ export type ComponentRenderer<T extends object,
                               U extends object,
                               V extends any> =
   (params: T, context: U) => Promise<V>;
+
+export type VectorMapRenderer = (container: HTMLElement) => (model: VectorMap) => Promise<boolean>;

@@ -7,11 +7,11 @@ import { Marker } from './marker';
 import { Track } from './track';
 import { PlasmidMap } from './map';
 
-import { StringKeyValMap, VectorMap } from '../../../models';
+import { StringKeyValMap, VectorMap, VectorMapRenderer } from '../../../models';
 
-import { LabelRenderModel, TextMeasurer } from '../../transformer/label';
-import { AxisAndLabels, MapRenderModel, MarkerAndLabels, TrackRenderModelComponents } from '../../transformer/map';
-import translateModel from '../../transformer/map';
+import { LabelRenderModel, TextMeasurer } from '../../../transformer/circular/label';
+import * as Transformer from '../../../transformer/circular/map';
+import translateModel from '../../../transformer/circular/map';
 
 import { resolveTextStyle, updateContextStyle } from '../../../util';
 
@@ -54,10 +54,10 @@ function createCanvasContext(): CanvasRenderingContext2D {
   return canvas.getContext('2d') as CanvasRenderingContext2D;
 }
 
-function createTracks(trackComponents: TrackRenderModelComponents[]): JSX.Element[] {
-  return trackComponents.map((componentMap: TrackRenderModelComponents) => {
+function createTracks(trackComponents: Transformer.TrackRenderModelComponents[]): JSX.Element[] {
+  return trackComponents.map((componentMap: Transformer.TrackRenderModelComponents) => {
     const { axes, track, markers } = componentMap;
-    const axisComponents = (axes || []).map((axisWithLabels: AxisAndLabels) => {
+    const axisComponents = (axes || []).map((axisWithLabels: Transformer.AxisAndLabels) => {
       const { axis, labels } = axisWithLabels;
       const labelComponents = createLabels(labels);
       return (
@@ -66,7 +66,7 @@ function createTracks(trackComponents: TrackRenderModelComponents[]): JSX.Elemen
         </Axis>
       );
     });
-    const markerComponents = (markers || []).map((markerWithLabels: MarkerAndLabels) => {
+    const markerComponents = (markers || []).map((markerWithLabels: Transformer.MarkerAndLabels) => {
       const { marker, labels } = markerWithLabels;
       const labelComponents = createLabels(labels);
       return (
@@ -88,7 +88,7 @@ function createLabels(labels: LabelRenderModel[]): JSX.Element[] {
   return labels.map((params: LabelRenderModel) => <Label {...params}></Label>);
 }
 
-function render(container: HTMLElement): (model: VectorMap) => Promise<boolean> {
+const render: VectorMapRenderer = (container: HTMLElement) => {
   const context: CanvasRenderingContext2D = createCanvasContext();
   const textMeasure: TextMeasurer = canvasContextTextMeasurer(context);
   const application: App = app as App;
@@ -106,7 +106,7 @@ function render(container: HTMLElement): (model: VectorMap) => Promise<boolean> 
       },
       ...displayConfig,
     };
-    const mapModel: MapRenderModel = translateModel(state, textMeasure);
+    const mapModel: Transformer.MapRenderModel = translateModel(state, textMeasure);
     const tracks: JSX.Element[] = createTracks(mapModel.tracks);
     const labels: JSX.Element[] = createLabels(mapModel.labels);
     return (
@@ -123,6 +123,6 @@ function render(container: HTMLElement): (model: VectorMap) => Promise<boolean> 
     actionables.render(model);
     return Promise.resolve(true);
   };
-}
+};
 
 export default render;

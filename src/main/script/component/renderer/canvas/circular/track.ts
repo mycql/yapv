@@ -1,5 +1,5 @@
 import { ComponentRenderer } from '../../../models';
-import { TrackRenderModel } from '../../transformer/track';
+import { TrackRenderModel } from '../../../transformer/circular/track';
 import { donut, pathDraw } from './common';
 
 type Renderer = ComponentRenderer<TrackRenderModel, CanvasRenderingContext2D, boolean>;

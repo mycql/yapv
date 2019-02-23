@@ -1,15 +1,13 @@
-import { ComponentRenderer, PI, StringKeyValMap, VectorMap } from '../../../models';
-import { resolveTextStyle, scaleLinear, updateContextStyle } from '../../../util';
+import { ComponentRenderer, StringKeyValMap, VectorMap, VectorMapRenderer } from '../../../models';
+import { resolveTextStyle, updateContextStyle } from '../../../util';
 import { preserveAspectRatio } from './common';
 
-import { MouseEventsListener } from '../../renderer/common';
+import { TextMeasurer } from '../../../transformer/circular/label';
+import { MapRenderModel } from '../../../transformer/circular/map';
 
-import { TextMeasurer } from '../../transformer/label';
-import { MapRenderModel } from '../../transformer/map';
+import { OrderedModels, orderModels } from '../../../transformer/circular/map';
 
-import { OrderedModels, orderModels } from '../../transformer/map';
-
-import translateModel from '../../transformer/map';
+import translateModel from '../../../transformer/circular/map';
 
 import renderTrack from './track';
 import renderMarker from './marker';
@@ -55,14 +53,11 @@ function canvasContextTextMeasurer(context: CanvasRenderingContext2D): TextMeasu
   };
 }
 
-export default function render(container: HTMLElement): (model: VectorMap) => Promise<boolean> {
+const render: VectorMapRenderer = (container: HTMLElement) => {
   const canvas: HTMLCanvasElement = document.createElement('canvas');
   const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
   container.appendChild(canvas);
 
-  const mouseEventsListener: MouseEventsListener = new MouseEventsListener(container);
-  canvas.addEventListener('mousemove', mouseEventsListener);
-  // TODO add cleanup of listener when element gets detached
   return (model: VectorMap): Promise<boolean> => {
     if (!context) {
       return Promise.resolve(false);
@@ -104,13 +99,8 @@ export default function render(container: HTMLElement): (model: VectorMap) => Pr
     });
 
     context.restore();
-    mouseEventsListener.data = {
-      model: renderModel,
-      scale: {
-        x: scaleLinear().domain([0, viewWidth]).range([-x, x]),
-        y: scaleLinear().domain([0, viewHeight]).range([y, -y]),
-      },
-    };
     return Promise.resolve(true);
   };
-}
+};
+
+export default render;

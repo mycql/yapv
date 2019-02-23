@@ -5,7 +5,7 @@ import {
   ConnectorRenderModel,
   LabelRenderModel,
   TextRenderModel,
-} from '../../transformer/label';
+} from '../../../transformer/circular/label';
 import { Coord, LabelTypes, Location, PI } from '../../../models';
 import { textContentWidth, toCamelCaseKeys, toCartesianCoords } from '../../../util';
 
@@ -25,15 +25,15 @@ function textAlongPath(label: TextRenderModel, labelStyle: CSSProperties): JSX.E
     const endAngle: number = pathLocation.end;
     const start: Coord = toCartesianCoords(center, distance, startAngle);
     const end: Coord = toCartesianCoords(center, distance, endAngle);
-    let arcSweep;
+    let largeArcFlag;
     if (startAngle < endAngle) {
-      arcSweep = endAngle - startAngle <= PI.WHOLE ? '0' : '1';
+      largeArcFlag = endAngle - startAngle <= PI.WHOLE ? '0' : '1';
     } else {
-      arcSweep = endAngle - startAngle <= PI.WHOLE ? '1' : '0';
+      largeArcFlag = endAngle - startAngle <= PI.WHOLE ? '1' : '0';
     }
     path = [
       `M ${start.x} ${start.y}`,
-      `A ${distance} ${distance} 0 ${arcSweep} 1 ${end.x} ${end.y}`,
+      `A ${distance} ${distance} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`,
     ].join(' ');
   }
   const pathId: string = `tpath${generateId()}`;

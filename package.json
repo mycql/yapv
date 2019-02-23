@@ -9,7 +9,7 @@
     "lint": "npm run lint:ts",
     "prep": "npm run clean && npm run lint",
     "build": "npm run prep && rollup -c --environment INCLUDE_DEPS,BUILD:development",
-    "bundle": "npm run build --environment BUILD:production",
+    "bundle": "npm run build -- --environment BUILD:production",
     "serve:watch": "rollup -c --watch --environment INCLUDE_DEPS,BUILD:development",
     "serve:browse": "browser-sync start --server --startPath 'examples/index.html' --files 'examples' 'dist'",
     "serve": "npm run prep && concurrently --kill-others \"npm run serve:watch\" \"npm run serve:browse\"",
