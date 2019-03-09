@@ -1,73 +1,8 @@
-import { CharInfo, Coord, DefaultArcObject, PI, ScaleLinear, StringKeyValMap, PolarCoord } from './models';
+import { CharInfo, Coord, PI, ScaleLinear, StringKeyValMap } from './models';
 
 export type StyleResolver = (styleProp: string, styleVal: string, context: CanvasRenderingContext2D) => void;
 
 export const _AXIS_OFFSET_RADIANS: number = -PI.HALF;
-
-export type Quadrant = {
-  start: number;
-  end: number;
-};
-
-/**
- * Enum that reflects where in the coordinate
- * plane, a coordinate (either cartesian or polar),
- * exists in the clockwise direction
- */
-export const Quadrants: {
-  FIRST: Quadrant;
-  SECOND: Quadrant;
-  THIRD: Quadrant;
-  FOURTH: Quadrant;
-  fromCoord: (coord: Coord) => Quadrant;
-  from: (angle: number) => Quadrant;
-  same: (angle1: number, angle2: number) => boolean;
-} = {
-  FOURTH: {
-    start: 0,
-    end: PI.HALF,
-  },
-  THIRD: {
-    start: PI.HALF,
-    end: PI.WHOLE,
-  },
-  SECOND: {
-    start: PI.WHOLE,
-    end: PI.WHOLE + PI.HALF,
-  },
-  FIRST: {
-    start: PI.WHOLE + PI.HALF,
-    end: PI.TWICE,
-  },
-  fromCoord: (coord: Coord) => {
-    const { x, y } = coord;
-    if (x < 0 && y >= 0) {
-      return Quadrants.SECOND;
-    } else if (x >= 0 && y < 0) {
-      return Quadrants.FOURTH;
-    } else if (x < 0 && y < 0) {
-      return Quadrants.THIRD;
-    } else {
-      return Quadrants.FIRST;
-    }
-  },
-  from: (angle: number) => {
-    let found: Quadrant = Quadrants.FIRST;
-    for (const key in Quadrants) {
-      if (Quadrants[key]) {
-        const value: Quadrant = Quadrants[key];
-        const inside: boolean = angle >= value.start && angle < value.end;
-        if (inside) {
-          found = value;
-        }
-      }
-    }
-    return found;
-  },
-  same: (angle1: number, angle2: number) => {
-    return Quadrants.from(angle1) === Quadrants.from(angle2);
-  },
-};
 
 export function scaleLinear(): ScaleLinear<number, number> {
   return (() => {
@@ -200,32 +135,6 @@ export function toCartesianCoords(center: Coord,
   };
 }
 
-/**
- * Converts the cartesian coordinates to polar coordinates
- * in the clockwise direction
- * @param target the cartesian coordinate to convert from
- * @param center the cartesian coordinate of the axis of rotation
- */
-export function toPolarCoords(target: Coord, center?: Coord): PolarCoord {
-  const normalizedTarget: Coord = center ? {
-    x: target.x - center.x,
-    y: target.y - center.y,
-  } : target;
-  const { x, y } = normalizedTarget;
-  const radius = Math.sqrt(squared(x) + squared(y));
-  const angleInRadians = ((computedAngle: number) => {
-    const quadrant = Quadrants.fromCoord(normalizedTarget);
-    const coordsSameSign = quadrant === Quadrants.FIRST ||
-                           quadrant === Quadrants.THIRD;
-    let angleOffset = quadrant.end;
-    if (coordsSameSign) {
-      angleOffset = quadrant.start;
-    }
-    return computedAngle + (coordsSameSign ? quadrant.start : quadrant.end);
-  })(Math.atan(x / y));
-  return { radius, angleInRadians };
-}
-
 export function withAxisOffset(angleInRadians: number): number {
   return _AXIS_OFFSET_RADIANS + angleInRadians;
 }
@@ -261,40 +170,4 @@ export function textContentWidth(symbols: string[], charInfo: CharInfo) {
   return symbols.reduce((total: number, symbol: string) => {
     return total + widths[symbol];
   }, spaceWidth);
-}
-
-export function debounce(func: (...args: any[]) => any, wait: number, immediate?: boolean) {
-  let timeout: number | null;
-  return (...args: any[]) => {
-    const context = null; // this?
-    const later = () => {
-      timeout = null;
-      if (!immediate) {
-        func.apply(context, args);
-      }
-    };
-    const callNow = immediate && !timeout;
-    clearTimeout(timeout as number);
-    timeout = (window || self).setTimeout(later, wait);
-    if (callNow) {
-      func.apply(context, args);
-    }
-  };
-}
-
-export function createEvent(eventType: string, params: object): CustomEvent {
-  const ua: string = window.navigator.userAgent;
-  const msie = ua.indexOf('MSIE ');
-  const trident = ua.indexOf('Trident');
-  const edge = ua.indexOf('Edge');
-  let event = null;
-  if (msie > 0 || trident > 0 || edge > 0) {
-    event = document.createEvent('CustomEvent');
-    event.initCustomEvent(eventType, true, true, params);
-  } else {
-    event = new CustomEvent(eventType, {
-      detail: params,
-    });
-  }
-  return event;
 }

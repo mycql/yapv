@@ -45,12 +45,13 @@ function canvasContextTextMeasurer(context: CanvasRenderingContext2D): TextMeasu
   };
 }
 
-function createCanvasContext(): CanvasRenderingContext2D {
+function createCanvasContext(container: HTMLElement): CanvasRenderingContext2D {
   const canvas: HTMLCanvasElement = document.createElement('canvas');
   canvas.style.position = 'fixed';
+  canvas.style.display = 'none';
   canvas.style.left = '-1000px';
   canvas.style.top = '-10000px';
-  document.body.appendChild(canvas);
+  container.appendChild(canvas);
   return canvas.getContext('2d') as CanvasRenderingContext2D;
 }
 
@@ -88,8 +89,10 @@ function createLabels(labels: LabelRenderModel[]): JSX.Element[] {
   return labels.map((params: LabelRenderModel) => <Label {...params}></Label>);
 }
 
-const render: VectorMapRenderer = (container: HTMLElement) => {
-  const context: CanvasRenderingContext2D = createCanvasContext();
+const render: VectorMapRenderer = (root: HTMLElement) => {
+  const container: HTMLElement = document.createElement('div');
+  root.appendChild(container);
+  const context: CanvasRenderingContext2D = createCanvasContext(root);
   const textMeasure: TextMeasurer = canvasContextTextMeasurer(context);
   const application: App = app as App;
   const actions: Actions = {
