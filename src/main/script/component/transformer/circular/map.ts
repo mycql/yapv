@@ -1,11 +1,13 @@
 import {
   Axis,
   AxisTickConfig,
+  DataToComponentModelFn,
   Label,
   Location,
   Marker,
   PI,
   ScaleLinear,
+  TextMeasurer,
   Track,
   VectorMap,
 } from '../../models';
@@ -13,7 +15,7 @@ import { scaleLinear, deepClone, withAxisOffset } from '../../util';
 import { TrackRenderModel } from './track';
 import { MarkerRenderModel } from './marker';
 import { AxisRenderModel } from './axis';
-import { LabelRenderModel, TextMeasurer } from './label';
+import { LabelRenderModel } from './label';
 import mapTrack from './track';
 import mapMarker from './marker';
 import mapLabel from './label';
@@ -37,13 +39,6 @@ export type TrackRenderModelComponents = {
 
 export type MapRenderModel = {
   tracks: TrackRenderModelComponents[];
-  labels: LabelRenderModel[];
-};
-
-export type OrderedModels = {
-  tracks: TrackRenderModel[];
-  axes: AxisRenderModel[];
-  markers: MarkerRenderModel[];
   labels: LabelRenderModel[];
 };
 
@@ -89,27 +84,7 @@ function toAxisModels(axes: Axis[] | undefined,
   });
 }
 
-export function orderModels(renderModel: MapRenderModel): OrderedModels {
-  const orderedModels: OrderedModels = {
-    axes: [], labels: [], markers: [], tracks: [],
-  };
-  renderModel.tracks.reduce((acc: OrderedModels, trackComponents: TrackRenderModelComponents) => {
-    acc.tracks.push(trackComponents.track);
-    trackComponents.markers.forEach((markerAndLabels: MarkerAndLabels) => {
-      acc.markers.push(markerAndLabels.marker);
-      acc.labels = acc.labels.concat(markerAndLabels.labels);
-    });
-    (trackComponents.axes || []).forEach((axisAndLabels: AxisAndLabels) => {
-      acc.axes.push(axisAndLabels.axis);
-      acc.labels = acc.labels.concat(axisAndLabels.labels);
-    });
-    return acc;
-  }, orderedModels);
-  orderedModels.labels = orderedModels.labels.concat(renderModel.labels);
-  return orderedModels;
-}
-
-export default function map(model: VectorMap, measure: TextMeasurer): MapRenderModel {
+const map: DataToComponentModelFn<MapRenderModel> = (model: VectorMap, measure: TextMeasurer) => {
   model = deepClone(model);
   const range: Location = model.sequenceConfig.range;
   const scale: ScaleLinear<number, number> = scaleLinear().domain([range.start, range.end])
@@ -128,4 +103,6 @@ export default function map(model: VectorMap, measure: TextMeasurer): MapRenderM
     return mapLabel(label, scale, measure);
   });
   return { tracks: trackMarkersAxes, labels: mapLabels };
-}
+};
+
+export default map;

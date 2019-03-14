@@ -1,5 +1,5 @@
 import { ComponentRenderer, Coord } from '../../../models';
-import * as Transformer from '../../../transformer/circular/axis';
+import * as Transformer from '../../../transformer/circular/types';
 import { donut, pathDraw } from './common';
 
 function drawAxis(params: Transformer.AnnulusRenderModel, context: CanvasRenderingContext2D): void {

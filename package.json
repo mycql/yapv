@@ -11,7 +11,7 @@
     "build": "npm run prep && rollup -c --environment INCLUDE_DEPS,BUILD:development",
     "bundle": "npm run build -- --environment BUILD:production",
     "serve:watch": "rollup -c --watch --environment INCLUDE_DEPS,BUILD:development",
-    "serve:browse": "browser-sync start --server --startPath 'examples/index.html' --files 'examples' 'dist'",
+    "serve:browse": "browser-sync start --server --startPath 'examples/plain/index.html' --files 'examples' 'dist'",
     "serve": "npm run prep && concurrently --kill-others \"npm run serve:watch\" \"npm run serve:browse\"",
     "start": "npm run serve"
   },

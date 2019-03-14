@@ -7,11 +7,15 @@ import { Marker } from './marker';
 import { Track } from './track';
 import { PlasmidMap } from './map';
 
-import { StringKeyValMap, VectorMap, VectorMapRenderer } from '../../../models';
+import {
+  DataToComponentModelFn,
+  InHouseVectorMapRenderer,
+  StringKeyValMap,
+  TextMeasurer,
+  VectorMap,
+} from '../../../models';
 
-import { LabelRenderModel, TextMeasurer } from '../../../transformer/circular/label';
-import * as Transformer from '../../../transformer/circular/map';
-import translateModel from '../../../transformer/circular/map';
+import * as Transformer from '../../../transformer/circular/types';
 
 import { resolveTextStyle, updateContextStyle } from '../../../util';
 
@@ -85,47 +89,52 @@ function createTracks(trackComponents: Transformer.TrackRenderModelComponents[])
   });
 }
 
-function createLabels(labels: LabelRenderModel[]): JSX.Element[] {
-  return labels.map((params: LabelRenderModel) => <Label {...params}></Label>);
+function createLabels(labels: Transformer.LabelRenderModel[]): JSX.Element[] {
+  return labels.map((params: Transformer.LabelRenderModel) => <Label {...params}></Label>);
 }
 
-const render: VectorMapRenderer = (root: HTMLElement) => {
-  const container: HTMLElement = document.createElement('div');
-  root.appendChild(container);
-  const context: CanvasRenderingContext2D = createCanvasContext(root);
-  const textMeasure: TextMeasurer = canvasContextTextMeasurer(context);
-  const application: App = app as App;
-  const actions: Actions = {
-    render: (value: VectorMap) => value,
-  };
-  const view = (state: VectorMap = DEFAULT_STATE) => {
-    let { displayConfig } = state;
-    displayConfig = {
-      ...{
-        viewBox: {
-          height: displayConfig.width,
-          width: displayConfig.width,
-        },
-      },
-      ...displayConfig,
+const render: InHouseVectorMapRenderer<Transformer.MapRenderModel> = {
+  key: 'circular',
+  createRenderer: (transform: DataToComponentModelFn<Transformer.MapRenderModel>) => {
+    return (root: HTMLElement) => {
+      const container: HTMLElement = document.createElement('div');
+      root.appendChild(container);
+      const context: CanvasRenderingContext2D = createCanvasContext(root);
+      const textMeasure: TextMeasurer = canvasContextTextMeasurer(context);
+      const application: App = app as App;
+      const actions: Actions = {
+        render: (value: VectorMap) => value,
+      };
+      const view = (state: VectorMap = DEFAULT_STATE) => {
+        let { displayConfig } = state;
+        displayConfig = {
+          ...{
+            viewBox: {
+              height: displayConfig.width,
+              width: displayConfig.width,
+            },
+          },
+          ...displayConfig,
+        };
+        const mapModel: Transformer.MapRenderModel = transform(state, textMeasure);
+        const tracks: JSX.Element[] = createTracks(mapModel.tracks);
+        const labels: JSX.Element[] = createLabels(mapModel.labels);
+        return (
+          <PlasmidMap {...displayConfig}>
+            {tracks}
+            <g>
+              {labels}
+            </g>
+          </PlasmidMap>
+        );
+      };
+      const actionables = application(DEFAULT_STATE, actions, view, container);
+      return (model: VectorMap): Promise<boolean> => {
+        actionables.render(model);
+        return Promise.resolve(true);
+      };
     };
-    const mapModel: Transformer.MapRenderModel = translateModel(state, textMeasure);
-    const tracks: JSX.Element[] = createTracks(mapModel.tracks);
-    const labels: JSX.Element[] = createLabels(mapModel.labels);
-    return (
-      <PlasmidMap {...displayConfig}>
-        {tracks}
-        <g>
-          {labels}
-        </g>
-      </PlasmidMap>
-    );
-  };
-  const actionables = application(DEFAULT_STATE, actions, view, container);
-  return (model: VectorMap): Promise<boolean> => {
-    actionables.render(model);
-    return Promise.resolve(true);
-  };
+  },
 };
 
 export default render;

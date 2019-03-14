@@ -9,15 +9,15 @@ const DIR = {
   DIST: 'dist',
   SRC_MAIN: 'src/main'
 };
-DIR.SRC_RENDERER = `${DIR.SRC_MAIN}/script/component/renderer`;
+DIR.SRC_COMPONENT = `${DIR.SRC_MAIN}/script`;
 
-function createConfig(entryFile, prefix, minify) {
+function createConfig(entryFile, prefix, namespace, minify) {
   return {
-    input: path.resolve(__dirname, `${DIR.SRC_RENDERER}/${entryFile}`),
+    input: path.resolve(__dirname, `${DIR.SRC_COMPONENT}/${entryFile}`),
     output: {
-      file: path.resolve(__dirname, `${DIR.DIST}/yapv-${prefix}${minify ? '.min' : ''}.js`),
+      file: path.resolve(__dirname, `${DIR.DIST}/yapv${prefix.length > 0 ? '-' + prefix : ''}${minify ? '.min' : ''}.js`),
       format: 'umd',
-      name: `YAPV.${prefix}`,
+      name: 'YAPV' + (namespace.length > 0 ? `.${namespace}`: ''),
       sourcemap: true,
     },
     watch: {
@@ -39,12 +39,16 @@ function createConfig(entryFile, prefix, minify) {
 }
 
 const configs = [
-  createConfig('canvas/index.ts', 'canvas'),
-  createConfig('svg/index.ts', 'svg'),
+  createConfig('index.ts', '', ''),
+  createConfig('component/index.ts', 'core', ''),
+  createConfig('component/renderer/canvas/index.ts', 'canvas', 'canvas'),
+  createConfig('component/renderer/svg/index.ts', 'svg', 'svg'),
 ];
 if(environment === 'production') {
-  configs.push(createConfig('canvas/index.ts', 'canvas', true));
-  configs.push(createConfig('svg/index.ts', 'svg', true));
+  createConfig('index.ts', '', '', true),
+  configs.push(createConfig('component/index.ts', 'core', '', true));
+  configs.push(createConfig('component/renderer/canvas/index.ts', 'canvas', 'canvas', true));
+  configs.push(createConfig('component/renderer/svg/index.ts', 'svg', 'svg', true));
 }
 
 export default configs;

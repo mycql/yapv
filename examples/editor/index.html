@@ -1,0 +1,115 @@
+<!doctype html>
+<head>
+  <meta charset="UTF-8">
+  <title>YAPV</title>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+    }
+    #editor {
+      width: 100%;
+      height: 200px;
+    }
+    #renderers {
+      overflow: auto;
+      display: flex;
+      flex: 1 1 auto;
+    }
+    #canvas {
+      display: flex;
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+    #svg {
+      display: flex;
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.1/ace.js"></script>
+</head>
+<body>
+  <div id="editor"></div>
+  <div id="renderers">
+    <iframe id="canvas" src="../plain/canvas/canvas.html"></iframe>
+    <iframe id="svg" src="../plain/svg/svg.html"></iframe>
+  </div>
+  <script>
+    (function() {
+      function buildEditor(data, panels) {
+        var editor = ace.edit('editor');
+        editor.setTheme('ace/theme/textmate');
+        editor.session.setMode('ace/mode/javascript');
+        editor.setValue(data, -1);
+        setTimeout(function() {
+          editor.resize();
+        }, 300);
+
+        window.addEventListener('resize', function() {
+          editor.resize();
+        });
+
+        setInterval((function() {
+          var prevValue = '';
+          return function() {
+            try {
+              var newValue = editor.getValue();
+              if(newValue === prevValue) {
+                return;
+              }
+              prevValue = newValue;
+              panels.forEach(function(panel) {
+                panel.postMessage(newValue, "*");
+              });
+            } catch(e) {
+              console.error(e);
+            }
+          };
+        })(), 200);
+      }
+
+      window.addEventListener('load', function() {
+        var canvas = document.querySelector('#canvas').contentWindow;
+        var svg = document.querySelector('#svg').contentWindow;
+        var panels = [canvas, svg];
+        fetch('../plain/01.json').then(function(response) {
+          response.text().then(function(textData) {
+            buildEditor(textData, panels);
+          });
+        });
+        // var presets = ['purple', 'red', 'green', 'orange', 'violet', 'blue', 'brown', 'yellow', 'maroon', 'pink'];
+        // var location = model.tracks[0].markers[0].location;
+        // var origStart = location.start;
+        // var direction = '+';
+        // function animate() {
+        //   var colorIdx = Math.floor(Math.random() * 10);
+        //   var style = 'text-anchor: middle; font: 40px "Arial", sans-serif;';
+        //   style = style + ' fill: ' + presets[colorIdx] + ';';
+        //   model.labels[0].displayConfig.style = style;
+        //   canvasRender(model).then(function() {
+        //     // setTimeout(animate, 500 / 1000);
+        //   });
+        //   svgRender(model);
+        //   if(location.start >= location.end) {
+        //     direction = '-';
+        //   }
+        //   if(location.start <= origStart) {
+        //     direction = '+';
+        //   }
+        //   if (direction === '+') {
+        //     location.start += 1;
+        //   } else {
+        //     location.start -= 1;
+        //   }
+        // }
+        // animate();
+      });
+    })();
+  </script>
+</body>

@@ -1,0 +1,40 @@
+<!doctype html>
+<head>
+  <meta charset="UTF-8">
+  <title>YAPV - SVG</title>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+    }
+    #workspace {
+      display: flex;
+      flex: 1 1 auto;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+  <script src="../../../dist/yapv-core.js"></script>
+  <script src="../../../dist/yapv-svg.js"></script>
+  <script>
+    window.addEventListener('message', function(event) {
+      var textData = event.data;
+      if (!textData || textData.length <= 0) {
+        return;
+      }
+      var plasmidData = JSON.parse(textData);
+      var workspace = document.querySelector('#workspace');
+      var plasmidRenderer = YAPV.create(workspace).use(YAPV.svg.circular);
+      plasmidRenderer.draw(plasmidData);
+    }, false);
+  </script>
+</head>
+<body>
+  <main id="workspace">
+  </main>
+</body>

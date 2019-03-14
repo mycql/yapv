@@ -5,7 +5,7 @@ import {
   ConnectorRenderModel,
   LabelRenderModel,
   TextRenderModel,
-} from '../../../transformer/circular/label';
+} from '../../../transformer/circular/types';
 import { Coord, LabelTypes, Location, PI } from '../../../models';
 import { textContentWidth, toCamelCaseKeys, toCartesianCoords } from '../../../util';
 

@@ -1,13 +1,24 @@
-import { ComponentRenderer, StringKeyValMap, VectorMap, VectorMapRenderer } from '../../../models';
+import {
+  ComponentRenderer,
+  DataToComponentModelFn,
+  InHouseVectorMapRenderer,
+  StringKeyValMap,
+  TextMeasurer,
+  VectorMap,
+} from '../../../models';
 import { resolveTextStyle, updateContextStyle } from '../../../util';
 import { preserveAspectRatio } from './common';
 
-import { TextMeasurer } from '../../../transformer/circular/label';
-import { MapRenderModel } from '../../../transformer/circular/map';
-
-import { OrderedModels, orderModels } from '../../../transformer/circular/map';
-
-import translateModel from '../../../transformer/circular/map';
+import {
+  AxisAndLabels,
+  AxisRenderModel,
+  LabelRenderModel,
+  MapRenderModel,
+  MarkerAndLabels,
+  MarkerRenderModel,
+  TrackRenderModel,
+  TrackRenderModelComponents,
+} from '../../../transformer/circular/types';
 
 import renderTrack from './track';
 import renderMarker from './marker';
@@ -20,6 +31,33 @@ type ModelRendererPair = {
   render: ComponentObjectRenderer;
   models: object[];
 };
+
+export type OrderedModels = {
+  tracks: TrackRenderModel[];
+  axes: AxisRenderModel[];
+  markers: MarkerRenderModel[];
+  labels: LabelRenderModel[];
+};
+
+export function orderModels(renderModel: MapRenderModel): OrderedModels {
+  const orderedModels: OrderedModels = {
+    axes: [], labels: [], markers: [], tracks: [],
+  };
+  renderModel.tracks.reduce((acc: OrderedModels, trackComponents: TrackRenderModelComponents) => {
+    acc.tracks.push(trackComponents.track);
+    trackComponents.markers.forEach((markerAndLabels: MarkerAndLabels) => {
+      acc.markers.push(markerAndLabels.marker);
+      acc.labels = acc.labels.concat(markerAndLabels.labels);
+    });
+    (trackComponents.axes || []).forEach((axisAndLabels: AxisAndLabels) => {
+      acc.axes.push(axisAndLabels.axis);
+      acc.labels = acc.labels.concat(axisAndLabels.labels);
+    });
+    return acc;
+  }, orderedModels);
+  orderedModels.labels = orderedModels.labels.concat(renderModel.labels);
+  return orderedModels;
+}
 
 function pairRendererWithModels(orderedModels: OrderedModels): ModelRendererPair[] {
   const renderPairs: ModelRendererPair[] = [
@@ -53,54 +91,58 @@ function canvasContextTextMeasurer(context: CanvasRenderingContext2D): TextMeasu
   };
 }
 
-const render: VectorMapRenderer = (container: HTMLElement) => {
-  const canvas: HTMLCanvasElement = document.createElement('canvas');
-  const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
-  container.appendChild(canvas);
+const render: InHouseVectorMapRenderer<MapRenderModel> = {
+  key: 'circular',
+  createRenderer: (transform: DataToComponentModelFn<MapRenderModel>) => {
+    return (container: HTMLElement) => {
+      const canvas: HTMLCanvasElement = document.createElement('canvas');
+      const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
+      container.appendChild(canvas);
+      return (model: VectorMap): Promise<boolean> => {
+        if (!context) {
+          return Promise.resolve(false);
+        }
+        let { displayConfig } = model;
+        displayConfig = {
+          ...{
+            viewBox: {
+              height: displayConfig.width,
+              width: displayConfig.width,
+            },
+          },
+          ...displayConfig,
+        };
+        displayConfig.viewBox = preserveAspectRatio(displayConfig,
+          displayConfig.viewBox, 'xMidYMid meet').dest;
+        const { viewBox, width: viewWidth, height: viewHeight } = displayConfig;
+        const { width, height } = viewBox;
+        canvas.setAttribute('width', `${width}`);
+        canvas.setAttribute('height', `${height}`);
+        canvas.style.width = `${viewWidth}px`;
+        canvas.style.height = `${viewHeight}px`;
+        const x: number = width / 2;
+        const y: number = height / 2;
 
-  return (model: VectorMap): Promise<boolean> => {
-    if (!context) {
-      return Promise.resolve(false);
-    }
-    let { displayConfig } = model;
-    displayConfig = {
-      ...{
-        viewBox: {
-          height: displayConfig.width,
-          width: displayConfig.width,
-        },
-      },
-      ...displayConfig,
+        context.save();
+        context.translate(x, y);
+        context.clearRect(-x, -y, width, height);
+
+        const measureText: TextMeasurer = canvasContextTextMeasurer(context);
+        const renderModel: MapRenderModel = transform(model, measureText);
+        const orderedModels: OrderedModels = orderModels(renderModel);
+        const renderPairs: ModelRendererPair[] = pairRendererWithModels(orderedModels);
+
+        renderPairs.forEach((renderPair: ModelRendererPair) => {
+          renderPair.models.forEach((toRender: object) => {
+            renderPair.render(toRender, context);
+          });
+        });
+
+        context.restore();
+        return Promise.resolve(true);
+      };
     };
-    displayConfig.viewBox = preserveAspectRatio(displayConfig,
-      displayConfig.viewBox, 'xMidYMid meet').dest;
-    const { viewBox, width: viewWidth, height: viewHeight } = displayConfig;
-    const { width, height } = viewBox;
-    canvas.setAttribute('width', `${width}`);
-    canvas.setAttribute('height', `${height}`);
-    canvas.style.width = `${viewWidth}px`;
-    canvas.style.height = `${viewHeight}px`;
-    const x: number = width / 2;
-    const y: number = height / 2;
-
-    context.save();
-    context.translate(x, y);
-    context.clearRect(-x, -y, width, height);
-
-    const measureText: TextMeasurer = canvasContextTextMeasurer(context);
-    const renderModel: MapRenderModel = translateModel(model, measureText);
-    const orderedModels: OrderedModels = orderModels(renderModel);
-    const renderPairs: ModelRendererPair[] = pairRendererWithModels(orderedModels);
-
-    renderPairs.forEach((renderPair: ModelRendererPair) => {
-      renderPair.models.forEach((toRender: object) => {
-        renderPair.render(toRender, context);
-      });
-    });
-
-    context.restore();
-    return Promise.resolve(true);
-  };
+  },
 };
 
 export default render;

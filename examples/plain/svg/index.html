@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+  <title>YAPV - SVG</title>
+  <style>
+    html, body, iframe {
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+      border-width: 0;
+    }
+  </style>
+  <script>
+    window.addEventListener('load', function() {
+      var workspace = document.querySelector('#workspace').contentWindow;
+      fetch('../01.json').then(function(response) {
+        response.text().then(function(textData) {
+          workspace.postMessage(textData, "*");
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+  <iframe id="workspace" src="./svg.html"></iframe>
+</body>

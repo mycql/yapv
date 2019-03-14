@@ -222,4 +222,15 @@ export type ComponentRenderer<T extends object,
                               V extends any> =
   (params: T, context: U) => Promise<V>;
 
-export type VectorMapRenderer = (container: HTMLElement) => (model: VectorMap) => Promise<boolean>;
+export type RenderFn = (mode: VectorMap) => Promise<boolean>;
+
+export type VectorMapRenderer = (container: HTMLElement) => RenderFn;
+
+export type TextMeasurer = (text: string, style: StringKeyValMap) => number;
+
+export type DataToComponentModelFn<T extends object> = (model: VectorMap, measure: TextMeasurer) => T;
+
+export type InHouseVectorMapRenderer<T extends object> = {
+  key: string;
+  createRenderer(transform: DataToComponentModelFn<T>): VectorMapRenderer;
+};

@@ -13,6 +13,7 @@ import {
   ScaleLinear,
   StringKeyNumValMap,
   StringKeyValMap,
+  TextMeasurer,
 } from '../../models';
 import {
   textContentWidth,
@@ -22,8 +23,6 @@ import {
 } from '../../util';
 
 const defaultStyle: string = 'stroke: black; fill: black; font: 10px "Courier New", monospace;';
-
-export type TextMeasurer = (text: string, style: StringKeyValMap) => number;
 
 export type TextRenderModel = {
   content: string;

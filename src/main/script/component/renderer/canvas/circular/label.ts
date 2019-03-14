@@ -15,7 +15,7 @@ import {
   ConnectorRenderModel,
   LabelRenderModel,
   TextRenderModel,
-} from '../../../transformer/circular/label';
+} from '../../../transformer/circular/types';
 
 import { pathDraw } from './common';
 

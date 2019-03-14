@@ -1,3 +1,5 @@
 import render from './circular';
 
-export default render;
+export default {
+  circular: render,
+};

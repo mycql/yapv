@@ -1,0 +1,45 @@
+<!doctype html>
+<head>
+  <meta charset="UTF-8">
+  <title>YAPV</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+    }
+    #workspace {
+      display: flex;
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+  </style>
+  <script src="../../dist/yapv.js"></script>
+  <script>
+    window.addEventListener('load', function () {
+      var textData = document.querySelector('#plasmid-data').contentDocument.body.textContent;
+      var plasmidData = JSON.parse(textData);
+      var workspace = document.querySelector('#workspace');
+      var rendererOption = document.querySelector('#renderer');
+      var plasmidViewer = YAPV.create(workspace);
+      render(renderer.value);
+      rendererOption.addEventListener('change', function(event) {
+        render(event.target.value);
+      });
+
+      function render(targetRenderer) {
+        const renderImpl = YAPV[targetRenderer].circular;
+        plasmidViewer.use(renderImpl).draw(plasmidData);
+      }
+    });
+  </script>
+</head>
+<body>
+  <iframe id="plasmid-data" src="./01.json" width="0" height="0" style="display: none;"></iframe>
+  <select id="renderer">
+    <option value="canvas">CANVAS</option>
+    <option value="svg">SVG</option>
+  </select>
+  <main id="workspace">
+  </main>
+</body>
