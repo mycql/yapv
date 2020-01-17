@@ -130,7 +130,7 @@ function mapLabels(tickModels: TickModel[],
                    scale: ScaleLinear<number, number>): Label[][] {
   return tickModels.filter(labeledScales).map((tickModel: TickModel) => {
     const { config, ticks }: TickModel = tickModel;
-    return ticks.map(ticksAsLabels(config.label, scale));
+    return config.label ? ticks.map(ticksAsLabels(config.label, scale)) : [];
   });
 }
 

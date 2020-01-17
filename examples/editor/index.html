@@ -78,37 +78,11 @@
         var canvas = document.querySelector('#canvas').contentWindow;
         var svg = document.querySelector('#svg').contentWindow;
         var panels = [canvas, svg];
-        fetch('../plain/01.json').then(function(response) {
+        fetch('../data/kitchensink.json').then(function(response) {
           response.text().then(function(textData) {
             buildEditor(textData, panels);
           });
         });
-        // var presets = ['purple', 'red', 'green', 'orange', 'violet', 'blue', 'brown', 'yellow', 'maroon', 'pink'];
-        // var location = model.tracks[0].markers[0].location;
-        // var origStart = location.start;
-        // var direction = '+';
-        // function animate() {
-        //   var colorIdx = Math.floor(Math.random() * 10);
-        //   var style = 'text-anchor: middle; font: 40px "Arial", sans-serif;';
-        //   style = style + ' fill: ' + presets[colorIdx] + ';';
-        //   model.labels[0].displayConfig.style = style;
-        //   canvasRender(model).then(function() {
-        //     // setTimeout(animate, 500 / 1000);
-        //   });
-        //   svgRender(model);
-        //   if(location.start >= location.end) {
-        //     direction = '-';
-        //   }
-        //   if(location.start <= origStart) {
-        //     direction = '+';
-        //   }
-        //   if (direction === '+') {
-        //     location.start += 1;
-        //   } else {
-        //     location.start -= 1;
-        //   }
-        // }
-        // animate();
       });
     })();
   </script>

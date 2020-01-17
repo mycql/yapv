@@ -72,7 +72,9 @@ function toAxisModels(axes: Axis[] | undefined,
     axis.displayConfig.distance += trackDistance;
     axis.displayConfig.scales.forEach((axisTickConfig: AxisTickConfig) => {
       const { label: labelConfig }: AxisTickConfig = axisTickConfig;
-      labelConfig.distance = (labelConfig.distance || 0) + axis.displayConfig.distance;
+      if (labelConfig) {
+        labelConfig.distance = (labelConfig.distance || 0) + axis.displayConfig.distance;
+      }
     });
     const axisModel: AxisRenderModel = mapAxis(axis, scale, measure);
     const labelModels: LabelRenderModel[] = axisModel.labels.map((labels: Label[]) => {

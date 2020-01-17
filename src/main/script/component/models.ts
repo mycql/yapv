@@ -168,7 +168,7 @@ export interface AxisTickConfig extends SpacedDispayConfig {
    * labels to be rendered,, otherwise no
    * labels will be associated with tick items
    */
-  label: LabelDisplayConfig;
+  label?: LabelDisplayConfig;
 }
 
 /**

@@ -1,9 +1,6 @@
-import { uglify } from 'rollup-plugin-uglify';
-import resolve from 'rollup-plugin-node-resolve';
-import typescript from 'rollup-plugin-typescript';
+import resolve from '@rollup/plugin-node-resolve';
+import typescript from '@rollup/plugin-typescript';
 import path from 'path';
-
-const environment = process.env.BUILD || 'development';
 
 const DIR = {
   DIST: 'dist',
@@ -25,16 +22,9 @@ function createConfig(entryFile, prefix, namespace, minify) {
       clearScreen: true,
     },
     plugins: [
-      resolve({
-        jsnext: true,
-        main: true,
-        browser: true,
-      }),
-      typescript({
-        typescript: require('typescript'),
-      }),
-      (minify && uglify()),
-    ]
+      resolve(),
+      typescript(),
+    ],
   };
 }
 
@@ -44,11 +34,5 @@ const configs = [
   createConfig('component/renderer/canvas/index.ts', 'canvas', 'canvas'),
   createConfig('component/renderer/svg/index.ts', 'svg', 'svg'),
 ];
-if(environment === 'production') {
-  createConfig('index.ts', '', '', true),
-  configs.push(createConfig('component/index.ts', 'core', '', true));
-  configs.push(createConfig('component/renderer/canvas/index.ts', 'canvas', 'canvas', true));
-  configs.push(createConfig('component/renderer/svg/index.ts', 'svg', 'svg', true));
-}
 
 export default configs;

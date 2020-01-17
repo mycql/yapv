@@ -14,7 +14,7 @@
   <script>
     window.addEventListener('load', function() {
       var workspace = document.querySelector('#workspace').contentWindow;
-      fetch('../01.json').then(function(response) {
+      fetch('../../data/kitchensink.json').then(function(response) {
         response.text().then(function(textData) {
           workspace.postMessage(textData, "*");
         });

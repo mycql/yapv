@@ -1,0 +1,331 @@
+{
+  "name": "pUC19",
+  "displayConfig": {
+    "height": 450,
+    "width": 450,
+    "viewBox": {
+      "height": 350,
+      "width": 350
+    }
+  },
+  "sequenceConfig": {
+    "range": {
+      "start": 1,
+      "end": 1000
+    }
+  },
+  "labels": [
+    {
+      "text": "pUC19",
+      "displayConfig": {
+        "type": "text",
+        "style": "text-anchor: middle; font: 28px \"Arial\", sans-serif; fill: #800000;"
+      }
+    },
+    {
+      "text": "1000 bp",
+      "displayConfig": {
+        "type": "text",
+        "style": "text-anchor: middle; font: 16px \"Courier\", monotype; fill: #800000;",
+        "vOffset": 30
+      }
+    }
+  ],
+  "tracks": [
+    {
+      "displayConfig": {
+        "distance": 85,
+        "width": 40,
+        "style": "stroke: blue; fill: transparent;"
+      },
+      "axes": [
+        {
+          "displayConfig": {
+            "distance": 0,
+            "width": 0,
+            "style": "stroke: transparent; fill: transparent;",
+            "scales": [
+              {
+                "width":5,
+                "distance": -24,
+                "interval": 60,
+                "style": "stroke: #800000; stroke-width: 1;"
+              }
+            ]
+          }
+        }
+      ],
+      "markers": [
+        {
+          "displayConfig": {
+            "width": 40,
+            "style": "stroke: #27408B; fill: #27408B; stroke-width: 1; fill-opacity: 1"
+          },
+          "location": {
+            "start": 1,
+            "end": 200
+          },
+          "direction": "#",
+          "labels": [
+            {
+              "text": "GFP",
+              "displayConfig": {
+                "type": "path",
+                "style": "text-anchor: middle; font: 18px \"Arial\", sans-serif; fill: white;"
+              }
+            }
+          ]
+        },
+        {
+          "displayConfig": {
+            "width": 40,
+            "style": "stroke: black; fill: #3063A5; stroke-width: 2; fill-opacity: 1;"
+          },
+          "location": {
+            "start": 201,
+            "end": 400
+          },
+          "direction": "#",
+          "labels": [
+            {
+              "text": "ORI",
+              "displayConfig": {
+                "type": "path",
+                "style": "text-anchor: middle; font: 18px \"Arial\", sans-serif; fill: white;"
+              }
+            }
+          ]
+        },
+        {
+          "displayConfig": {
+            "width": 40,
+            "style": "stroke: #26466D; fill: #26466D; stroke-width: 1; fill-opacity: 1"
+          },
+          "location": {
+            "start": 401,
+            "end": 600
+          },
+          "direction": "#",
+          "labels": [
+            {
+              "text": "Tet",
+              "displayConfig": {
+                "type": "path",
+                "style": "text-anchor: middle; font: 18px \"Arial\", sans-serif; fill: white;"
+              }
+            }
+          ]
+        },
+        {
+          "displayConfig": {
+            "width": 40,
+            "style": "stroke: black; fill: #CAE1FF; stroke-width: 2; fill-opacity: 1;"
+          },
+          "location": {
+            "start": 601,
+            "end": 800
+          },
+          "direction": "#",
+          "labels": [
+            {
+              "text": "Amp",
+              "displayConfig": {
+                "type": "path",
+                "style": "text-anchor: middle; font: 18px \"Arial\", sans-serif; fill: black;"
+              }
+            }
+          ]
+        },
+        {
+          "displayConfig": {
+            "width": 40,
+            "style": "stroke: gray; fill: blue; stroke-width: 1; fill-opacity: 0.5"
+          },
+          "location": {
+            "start": 801,
+            "end": 1000
+          },
+          "direction": "#",
+          "labels": [
+            {
+              "text": "CDS",
+              "displayConfig": {
+                "type": "path",
+                "style": "text-anchor: middle; font: 18px \"Arial\", sans-serif; fill: black;"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "displayConfig": {
+        "distance": 125,
+        "width": 20,
+        "style": "stroke: gray; fill: gray; fill-opacity: 0.2"
+      },
+      "markers": [
+        {
+          "displayConfig": {
+            "width": 20,
+            "style": "stroke: #1C1C1C; fill: #1C1C1C; stroke-width: 1; fill-opacity: 1"
+          },
+          "location": {
+            "start": 1,
+            "end": 200
+          },
+          "direction": "#",
+          "labels": [
+            {
+              "text": "LacV",
+              "displayConfig": {
+                "type": "path",
+                "style": "text-anchor: middle; font: 18px \"Arial\", sans-serif; fill: white;"
+              }
+            }
+          ]
+        },
+        {
+          "displayConfig": {
+            "width": 20,
+            "style": "stroke: #424242; fill: #424242; stroke-width: 2; fill-opacity: 1;"
+          },
+          "location": {
+            "start": 201,
+            "end": 400
+          },
+          "direction": "#",
+          "labels": [
+            {
+              "text": "Rep1",
+              "displayConfig": {
+                "type": "path",
+                "style": "text-anchor: middle; font: 18px \"Arial\", sans-serif; fill: white;"
+              }
+            }
+          ]
+        },
+        {
+          "displayConfig": {
+            "width": 20,
+            "style": "stroke: #595959; fill: #595959; stroke-width: 1; fill-opacity: 1"
+          },
+          "location": {
+            "start": 401,
+            "end": 600
+          },
+          "direction": "#",
+          "labels": [
+            {
+              "text": "Sv40",
+              "displayConfig": {
+                "type": "path",
+                "style": "text-anchor: middle; font: 18px \"Arial\", sans-serif; fill: white;"
+              }
+            }
+          ]
+        },
+        {
+          "displayConfig": {
+            "width": 20,
+            "style": "stroke: #8F8F8F; fill: #8F8F8F; stroke-width: 2; fill-opacity: 1;"
+          },
+          "location": {
+            "start": 601,
+            "end": 800
+          },
+          "direction": "#",
+          "labels": [
+            {
+              "text": "TetR",
+              "displayConfig": {
+                "type": "path",
+                "style": "text-anchor: middle; font: 18px \"Arial\", sans-serif; fill: black;"
+              }
+            }
+          ]
+        },
+        {
+          "displayConfig": {
+            "width": 20,
+            "style": "stroke: gray; fill: transparent; stroke-width: 1; fill-opacity: 0.5"
+          },
+          "location": {
+            "start": 801,
+            "end": 1000
+          },
+          "direction": "#",
+          "labels": [
+            {
+              "text": "source",
+              "displayConfig": {
+                "type": "path",
+                "style": "text-anchor: middle; font: 18px \"Arial\", sans-serif; fill: black;"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "displayConfig": {
+        "distance": 170,
+        "width": 10,
+        "style": "stroke: transparent; fill: transparent;"
+      }
+    },
+    {
+      "displayConfig": {
+        "distance": 145,
+        "width": 10,
+        "style": "stroke: transparent; fill: transparent;"
+      },
+      "axes": [
+        {
+          "displayConfig": {
+            "distance": 0,
+            "width": 0,
+            "style": "stroke: transparent; fill: transparent;",
+            "scales": [
+              {
+                "width": 10,
+                "distance": 0,
+                "interval": 50,
+                "style": "stroke: black; stroke-width: 3;",
+                "label": {
+                  "type": "text",
+                  "style": "text-anchor: middle; font: 10px \"Arial\", sans-serif; fill: gray;",
+                  "distance": 15
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "displayConfig": {
+        "distance": 145,
+        "width": 10,
+        "style": "stroke: transparent; fill: transparent;"
+      },
+      "axes": [
+        {
+          "displayConfig": {
+            "distance": 0,
+            "width": 0,
+            "style": "stroke: transparent; fill: transparent;",
+            "scales": [
+              {
+                "width": 5,
+                "distance": 0,
+                "interval": 5,
+                "style": "stroke: black; stroke-width: 1;"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

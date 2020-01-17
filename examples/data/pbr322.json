@@ -1,0 +1,342 @@
+{
+  "name": "pBR322",
+  "displayConfig": {
+    "height": 500,
+    "width": 500,
+    "viewBox": {
+      "height": 500,
+      "width": 500
+    }
+  },
+  "sequenceConfig": {
+    "range": {
+      "start": 1,
+      "end": 4361
+    }
+  },
+  "labels": [
+    {
+      "text": "pBR322",
+      "displayConfig": {
+        "type": "text",
+        "style": "text-anchor: middle; font: 28px \"Arial\", sans-serif; fill: black;"
+      }
+    },
+    {
+      "text": "4361 bp",
+      "displayConfig": {
+        "type": "text",
+        "style": "text-anchor: middle; font: 16px \"Courier\", monotype; fill: black;",
+        "vOffset": 30
+      }
+    }
+  ],
+  "tracks": [
+    {
+      "displayConfig": {
+        "distance": 130,
+        "width": 10,
+        "style": "stroke: transparent; fill: transparent;"
+      },
+      "markers": [
+        {
+          "displayConfig": {
+            "width": 10,
+            "style": "stroke: black; fill: black; stroke-width: 1;",
+            "anchor": {
+              "width": 30,
+              "height": 20
+            }
+          },
+          "location": {
+            "start": 86,
+            "end": 1278
+          },
+          "direction": "+",
+          "labels": [
+            {
+              "text": "tet",
+              "displayConfig": {
+                "type": "text",
+                "style": "text-anchor: middle; font: 28px \"Arial\", sans-serif; fill: black;",
+                "hOffset": -20,
+                "vOffset": 20
+              }
+            }
+          ]
+        },
+        {
+          "displayConfig": {
+            "width": 10,
+            "style": "stroke: black; fill: black;",
+            "anchor": {
+              "width": 30,
+              "height": 20
+            }
+          },
+          "location": {
+            "start": 2519,
+            "end": 3133
+          },
+          "direction": "-",
+          "labels": [
+            {
+              "text": "ori",
+              "displayConfig": {
+                "type": "text",
+                "style": "text-anchor: middle; font: 28px \"Arial\", sans-serif; fill: black;",
+                "hOffset": 20,
+                "vOffset": -20
+              }
+            }
+          ]
+        },
+        {
+          "displayConfig": {
+            "width": 10,
+            "style": "stroke: black; fill: black; stroke-width: 1;",
+            "anchor": {
+              "width": 30,
+              "height": 20
+            }
+          },
+          "location": {
+            "start": 3293,
+            "end": 4153
+          },
+          "direction": "-",
+          "labels": [
+            {
+              "text": "amp",
+              "displayConfig": {
+                "type": "text",
+                "style": "text-anchor: middle; font: 28px \"Arial\", sans-serif; fill: black;",
+                "hOffset": 35,
+                "vOffset": 15
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "displayConfig": {
+        "distance": 145,
+        "width": 5,
+        "style": "stroke: orange; fill: orange;"
+      }
+    },
+    {
+      "displayConfig": {
+        "distance": 170,
+        "width": 5,
+        "style": "stroke: transparent; fill: transparent;"
+      },
+      "markers": [
+         {
+          "displayConfig": {
+            "width": 0,
+            "style": "stroke: transparent; fill: transparent;"
+          },
+          "location": {
+            "start": 29,
+            "end": 29
+          },
+          "direction": "*",
+          "labels": [
+            {
+              "text": "HindIII",
+              "line": true,
+              "displayConfig": {
+                "type": "text",
+                "style": "text-anchor: middle; font: 15px \"Courier New\", sans-serif; stroke: blue;",
+                "vOffset": -30,
+                "hOffset": 20
+              }
+            }
+          ]
+        },
+        {
+          "displayConfig": {
+            "width": 0,
+            "style": "stroke: transparent; fill: transparent;"
+          },
+          "location": {
+            "start": 185,
+            "end": 185
+          },
+          "direction": "*",
+          "labels": [
+            {
+              "text": "EcoRV",
+              "line": true,
+              "displayConfig": {
+                "type": "text",
+                "style": "text-anchor: middle; font: 15px \"Courier New\", sans-serif; stroke: blue;",
+                "vOffset": -20,
+                "hOffset": 10
+              }
+            }
+          ]
+        },
+        {
+          "displayConfig": {
+            "width": 0,
+            "style": "stroke: transparent; fill: transparent;"
+          },
+          "location": {
+            "start": 375,
+            "end": 375
+          },
+          "direction": "*",
+          "labels": [
+            {
+              "text": "BamHI",
+              "line": true,
+              "displayConfig": {
+                "type": "text",
+                "style": "text-anchor: middle; font: 15px \"Courier New\", sans-serif; stroke: blue;",
+                "vOffset": -20,
+                "hOffset": 10
+              }
+            }
+          ]
+        },
+        {
+          "displayConfig": {
+            "width": 0,
+            "style": "stroke: transparent; fill: transparent;"
+          },
+          "location": {
+            "start": 651,
+            "end": 651
+          },
+          "direction": "*",
+          "labels": [
+            {
+              "text": "SalI",
+              "line": true,
+              "displayConfig": {
+                "type": "text",
+                "style": "text-anchor: middle; font: 15px \"Courier New\", sans-serif; stroke: blue;",
+                "vOffset": -20,
+                "hOffset": 10
+              }
+            }
+          ]
+        },
+        {
+          "displayConfig": {
+            "width": 0,
+            "style": "stroke: transparent; fill: transparent;"
+          },
+          "location": {
+            "start": 2295,
+            "end": 2295
+          },
+          "direction": "*",
+          "labels": [
+            {
+              "text": "NdeI",
+              "line": true,
+              "displayConfig": {
+                "type": "text",
+                "style": "text-anchor: middle; font: 15px \"Courier New\", sans-serif; stroke: blue;",
+                "vOffset": 20,
+                "hOffset": -10
+              }
+            }
+          ]
+        },
+        {
+          "displayConfig": {
+            "width": 0,
+            "style": "stroke: transparent; fill: transparent;"
+          },
+          "location": {
+            "start": 3607,
+            "end": 3607
+          },
+          "direction": "*",
+          "labels": [
+            {
+              "text": "PstI",
+              "line": true,
+              "displayConfig": {
+                "type": "text",
+                "style": "text-anchor: middle; font: 15px \"Courier New\", sans-serif; stroke: blue;",
+                "vOffset": -20,
+                "hOffset": -10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "displayConfig": {
+        "distance": 170,
+        "width": 10,
+        "style": "stroke: transparent; fill: transparent;"
+      },
+      "axes": [
+        {
+          "displayConfig": {
+            "distance": 0,
+            "width": 0,
+            "style": "stroke: transparent; fill: transparent;",
+            "scales": [
+              {
+                "width": 0,
+                "distance": 4,
+                "total": 4,
+                "style": "stroke: transparent; stroke-width: 0;",
+                "label": {
+                  "type": "text",
+                  "style": "text-anchor: middle; font: 10px \"Arial\", sans-serif; fill: black;",
+                  "distance": -10
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "displayConfig": {
+        "distance": 170,
+        "width": 10,
+        "style": "stroke: transparent; fill: transparent;"
+      },
+      "axes": [
+        {
+          "displayConfig": {
+            "distance": 0,
+            "width": 0,
+            "style": "stroke: transparent; fill: transparent;",
+            "scales": [
+              {
+                "width": 0,
+                "distance": 0,
+                "ticks": [
+                  29,
+                  185,
+                  375,
+                  651,
+                  2295,
+                  3607
+                ],
+                "style": "stroke: transparent; stroke-width: 0;",
+                "label": {
+                  "type": "text",
+                  "style": "text-anchor: middle; font: 10px \"Arial\", sans-serif; fill: blue;",
+                  "distance": -10
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

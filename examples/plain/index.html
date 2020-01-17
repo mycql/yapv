@@ -16,30 +16,57 @@
   </style>
   <script src="../../dist/yapv.js"></script>
   <script>
-    window.addEventListener('load', function () {
-      var textData = document.querySelector('#plasmid-data').contentDocument.body.textContent;
-      var plasmidData = JSON.parse(textData);
-      var workspace = document.querySelector('#workspace');
-      var rendererOption = document.querySelector('#renderer');
-      var plasmidViewer = YAPV.create(workspace);
-      render(renderer.value);
-      rendererOption.addEventListener('change', function(event) {
-        render(event.target.value);
+    (() => {
+      const configsPromise = Promise.all(['kitchensink', 'pbr322', 'pUC19'].map((dataKey) => fetch(`../data/${dataKey}.json`)
+          .then((response) => response.text())));
+      window.addEventListener('load', () => {
+        const workspace = document.querySelector('#workspace');
+        const rendererSelection = document.querySelector('#renderer-selection');
+        const dataSelection = document.querySelector('#data-selection');
+        const plasmidViewer = YAPV.create(workspace);
+        configsPromise.then((configs) => {
+          const configData = configs.map(JSON.parse);
+          const configMap = configData.reduce((acc, config) => {
+            const { name } = config;
+            const optionEl = document.createElement('option');
+            optionEl.text = name;
+            optionEl.value = name;
+            dataSelection.appendChild(optionEl);
+            acc[name] = config;
+            return acc;
+          }, {});
+          const [ initialData ] = configData;
+          const render = (targetRenderer, data) => {
+            const renderImpl = YAPV[targetRenderer].circular;
+            plasmidViewer.use(renderImpl).draw(data);
+          };
+          render(rendererSelection.value, initialData);
+          rendererSelection.addEventListener('change', (event) => {
+            const selectionKey = dataSelection.options[dataSelection.selectedIndex].value;
+            render(event.target.value, configMap[selectionKey]);
+          });
+          dataSelection.addEventListener('change', (event) => {
+            const selectionKey = rendererSelection.options[rendererSelection.selectedIndex].value;
+            render(selectionKey, configMap[event.target.value]);
+          });
+        });
       });
-
-      function render(targetRenderer) {
-        const renderImpl = YAPV[targetRenderer].circular;
-        plasmidViewer.use(renderImpl).draw(plasmidData);
-      }
-    });
+    })();
   </script>
 </head>
 <body>
-  <iframe id="plasmid-data" src="./01.json" width="0" height="0" style="display: none;"></iframe>
-  <select id="renderer">
-    <option value="canvas">CANVAS</option>
-    <option value="svg">SVG</option>
-  </select>
+  <div class="renderer-options">
+    <span>Renderer:</span>
+    <select id="renderer-selection">
+      <option value="svg">SVG</option>
+      <option value="canvas">CANVAS</option>
+    </select>
+  </div>
+  <div class="data-options">
+    <span>Data:</span>
+    <select id="data-selection">
+    </select>
+  </div>
   <main id="workspace">
   </main>
 </body>
