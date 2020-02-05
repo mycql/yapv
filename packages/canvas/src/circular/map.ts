@@ -5,8 +5,8 @@ import {
   StringKeyValMap,
   TextMeasurer,
   VectorMap,
-} from '../../../core/src/models';
-import { resolveTextStyle, updateContextStyle } from '../../../core/src/util';
+} from '../core/models';
+import { resolveTextStyle, updateContextStyle } from '../core/util';
 import { preserveAspectRatio } from './common';
 
 import {
@@ -18,7 +18,7 @@ import {
   MarkerRenderModel,
   TrackRenderModel,
   TrackRenderModelComponents,
-} from '../../../core/src/transformer/circular/types';
+} from '../core/transformer/circular/types';
 
 import renderTrack from './track';
 import renderMarker from './marker';

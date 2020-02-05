@@ -5,6 +5,7 @@
     "declarationDir": "./lib",
     "jsx": "react",
     "jsxFactory": "h",
+    "skipLibCheck": true
   },
   "include": [
     "./src/"

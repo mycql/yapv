@@ -1,5 +1,5 @@
-import { Coord, DefaultArcObject, Dimension, StringKeyValMap } from '../../../core/src/models';
-import { parseStyle, toCartesianCoords, updateContextStyle } from '../../../core/src/util';
+import { Coord, DefaultArcObject, Dimension, StringKeyValMap } from '../core/models';
+import { parseStyle, toCartesianCoords, updateContextStyle } from '../core/util';
 
 function startsAndEndsAtSameCoord(config: DefaultArcObject): boolean {
   const { anglesInRadians, radii } = config;

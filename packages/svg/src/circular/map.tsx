@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import core from './core';
-import { ViewDisplayConfig } from '../../../core/src/models';
+import { ViewDisplayConfig } from '../core/models';
 
 const { h } = core;
 

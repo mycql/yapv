@@ -1,8 +1,8 @@
 import { CSSProperties, ReactNode } from 'react';
 import core from './core';
 import { arcAsDonutPaths } from './common';
-import { TrackRenderModel } from '../../../core/src/transformer/circular/types';
-import { toCamelCaseKeys } from '../../../core/src/util';
+import { TrackRenderModel } from '../core/transformer/circular/types';
+import { toCamelCaseKeys } from '../core/util';
 
 const { h } = core;
 

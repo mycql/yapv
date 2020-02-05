@@ -13,11 +13,11 @@ import {
   StringKeyValMap,
   TextMeasurer,
   VectorMap,
-} from '../../../core/src/models';
+} from '../core/models';
 
-import * as Transformer from '../../../core/src/transformer/circular/types';
+import * as Transformer from '../core/transformer/circular/types';
 
-import { resolveTextStyle, updateContextStyle } from '../../../core/src/util';
+import { resolveTextStyle, updateContextStyle } from '../core/util';
 
 const { h, app } = core;
 

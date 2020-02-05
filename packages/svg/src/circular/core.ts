@@ -1,5 +1,5 @@
 import * as hyperapp from 'hyperapp';
-import { VectorMap } from '../../../core/src/models';
+import { VectorMap } from '../core/models';
 
 export type Actions = {
   render: (value: VectorMap) => VectorMap;

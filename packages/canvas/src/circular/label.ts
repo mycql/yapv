@@ -4,18 +4,18 @@ import {
   LabelType,
   LabelTypes,
   PI,
-} from '../../../core/src/models';
+} from '../core/models';
 import {
   resolveTextStyle,
   textContentWidth,
   updateContextStyle,
   withAxisOffset,
-} from '../../../core/src/util';
+} from '../core/util';
 import {
   ConnectorRenderModel,
   LabelRenderModel,
   TextRenderModel,
-} from '../../../core/src/transformer/circular/types';
+} from '../core/transformer/circular/types';
 
 import { pathDraw } from './common';
 

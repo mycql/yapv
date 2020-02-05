@@ -5,9 +5,9 @@ import {
   ConnectorRenderModel,
   LabelRenderModel,
   TextRenderModel,
-} from '../../../core/src/transformer/circular/types';
-import { Coord, LabelTypes, Location, PI } from '../../../core/src/models';
-import { textContentWidth, toCamelCaseKeys, toCartesianCoords } from '../../../core/src/util';
+} from '../core/transformer/circular/types';
+import { Coord, LabelTypes, Location, PI } from '../core/models';
+import { textContentWidth, toCamelCaseKeys, toCartesianCoords } from '../core/util';
 
 const { h } = core;
 

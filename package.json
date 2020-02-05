@@ -12,6 +12,12 @@
   ],
   "author": "Christopher Luna",
   "license": "MIT",
+  "scripts": {
+    "link:core": "symlink-dir ./packages/core/src ./packages/canvas/src/core && symlink-dir ./packages/core/src ./packages/svg/src/core",
+    "postinstall": "npm run link:core",
+    "build": "lerna run prep && lerna run build && lerna run declare",
+    "clean": "lerna run clean"
+  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.0.1",
     "@rollup/plugin-node-resolve": "^6.0.0",
@@ -22,6 +28,7 @@
     "lerna": "^3.20.2",
     "rimraf": "^2.6.2",
     "rollup": "^1.27.14",
+    "symlink-dir": "^3.1.1",
     "tslib": "^1.10.0",
     "tslint": "^5.20.1",
     "typescript": "^3.7.4"

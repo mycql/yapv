@@ -1,9 +1,9 @@
 import { CSSProperties, ReactNode } from 'react';
 import core from './core';
 import { arcAsDonutPaths } from './common';
-import { AxisRenderModel, ScaleRenderModel, TickRenderModel } from '../../../core/src/transformer/circular/types';
-import { toCamelCaseKeys } from '../../../core/src/util';
-import { Coord } from '../../../core/src/models';
+import { AxisRenderModel, ScaleRenderModel, TickRenderModel } from '../core/transformer/circular/types';
+import { toCamelCaseKeys } from '../core/util';
+import { Coord } from '../core/models';
 
 const { h } = core;
 

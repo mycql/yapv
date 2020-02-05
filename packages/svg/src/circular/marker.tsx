@@ -1,9 +1,9 @@
 import { CSSProperties, ReactNode } from 'react';
 import core from './core';
 import { arcEndsCoords, Positioned } from './common';
-import { MarkerRenderModel } from '../../../core/src/transformer/circular/types';
-import { Coord, PI } from '../../../core/src/models';
-import { toCamelCaseKeys } from '../../../core/src/util';
+import { MarkerRenderModel } from '../core/transformer/circular/types';
+import { Coord, PI } from '../core/models';
+import { toCamelCaseKeys } from '../core/util';
 
 const { h } = core;
 
