@@ -2,8 +2,6 @@
   "compileOnSave": true,
   "compilerOptions": {
     "declaration": true,
-    "declarationDir": "./dist/",
-    "outDir": "./dist/",
     "sourceMap": true,
     "suppressImplicitAnyIndexErrors": true,
     "removeComments": true,
@@ -24,12 +22,10 @@
     "noImplicitThis": true,
     "noImplicitReturns": true,
     "strict": true,
-    "strictNullChecks": true,
-    "jsx": "react",
-    "jsxFactory": "h",
+    "strictNullChecks": true
   },
-  "include": [
-    "./src/main/script/**/*.ts*",
-    "./src/test/script/**/*.ts*"
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
   ]
 }

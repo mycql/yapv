@@ -1,20 +1,7 @@
 {
   "name": "yapv",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "Yet Another Plasmid Viewer: A DNA plasmid viewer using web technologies",
-  "main": "dist/Canvas.yapv-0.1.0.js",
-  "scripts": {
-    "clean": "rimraf dist",
-    "lint:ts": "tslint --project tsconfig.json",
-    "lint": "npm run lint:ts",
-    "prep": "npm run clean && npm run lint",
-    "build": "npm run prep && rollup -c --environment INCLUDE_DEPS,BUILD:development",
-    "bundle": "npm run build -- --environment BUILD:production",
-    "serve:watch": "rollup -c --watch --environment INCLUDE_DEPS,BUILD:development",
-    "serve:browse": "browser-sync start --server --startPath 'examples/plain/index.html' --files 'examples' 'dist'",
-    "serve": "npm run prep && concurrently --kill-others \"npm run serve:watch\" \"npm run serve:browse\"",
-    "start": "npm run serve"
-  },
   "keywords": [
     "DNA",
     "plasmid",
@@ -26,13 +13,13 @@
   "author": "Christopher Luna",
   "license": "MIT",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^11.0.1",
     "@rollup/plugin-node-resolve": "^6.0.0",
     "@rollup/plugin-typescript": "^2.0.1",
-    "@types/react": "^16.9.17",
-    "@types/react-dom": "^16.9.4",
+    "@types/node": "^13.5.0",
     "browser-sync": "^2.26.3",
     "concurrently": "^4.0.1",
-    "hyperapp": "^1.2.10",
+    "lerna": "^3.20.2",
     "rimraf": "^2.6.2",
     "rollup": "^1.27.14",
     "tslib": "^1.10.0",

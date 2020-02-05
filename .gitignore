@@ -1,5 +1,5 @@
-node_modules
-typings
-dist
-build
+node_modules/
+lerna-debug.log
+npm-debug.log
+packages/*/lib
 .vscode
