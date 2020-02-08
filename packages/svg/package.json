@@ -32,7 +32,8 @@
   },
   "scripts": {
     "clean": "rimraf lib/*",
-    "build": "rollup -c",
+    "build": "rollup -c --environment BUILD:production",
+    "serve": "rollup -c --watch --environment INCLUDE_DEPS,BUILD:development",
     "declare": "tsc --emitDeclarationOnly",
     "lint:ts": "tslint --config ../../tslint.json --project tsconfig.json",
     "lint": "npm run lint:ts",

@@ -14,7 +14,9 @@
       justify-content: center;
     }
   </style>
-  <script src="../../dist/yapv.js"></script>
+  <script src="../../packages/core/lib/index.umd.js"></script>
+  <script src="../../packages/canvas/lib/index.umd.js"></script>
+  <script src="../../packages/svg/lib/index.umd.js"></script>
   <script>
     (() => {
       const configsPromise = Promise.all(['kitchensink', 'pbr322', 'pUC19'].map((dataKey) => fetch(`../data/${dataKey}.json`)
@@ -36,19 +38,18 @@
             return acc;
           }, {});
           const [ initialData ] = configData;
-          const render = (targetRenderer, data) => {
-            const renderImpl = YAPV[targetRenderer].circular;
-            plasmidViewer.use(renderImpl).draw(data);
-          };
-          render(rendererSelection.value, initialData);
+          const useRenderer = (targetRenderer) => plasmidViewer.use(YAPV[targetRenderer].circular);
+          const render = (data) => plasmidViewer.draw(data);
           rendererSelection.addEventListener('change', (event) => {
             const selectionKey = dataSelection.options[dataSelection.selectedIndex].value;
-            render(event.target.value, configMap[selectionKey]);
+            useRenderer(event.target.value);
+            render(configMap[selectionKey]);
           });
           dataSelection.addEventListener('change', (event) => {
-            const selectionKey = rendererSelection.options[rendererSelection.selectedIndex].value;
-            render(selectionKey, configMap[event.target.value]);
+            render(configMap[event.target.value]);
           });
+          useRenderer(rendererSelection.value);
+          render(initialData);
         });
       });
     })();

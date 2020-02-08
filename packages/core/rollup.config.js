@@ -8,7 +8,7 @@ export default [
 		input: 'src/index.ts',
 		output: [
 			{
-				name: 'YAPV.core',
+				name: 'YAPV',
 				file: pkg.browser,
 				format: 'umd',
 				extend: true,

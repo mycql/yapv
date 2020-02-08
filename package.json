@@ -14,9 +14,12 @@
   "license": "MIT",
   "scripts": {
     "link:core": "symlink-dir ./packages/core/src ./packages/canvas/src/core && symlink-dir ./packages/core/src ./packages/svg/src/core",
-    "postinstall": "npm run link:core",
+    "postinstall": "lerna bootstrap && npm run link:core",
     "build": "lerna run prep && lerna run build && lerna run declare",
-    "clean": "lerna run clean"
+    "clean": "lerna run clean",
+    "serve:browse": "browser-sync start --server --startPath 'examples/plain/index.html' --files 'examples' 'packages/core/lib' 'packages/canvas/lib' 'packages/svg/lib'",
+    "serve:watch": "lerna run --parallel serve",
+    "serve": "npm run clean && concurrently --kill-others \"npm run serve:watch\" \"npm run serve:browse\""
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.0.1",
