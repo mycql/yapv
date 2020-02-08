@@ -1,0 +1,10 @@
+sudo: false
+language: node_js
+node_js:
+  - lts/* # latest LTS Node.js release
+cache: npm
+branches:
+  only:
+    - master # build master branch only
+script:
+  - npm run build
