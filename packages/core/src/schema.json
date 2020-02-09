@@ -1,0 +1,401 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$ref": "#/definitions/ViewSetup",
+  "definitions": {
+      "ViewSetup": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "name": {
+                  "type": "string"
+              },
+              "displayConfig": {
+                  "$ref": "#/definitions/ViewSetupDisplayConfig"
+              },
+              "sequenceConfig": {
+                  "$ref": "#/definitions/SequenceConfig"
+              },
+              "labels": {
+                  "type": "array",
+                  "items": {
+                      "$ref": "#/definitions/ViewSetupLabel"
+                  }
+              },
+              "tracks": {
+                  "type": "array",
+                  "items": {
+                      "$ref": "#/definitions/Track"
+                  }
+              }
+          },
+          "required": [
+              "displayConfig",
+              "labels",
+              "name",
+              "sequenceConfig",
+              "tracks"
+          ],
+          "title": "ViewSetup"
+      },
+      "ViewSetupDisplayConfig": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "height": {
+                  "type": "integer"
+              },
+              "width": {
+                  "type": "integer"
+              },
+              "viewBox": {
+                  "$ref": "#/definitions/ViewBox"
+              }
+          },
+          "required": [
+              "height",
+              "viewBox",
+              "width"
+          ],
+          "title": "ViewSetupDisplayConfig"
+      },
+      "ViewBox": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "height": {
+                  "type": "integer"
+              },
+              "width": {
+                  "type": "integer"
+              }
+          },
+          "required": [
+              "height",
+              "width"
+          ],
+          "title": "ViewBox"
+      },
+      "ViewSetupLabel": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "text": {
+                  "type": "string"
+              },
+              "displayConfig": {
+                  "$ref": "#/definitions/LabelDisplayConfig"
+              }
+          },
+          "required": [
+              "displayConfig",
+              "text"
+          ],
+          "title": "ViewSetupLabel"
+      },
+      "LabelDisplayConfig": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "type": {
+                  "type": "string"
+              },
+              "style": {
+                  "type": "string"
+              },
+              "vOffset": {
+                  "type": "integer"
+              },
+              "hOffset": {
+                  "type": "integer"
+              }
+          },
+          "required": [
+              "style",
+              "type"
+          ],
+          "title": "LabelDisplayConfig"
+      },
+      "SequenceConfig": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "range": {
+                  "$ref": "#/definitions/Range"
+              }
+          },
+          "required": [
+              "range"
+          ],
+          "title": "SequenceConfig"
+      },
+      "Range": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "start": {
+                  "type": "integer"
+              },
+              "end": {
+                  "type": "integer"
+              }
+          },
+          "required": [
+              "end",
+              "start"
+          ],
+          "title": "Range"
+      },
+      "Track": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "displayConfig": {
+                  "$ref": "#/definitions/AxisDisplayConfig"
+              },
+              "axes": {
+                  "type": "array",
+                  "items": {
+                      "$ref": "#/definitions/Axis"
+                  }
+              },
+              "markers": {
+                  "type": "array",
+                  "items": {
+                      "$ref": "#/definitions/Marker"
+                  }
+              }
+          },
+          "required": [
+              "axes",
+              "displayConfig",
+              "markers"
+          ],
+          "title": "Track"
+      },
+      "Axis": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "displayConfig": {
+                  "$ref": "#/definitions/AxisDisplayConfig"
+              }
+          },
+          "required": [
+              "displayConfig"
+          ],
+          "title": "Axis"
+      },
+      "AxisDisplayConfig": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "distance": {
+                  "type": "integer"
+              },
+              "width": {
+                  "type": "integer"
+              },
+              "style": {
+                  "type": "string"
+              },
+              "scales": {
+                  "type": "array",
+                  "items": {
+                      "$ref": "#/definitions/Scale"
+                  }
+              }
+          },
+          "required": [
+              "distance",
+              "width"
+          ],
+          "title": "AxisDisplayConfig"
+      },
+      "Scale": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "width": {
+                  "type": "integer"
+              },
+              "distance": {
+                  "type": "integer"
+              },
+              "total": {
+                  "type": "integer"
+              },
+              "style": {
+                  "type": "string"
+              },
+              "label": {
+                  "$ref": "#/definitions/ScaleLabel"
+              },
+              "interval": {
+                  "type": "integer"
+              },
+              "ticks": {
+                  "type": "array",
+                  "items": {
+                      "type": "integer"
+                  }
+              }
+          },
+          "required": [
+              "distance",
+              "label",
+              "style",
+              "width"
+          ],
+          "title": "Scale"
+      },
+      "ScaleLabel": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "type": {
+                  "type": "string"
+              },
+              "style": {
+                  "type": "string"
+              },
+              "distance": {
+                  "type": "integer"
+              }
+          },
+          "required": [
+              "distance",
+              "style",
+              "type"
+          ],
+          "title": "ScaleLabel"
+      },
+      "Marker": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "displayConfig": {
+                  "$ref": "#/definitions/MarkerDisplayConfig"
+              },
+              "location": {
+                  "$ref": "#/definitions/Range"
+              },
+              "direction": {
+                  "type": "string"
+              },
+              "labels": {
+                  "type": "array",
+                  "items": {
+                      "$ref": "#/definitions/MarkerLabel"
+                  }
+              }
+          },
+          "required": [
+              "direction",
+              "displayConfig",
+              "labels",
+              "location"
+          ],
+          "title": "Marker"
+      },
+      "MarkerDisplayConfig": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "width": {
+                  "type": "integer"
+              },
+              "style": {
+                  "type": "string"
+              },
+              "anchor": {
+                  "$ref": "#/definitions/ViewBox"
+              }
+          },
+          "required": [
+              "style",
+              "width"
+          ],
+          "title": "MarkerDisplayConfig"
+      },
+      "MarkerLabel": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "text": {
+                  "type": "string"
+              },
+              "displayConfig": {
+                  "$ref": "#/definitions/LabelDisplayConfig"
+              },
+              "line": {
+                  "$ref": "#/definitions/LineUnion"
+              }
+          },
+          "required": [
+              "displayConfig",
+              "text"
+          ],
+          "title": "MarkerLabel"
+      },
+      "LineClass": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "coords": {
+                  "type": "array",
+                  "items": {
+                      "$ref": "#/definitions/Coord"
+                  }
+              },
+              "displayConfig": {
+                  "$ref": "#/definitions/LineDisplayConfig"
+              }
+          },
+          "required": [
+              "coords"
+          ],
+          "title": "LineClass"
+      },
+      "Coord": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "x": {
+                  "type": "integer"
+              },
+              "y": {
+                  "type": "integer"
+              }
+          },
+          "required": [
+              "x",
+              "y"
+          ],
+          "title": "Coord"
+      },
+      "LineDisplayConfig": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+              "style": {
+                  "type": "string"
+              }
+          },
+          "required": [
+              "style"
+          ],
+          "title": "LineDisplayConfig"
+      },
+      "LineUnion": {
+          "anyOf": [
+              {
+                  "type": "boolean"
+              },
+              {
+                  "$ref": "#/definitions/LineClass"
+              }
+          ],
+          "title": "LineUnion"
+      }
+  }
+}
