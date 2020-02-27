@@ -1,11 +1,11 @@
-import core from './core';
+import * as core from 'hyperapp';
 import { Actions, App } from './core';
 
-import { Axis } from './axis';
-import { Label } from './label';
-import { Marker } from './marker';
-import { Track } from './track';
-import { PlasmidMap } from './map';
+import { AxisRenderer } from './axis';
+import { LabelRenderer } from './label';
+import { MarkerRenderer } from './marker';
+import { TrackRenderer } from './track';
+import { PlasmidMapRenderer } from './map';
 
 import {
   DataToComponentModelFn,
@@ -20,6 +20,12 @@ import * as Transformer from '../core/transformer/circular/types';
 import { resolveTextStyle, updateContextStyle } from '../core/util';
 
 const { h, app } = core;
+
+const Axis = AxisRenderer(h);
+const Label = LabelRenderer(h);
+const Marker = MarkerRenderer(h);
+const Track = TrackRenderer(h);
+const PlasmidMap = PlasmidMapRenderer(h);
 
 const DEFAULT_STATE: VectorMap = {
   displayConfig: {

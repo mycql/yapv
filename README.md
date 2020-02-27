@@ -6,7 +6,7 @@
 
 ### What is it?
 
-YAPV is a library for building views for plasmid maps which is a common way to represent [vectors](https://en.wikipedia.org/wiki/Vector_%28molecular_biology%29). You can read more about there [here](https://bitesizebio.com/43119/the-beginners-guide-to-reading-plasmid-maps/) or [here](https://pediaa.com/how-to-read-a-plasmid-map/).
+YAPV is a library for building views for plasmid maps which is a common way to represent [vectors](https://en.wikipedia.org/wiki/Vector_%28molecular_biology%29). You can read more about that [here](https://bitesizebio.com/43119/the-beginners-guide-to-reading-plasmid-maps/) or [here](https://pediaa.com/how-to-read-a-plasmid-map/).
 
 They usually look like this:
 

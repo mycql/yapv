@@ -1,45 +1,47 @@
 import { CSSProperties, ReactNode } from 'react';
-import core from './core';
+import { H } from './core';
 import { arcAsDonutPaths } from './common';
 import { AxisRenderModel, ScaleRenderModel, TickRenderModel } from '../core/transformer/circular/types';
 import { toCamelCaseKeys } from '../core/util';
 import { Coord } from '../core/models';
 
-const { h } = core;
-
-function scalesAsPaths(scale: ScaleRenderModel): JSX.Element {
-  const scaleStyle = {...scale.style, ...{ 'fill-rule' : 'evenodd' }};
-  const cssProps: CSSProperties = toCamelCaseKeys(scaleStyle);
-  const scalePaths = scale.ticks.map((coords: TickRenderModel) => {
-    const from: Coord = coords[0];
-    const to: Coord = coords[1];
-    const path = `M ${from.x} ${from.y} L ${to.x} ${to.y}`;
+function scalesAsPaths(h: H) {
+  return (scale: ScaleRenderModel): JSX.Element => {
+    const scaleStyle = {...scale.style, ...{ 'fill-rule' : 'evenodd' }};
+    const cssProps: CSSProperties = toCamelCaseKeys(scaleStyle);
+    const scalePaths = scale.ticks.map((coords: TickRenderModel) => {
+      const from: Coord = coords[0];
+      const to: Coord = coords[1];
+      const path = `M ${from.x} ${from.y} L ${to.x} ${to.y}`;
+      return (
+        <path d={path} style={cssProps}></path>
+      );
+    });
     return (
-      <path d={path} style={cssProps}></path>
+      <g>{scalePaths}</g>
     );
-  });
-  return (
-    <g>{scalePaths}</g>
-  );
+  };
 }
 
-export const Axis = (params: AxisRenderModel, children: ReactNode[]) => {
-  const { axis, scales } = params;
-  const axisStyle = {...axis.style, ...{ 'fill-rule' : 'evenodd' }};
-  const cssProps: CSSProperties = toCamelCaseKeys(axisStyle);
-  const path = arcAsDonutPaths(axis.annulus).join(' ');
-  const scalePaths = scales.map(scalesAsPaths);
-  return (
-    <g>
+export const AxisRenderer = (h: H) => {
+  return (params: AxisRenderModel, children: ReactNode[]) => {
+    const { axis, scales } = params;
+    const axisStyle = {...axis.style, ...{ 'fill-rule' : 'evenodd' }};
+    const cssProps: CSSProperties = toCamelCaseKeys(axisStyle);
+    const path = arcAsDonutPaths(axis.annulus).join(' ');
+    const scalePaths = scales.map(scalesAsPaths(h));
+    return (
       <g>
-        <path d={path} style={cssProps}></path>
+        <g>
+          <path d={path} style={cssProps}></path>
+        </g>
+        <g>
+          {scalePaths}
+        </g>
+        <g>
+          {children}
+        </g>
       </g>
-      <g>
-        {scalePaths}
-      </g>
-      <g>
-        {children}
-      </g>
-    </g>
-  );
+    );
+  };
 };
