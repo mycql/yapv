@@ -8,3 +8,11 @@ branches:
     - master # build master branch only
 script:
   - npm run build
+before_deploy:
+  - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc 2> /dev/null
+deploy:
+  provider: script
+  script: "npm run release:deploy"
+  skip_cleanup: true
+  on:
+    tags: true

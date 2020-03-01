@@ -17,6 +17,8 @@
     "postinstall": "lerna bootstrap && npm run link:core",
     "build": "lerna run prep && lerna run build && lerna run declare",
     "clean": "lerna run clean",
+    "release:prepare": "lerna version",
+    "release:deploy": "lerna publish from-git --yes",
     "serve:browse": "browser-sync start --server --startPath 'examples/plain/index.html' --files 'examples' 'packages/core/lib' 'packages/canvas/lib' 'packages/svg/lib'",
     "serve:watch": "lerna run --parallel serve",
     "serve": "npm run clean && concurrently --kill-others \"npm run serve:watch\" \"npm run serve:browse\""
