@@ -3,6 +3,7 @@
 
 [![Build Status](https://travis-ci.com/mycql/yapv.svg?branch=master)](https://travis-ci.com/mycql/yapv)
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
+[![npm version](https://badge.fury.io/js/%40yapv%2Fcore.svg)](https://badge.fury.io/js/%40yapv%2Fcore)
 
 ### What is it?
 
