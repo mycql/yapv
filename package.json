@@ -33,6 +33,7 @@
     "lerna": "^3.20.2",
     "rimraf": "^2.6.2",
     "rollup": "^1.27.14",
+    "rollup-plugin-terser": "^5.2.0",
     "symlink-dir": "^3.1.1",
     "tslib": "^1.10.0",
     "tslint": "^5.20.1",
