@@ -16,13 +16,27 @@ They usually look like this:
 
 They can be drawn and interpreted in multiple different ways and this is exactly what YAPV is meant to do.
 
+## Wait, what? Another plasmid viewer?
+
+Yeah, yeah. I know what your thinking. Sure there are tons of viewers out there that scientists can use instead, so why bother? Well my friend, first, most of them are part of a commercial software offering. Second, none of them are composable. Third, I can't really find any other decent open source library alternatives, so I am building one.
+
 ## Getting Started
+
+If you're using a module bundler:
 ```shell
 npm install @yapv/core
 // and install any of the renderers
 npm install @yapv/svg
 // OR
 npm install @yapv/canvas
+```
+
+If you want it directly off html:
+```html
+<script src="https://unpkg.com/@yapv/core@0.1.0/lib/index.umd.js" />
+<script src="https://unpkg.com/@yapv/canvas@0.1.0/lib/index.umd.js" />
+// OR
+<script src="https://unpkg.com/@yapv/svg@0.1.0/lib/index.umd.js" />
 ```
 
 ## How do I use it? Show me the code!
@@ -52,6 +66,6 @@ The 'data' instance is a JS object that conforms to the schema below.
 ## Data Schema
 [schema.json](https://ghcdn.rawgit.org/mycql/yapv/master/packages/core/src/schema.json ':include :type=code')
 
-## Tutorial
+## [Tutorial](tutorial/)
 
 If you want more guidance, head over to the [Tutorial](tutorial/) section to get started on how to slowly build your data model from scratch.
