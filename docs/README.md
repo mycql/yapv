@@ -6,7 +6,7 @@
 
 ## What is it?
 
-YAPV is a library for building views for plasmid maps which is a common way to represent [vectors](https://en.wikipedia.org/wiki/Vector_%28molecular_biology%29). If you do not have a molecular biology background and want to know more details on how to read one, you can read more about that [here](https://bitesizebio.com/43119/the-beginners-guide-to-reading-plasmid-maps/) or [here](https://pediaa.com/how-to-read-a-plasmid-map/).
+YAPV is a library for building views for plasmid maps with no external dependencies and is framework agnostic. Plasmid maps are a common way to represent [vectors](https://en.wikipedia.org/wiki/Vector_%28molecular_biology%29). If you do not have a molecular biology background and want to know more details on how to read one, you can read more about that [here](https://bitesizebio.com/43119/the-beginners-guide-to-reading-plasmid-maps/) or [here](https://pediaa.com/how-to-read-a-plasmid-map/).
 
 They usually look like this:
 
@@ -18,7 +18,7 @@ They can be drawn and interpreted in multiple different ways and this is exactly
 
 ## Wait, what? Another plasmid viewer?
 
-Yeah, yeah. I know what your thinking. Sure there are tons of viewers out there that scientists can use instead, so why bother? Well my friend, first, most of them are part of a commercial software offering. Second, none of them are composable. Third, I can't really find any other decent open source library alternatives, so I am building one.
+Yeah, yeah. I know what you're thinking. Sure there are tons of viewers out there that scientists can use instead, so why bother? Well my friend, most of them are part of a commercial software offering, and usually desktop based. There are really a limited options of web based open source viewers I can find. And well, I can't really find any other decent open source library alternatives that are composable and independent of frameworks, so here I am building one. ^_^
 
 ## Getting Started
 
@@ -66,6 +66,6 @@ The 'data' instance is a JS object that conforms to the schema below.
 ## Data Schema
 [schema.json](https://ghcdn.rawgit.org/mycql/yapv/master/packages/core/src/schema.json ':include :type=code')
 
-## [Tutorial](tutorial/)
+## [Learn The Basics](tutorial/)
 
 If you want more guidance, head over to the [Tutorial](tutorial/) section to get started on how to slowly build your data model from scratch.
