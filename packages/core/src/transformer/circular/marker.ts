@@ -2,15 +2,14 @@ import {
   AnchorDisplayConfig,
   Coord,
   Direction,
-  Directions,
   Location,
   Marker,
   MarkerDisplayConfig,
-  PI,
   RenderModelTransformer,
   ScaleLinear,
   StringKeyValMap,
-} from '../../models';
+} from '../../models/types';
+import { Directions, PI } from '../../models';
 import {
   angleRadInBetweenSides,
   arcLength,

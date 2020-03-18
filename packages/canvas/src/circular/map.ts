@@ -5,9 +5,7 @@ import {
   StringKeyValMap,
   TextMeasurer,
   VectorMap,
-} from '../core/models';
-import { resolveTextStyle, updateContextStyle } from '../core/util';
-import { preserveAspectRatio } from './common';
+} from '../core/models/types';
 
 import {
   AxisAndLabels,
@@ -19,6 +17,9 @@ import {
   TrackRenderModel,
   TrackRenderModelComponents,
 } from '../core/transformer/circular/types';
+
+import { resolveTextStyle, updateContextStyle } from '../core/util';
+import { preserveAspectRatio } from './common';
 
 import renderTrack from './track';
 import renderMarker from './marker';

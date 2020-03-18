@@ -1,4 +1,4 @@
-import { ComponentRenderer, Coord, Location } from '../core/models';
+import { ComponentRenderer, Coord, Location } from '../core/models/types';
 import { MarkerRenderModel } from '../core/transformer/circular/types';
 import { pathDraw } from './common';
 

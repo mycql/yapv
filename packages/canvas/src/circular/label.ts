@@ -1,21 +1,7 @@
-import {
-  ComponentRenderer,
-  Coord,
-  LabelType,
-  LabelTypes,
-  PI,
-} from '../core/models';
-import {
-  resolveTextStyle,
-  textContentWidth,
-  updateContextStyle,
-  withAxisOffset,
-} from '../core/util';
-import {
-  ConnectorRenderModel,
-  LabelRenderModel,
-  TextRenderModel,
-} from '../core/transformer/circular/types';
+import { ComponentRenderer, Coord, LabelType } from '../core/models/types';
+import { ConnectorRenderModel, LabelRenderModel, TextRenderModel } from '../core/transformer/circular/types';
+import { LabelTypes, PI } from '../core/models';
+import { resolveTextStyle, textContentWidth, updateContextStyle, withAxisOffset } from '../core/util';
 
 import { pathDraw } from './common';
 

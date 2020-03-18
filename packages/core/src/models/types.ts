@@ -1,31 +1,15 @@
-export const PI: {
-  WHOLE: number;
-  HALF: number;
-  TWICE: number;
-} = {
-  WHOLE: Math.PI,
-  HALF: Math.PI / 2,
-  TWICE: Math.PI * 2,
-};
-
-export interface ScaleLinear<T, U> {
+export type ScaleLinear<T, U> = {
   (value: T): U;
   domain(values: T[]): ScaleLinear<T, U>;
   range(values: U[]): ScaleLinear<T, U>;
-}
+};
 
 export type StringKeyValMap = { [key: string]: string };
 
 export type StringKeyNumValMap = { [key: string]: number };
 
 export type CollisionState = 1 | 0;
-export const CollisionStates: {
-  HIT: CollisionState;
-  NO_HIT: CollisionState
-} = {
-  HIT: 1,
-  NO_HIT: 0,
-};
+
 export type CollisionIndicator<T extends object, U extends object> = (model: T, target: U) => CollisionState;
 
 export type CharInfo = {
@@ -33,33 +17,33 @@ export type CharInfo = {
   space: number;
 };
 
-export interface DefaultArcObject {
+export type DefaultArcObject = {
   anglesInRadians: Location;
   radii: {
     inner: number;
     outer: number;
   };
-}
+};
 
 export type Coord = { x: number, y: number };
 export type PolarCoord = { radius: number, angleInRadians: number; };
 
-export interface Location {
+export type Location = {
   start: number;
   end: number;
-}
+};
 
-export interface Dimension {
+export type Dimension = {
   width: number;
   height: number;
-}
+};
 
-export interface DisplayConfig {
+export type DisplayConfig = {
   width: number;
   style: string;
-}
+};
 
-export interface SpacedDispayConfig extends DisplayConfig {
+export type SpacedDispayConfig = {
   /**
    * Distance of the center of the the target component
    * to a reference point:
@@ -67,65 +51,51 @@ export interface SpacedDispayConfig extends DisplayConfig {
    * For linear, the center of the main axis
    */
   distance: number;
-}
+} & DisplayConfig;
 
-export interface SizedDisplayConfig extends DisplayConfig, Dimension {
-}
+export type SizedDisplayConfig = DisplayConfig & Dimension;
 
-export interface ViewDisplayConfig extends SizedDisplayConfig {
+export type ViewDisplayConfig = {
   viewBox: Dimension;
-}
+} & SizedDisplayConfig;
 
-export interface ComponentModel<T extends DisplayConfig> {
+export type ComponentModel<T extends DisplayConfig, U = {}> = {
   displayConfig: T;
-  // parent?: ComponentModel<DisplayConfig>;
-}
+  parent?: U;
+};
 
-export interface LocatableComponentModel<T extends DisplayConfig> extends ComponentModel<T> {
+export type LocatableComponentModel<T extends DisplayConfig> = {
   location: Location;
-}
+} & ComponentModel<T>;
 
-export interface Line extends ComponentModel<DisplayConfig> {
-  coords: Coord[];
-}
+export type LineComponentModel = {
+  coords?: Coord[];
+} & ComponentModel<DisplayConfig>;
+
+export type Line = LineComponentModel;
 
 export type LabelType = 'path' | 'text';
 
-export const LabelTypes: { PATH: LabelType; TEXT: LabelType } = {
-  PATH: 'path',
-  TEXT: 'text',
-};
-
-export interface LabelDisplayConfig extends SpacedDispayConfig {
+export type LabelDisplayConfig = {
   vOffset?: number;
   hOffset?: number;
   type: LabelType;
-}
+} & SpacedDispayConfig;
 
-export interface Label extends LocatableComponentModel<LabelDisplayConfig> {
+export type LabelComponentModel = {
   text: string;
   line?: boolean | Line;
-}
+} & LocatableComponentModel<LabelDisplayConfig>;
+
+export type Label = LabelComponentModel;
 
 export type Direction = '+' | '-' | '#' | '*';
 
-export const Directions: {
-  FORWARD: Direction;
-  REVERSE: Direction;
-  NONE: Direction;
-  BOTH: Direction;
-} = {
-  FORWARD: '+',
-  REVERSE: '-',
-  NONE: '#',
-  BOTH: '*',
-};
-
 export type AnchorDisplayConfig = SizedDisplayConfig;
 
-export interface MarkerDisplayConfig extends SpacedDispayConfig {
+export type MarkerDisplayConfig = {
   anchor?: AnchorDisplayConfig;
-}
+} & SpacedDispayConfig;
 
 /**
  * Supported styles:
@@ -133,14 +103,17 @@ export interface MarkerDisplayConfig extends SpacedDispayConfig {
  * stroke-width, stroke-linecap, stroke-linejoin,
  * stroke-miterlimit, stroke-dasharray, stroke-dashoffset
  */
-export interface Marker extends LocatableComponentModel<MarkerDisplayConfig> {
+export type MarkerComponentModel = {
   direction: Direction;
+} & LocatableComponentModel<MarkerDisplayConfig>;
+
+export type Marker = {
   labels?: Label[];
-}
+} & MarkerComponentModel;
 
 export type TrackDisplayConfig = SpacedDispayConfig;
 
-export interface AxisTickConfig extends SpacedDispayConfig {
+export type AxisTickConfig = {
   /**
    * Vertical distance of each scale marker to
    * the center of the axis on which it is
@@ -169,13 +142,13 @@ export interface AxisTickConfig extends SpacedDispayConfig {
    * labels will be associated with tick items
    */
   label?: LabelDisplayConfig;
-}
+} & SpacedDispayConfig;
 
 /**
  * For axes, the distance is relative to the middle of
  * the enclosing track
  */
-export interface AxisDisplayConfig extends SpacedDispayConfig {
+export type AxisDisplayConfig = {
   /**
    * Distance of the center of the axis to the
    * center of the track on which the scales
@@ -183,9 +156,11 @@ export interface AxisDisplayConfig extends SpacedDispayConfig {
    */
   distance: number;
   scales: AxisTickConfig[];
-}
+} & SpacedDispayConfig;
 
-export type Axis = LocatableComponentModel<AxisDisplayConfig>;
+export type AxisComponentModel = LocatableComponentModel<AxisDisplayConfig>;
+
+export type Axis = AxisComponentModel;
 
 /**
  * Supported styles:
@@ -193,25 +168,31 @@ export type Axis = LocatableComponentModel<AxisDisplayConfig>;
  * stroke-width, stroke-linecap, stroke-linejoin,
  * stroke-miterlimit, stroke-dasharray, stroke-dashoffset
  */
-export interface Track extends ComponentModel<TrackDisplayConfig> {
+export type TrackComponentModel = {
   index: number;
-  markers: Marker[];
+} & ComponentModel<TrackDisplayConfig>;
+
+export type Track = {
+  markers?: Marker[];
   axes?: Axis[];
-}
+} & TrackComponentModel;
 
 export type VectorMapDisplayConfig = ViewDisplayConfig;
 
-export interface VectorMapSeqConfig {
+export type VectorMapSeqConfig = {
   range: Location;
   sequence?: string;
-}
+};
 
-export interface VectorMap extends ComponentModel<VectorMapDisplayConfig> {
+export type VectorMapComponentModel = {
   displayConfig: VectorMapDisplayConfig;
   sequenceConfig: VectorMapSeqConfig;
-  tracks: Track[];
+} & ComponentModel<VectorMapDisplayConfig>;
+
+export type VectorMap = {
+  tracks?: Track[];
   labels?: Label[];
-}
+} & VectorMapComponentModel;
 
 export type RenderModelTransformer<T extends ComponentModel<U>,
                                    U extends DisplayConfig,

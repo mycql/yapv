@@ -1,9 +1,10 @@
 import { CSSProperties, ReactNode } from 'react';
 import { H } from './core';
-import { arcEndsCoords, Positioned } from './common';
+import { Coord } from '../core/models/types';
 import { MarkerRenderModel } from '../core/transformer/circular/types';
-import { Coord, PI } from '../core/models';
+import { PI } from '../core/models';
 import { toCamelCaseKeys } from '../core/util';
+import { arcEndsCoords, Positioned } from './common';
 
 function anchorPaths(coords: Coord[], isBeginning: boolean): string[] {
   return coords.map((coord: Coord, index: number) => {

@@ -1,13 +1,13 @@
 import {
   DefaultArcObject,
   Location,
-  PI,
   RenderModelTransformer,
   ScaleLinear,
   StringKeyValMap,
   Track,
   TrackDisplayConfig,
-} from '../../models';
+} from '../../models/types';
+import { PI } from '../../models';
 import { parseStyle } from '../../util';
 
 const defaultStyle: string = 'stroke: black; fill: transparent;';

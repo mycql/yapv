@@ -1,4 +1,4 @@
-import { DataToComponentModelFn, InHouseVectorMapRenderer, RenderFn, VectorMap, VectorMapRenderer } from './models';
+import { DataToComponentModelFn, InHouseVectorMapRenderer, RenderFn, VectorMap, VectorMapRenderer } from './models/types';
 
 import circularTransform from './transformer/circular/map';
 

@@ -5,17 +5,17 @@ import {
   Label,
   Location,
   Marker,
-  PI,
   ScaleLinear,
   TextMeasurer,
   Track,
   VectorMap,
-} from '../../models';
-import { scaleLinear, deepClone, withAxisOffset } from '../../util';
+} from '../../models/types';
 import { TrackRenderModel } from './track';
 import { MarkerRenderModel } from './marker';
 import { AxisRenderModel } from './axis';
 import { LabelRenderModel } from './label';
+import { PI } from '../../models';
+import { scaleLinear, deepClone, withAxisOffset } from '../../util';
 import mapTrack from './track';
 import mapMarker from './marker';
 import mapLabel from './label';
@@ -46,10 +46,10 @@ function arrayOrEmpty<T>(array: T[] | undefined): T[] {
   return array || [];
 }
 
-function toMarkerModels(markers: Marker[],
-                        scale: ScaleLinear<number, number>,
+function toMarkerModels(scale: ScaleLinear<number, number>,
                         measure: TextMeasurer,
-                        trackDistance: number): MarkerAndLabels[] {
+                        trackDistance: number,
+                        markers?: Marker[]): MarkerAndLabels[] {
   return arrayOrEmpty(markers).map((marker: Marker) => {
     marker.displayConfig.distance = trackDistance;
     const markerModel: MarkerRenderModel = mapMarker(marker, scale);
@@ -62,11 +62,11 @@ function toMarkerModels(markers: Marker[],
   });
 }
 
-function toAxisModels(axes: Axis[] | undefined,
-                      range: Location,
+function toAxisModels(range: Location,
                       scale: ScaleLinear<number, number>,
                       measure: TextMeasurer,
-                      trackDistance: number): AxisAndLabels[] {
+                      trackDistance: number,
+                      axes?: Axis[]): AxisAndLabels[] {
   return arrayOrEmpty(axes).map((axis: Axis) => {
     axis.location = range;
     axis.displayConfig.distance += trackDistance;
@@ -95,8 +95,8 @@ const map: DataToComponentModelFn<MapRenderModel> = (model: VectorMap, measure: 
   const trackMarkersAxes: TrackRenderModelComponents[] = arrayOrEmpty(model.tracks).map((track: Track) => {
     const trackDistance: number = track.displayConfig.distance;
     const trackModel: TrackRenderModel = mapTrack(track, scale, range);
-    const markers: MarkerAndLabels[] = toMarkerModels(track.markers, scale, measure, trackDistance);
-    const axes: AxisAndLabels[] = toAxisModels(track.axes, range, scale, measure, trackDistance);
+    const markers: MarkerAndLabels[] = toMarkerModels(scale, measure, trackDistance, track.markers);
+    const axes: AxisAndLabels[] = toAxisModels(range, scale, measure, trackDistance, track.axes);
     return { track: trackModel, markers, axes };
   });
   const mapLabels: LabelRenderModel[] = arrayOrEmpty(model.labels).map((label: Label) => {

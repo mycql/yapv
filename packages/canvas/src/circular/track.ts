@@ -1,4 +1,4 @@
-import { ComponentRenderer } from '../core/models';
+import { ComponentRenderer } from '../core/models/types';
 import { TrackRenderModel } from '../core/transformer/circular/types';
 import { donut, pathDraw } from './common';
 

@@ -1,19 +1,18 @@
 import * as core from 'hyperapp';
 import { Actions, App } from './core';
-
-import { AxisRenderer } from './axis';
-import { LabelRenderer } from './label';
-import { MarkerRenderer } from './marker';
-import { TrackRenderer } from './track';
-import { PlasmidMapRenderer } from './map';
-
 import {
   DataToComponentModelFn,
   InHouseVectorMapRenderer,
   StringKeyValMap,
   TextMeasurer,
   VectorMap,
-} from '../core/models';
+} from '../core/models/types';
+
+import { AxisRenderer } from './axis';
+import { LabelRenderer } from './label';
+import { MarkerRenderer } from './marker';
+import { TrackRenderer } from './track';
+import { PlasmidMapRenderer } from './map';
 
 import * as Transformer from '../core/transformer/circular/types';
 

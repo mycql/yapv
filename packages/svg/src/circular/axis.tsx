@@ -1,9 +1,9 @@
 import { CSSProperties, ReactNode } from 'react';
 import { H } from './core';
-import { arcAsDonutPaths } from './common';
+import { Coord } from '../core/models/types';
 import { AxisRenderModel, ScaleRenderModel, TickRenderModel } from '../core/transformer/circular/types';
+import { arcAsDonutPaths } from './common';
 import { toCamelCaseKeys } from '../core/util';
-import { Coord } from '../core/models';
 
 function scalesAsPaths(h: H) {
   return (scale: ScaleRenderModel): JSX.Element => {

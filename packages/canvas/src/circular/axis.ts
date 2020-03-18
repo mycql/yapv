@@ -1,4 +1,4 @@
-import { ComponentRenderer, Coord } from '../core/models';
+import { ComponentRenderer, Coord } from '../core/models/types';
 import * as Transformer from '../core/transformer/circular/types';
 import { donut, pathDraw } from './common';
 

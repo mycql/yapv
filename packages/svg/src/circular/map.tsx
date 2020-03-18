@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { H } from './core';
-import { ViewDisplayConfig } from '../core/models';
+import { ViewDisplayConfig } from '../core/models/types';
 
 export const PlasmidMapRenderer = (h: H) => {
   return (params: ViewDisplayConfig, children: ReactNode[]) => {

@@ -1,4 +1,5 @@
-import { Coord, DefaultArcObject, PI } from '../core/models';
+import { Coord, DefaultArcObject } from '../core/models/types';
+import { PI } from '../core/models';
 import { toCartesianCoords } from '../core/util';
 
 export type Positioned = { start: Coord; end: Coord; };

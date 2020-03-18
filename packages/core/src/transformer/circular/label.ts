@@ -5,16 +5,15 @@ import {
   Label,
   LabelDisplayConfig,
   LabelType,
-  LabelTypes,
   Line,
   Location,
-  PI,
   RenderModelTransformer,
   ScaleLinear,
   StringKeyNumValMap,
   StringKeyValMap,
   TextMeasurer,
-} from '../../models';
+} from '../../models/types';
+import { LabelTypes, PI } from '../../models';
 import {
   textContentWidth,
   toCartesianCoords,

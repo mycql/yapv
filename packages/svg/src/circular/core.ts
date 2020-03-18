@@ -1,4 +1,4 @@
-import { VectorMap } from '../core/models';
+import { VectorMap } from '../core/models/types';
 
 export type Actions = {
   render: (value: VectorMap) => VectorMap;

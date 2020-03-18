@@ -1,13 +1,10 @@
 import { CSSProperties } from 'react';
 import { H } from './core';
-import { generateId } from './common';
-import {
-  ConnectorRenderModel,
-  LabelRenderModel,
-  TextRenderModel,
-} from '../core/transformer/circular/types';
-import { Coord, LabelTypes, Location, PI } from '../core/models';
+import { Coord, Location } from '../core/models/types';
+import { ConnectorRenderModel, LabelRenderModel, TextRenderModel } from '../core/transformer/circular/types';
+import { LabelTypes, PI } from '../core/models';
 import { textContentWidth, toCamelCaseKeys, toCartesianCoords } from '../core/util';
+import { generateId } from './common';
 
 function textAlongPath(h: H) {
   return (label: TextRenderModel, labelStyle: CSSProperties): JSX.Element => {

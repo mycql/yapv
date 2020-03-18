@@ -10,7 +10,7 @@ import {
   RenderModelTransformer,
   ScaleLinear,
   StringKeyValMap,
-} from '../../models';
+} from '../../models/types';
 import { parseStyle, toCartesianCoords } from '../../util';
 
 const defaultStyle: string = 'stroke: black; fill: gray;';

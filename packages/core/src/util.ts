@@ -1,4 +1,6 @@
-import { CharInfo, Coord, PI, ScaleLinear, StringKeyValMap } from './models';
+import { CharInfo, Coord, ScaleLinear, StringKeyValMap } from './models/types';
+
+import { PI } from './models';
 
 export type StyleResolver = (styleProp: string, styleVal: string, context: CanvasRenderingContext2D) => void;
 

@@ -1,4 +1,4 @@
-import { Coord, DefaultArcObject, Dimension, StringKeyValMap } from '../core/models';
+import { Coord, DefaultArcObject, Dimension, StringKeyValMap } from '../core/models/types';
 import { parseStyle, toCartesianCoords, updateContextStyle } from '../core/util';
 
 function startsAndEndsAtSameCoord(config: DefaultArcObject): boolean {
