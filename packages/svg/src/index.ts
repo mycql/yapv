@@ -1,5 +1,5 @@
-import render from './circular';
+import circular from './circular';
 
 export default {
-  circular: render,
+  circular,
 };

@@ -1,8 +1,8 @@
 import { CSSProperties, ReactNode } from 'react';
 import { H } from './core';
 import { Coord } from '../core/models/types';
-import { AxisRenderModel, ScaleRenderModel, TickRenderModel } from '../core/transformer/circular/types';
-import { arcAsDonutPaths } from './common';
+import { Axis as AxisBase, AxisRenderModel, ScaleRenderModel, TickRenderModel } from '../core/transformer/circular/types';
+import { arcAsDonutPaths, resolveChildNodes } from './common';
 import { toCamelCaseKeys } from '../core/util';
 
 function scalesAsPaths(h: H) {
@@ -43,5 +43,20 @@ export const AxisRenderer = (h: H) => {
         </g>
       </g>
     );
+  };
+};
+
+export type Axis = {
+  children?: ReactNode | ReactNode[];
+} & AxisBase;
+export type AxisComponentMaker = (h: H) => (props: Axis, children: ReactNode[]) => JSX.Element;
+export const AxisComponent: AxisComponentMaker = (h: H) => {
+  const render = AxisRenderer(h);
+  return (props: Axis, children: ReactNode[]) => {
+    const { layout } = props;
+    const { scale } = layout;
+    const params = layout.axis(props, scale);
+    const actualChildren: ReactNode[] = resolveChildNodes(props.children || children);
+    return render(params, actualChildren);
   };
 };

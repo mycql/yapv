@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Coord, DefaultArcObject } from '../core/models/types';
 import { PI } from '../core/models';
 import { toCartesianCoords } from '../core/util';
@@ -30,4 +31,27 @@ export function arcAsDonutPaths(arc: DefaultArcObject,
 
 export function generateId(): string {
   return Math.random().toString(36).substring(2);
+}
+
+export function isEmpty(obj: any): boolean {
+  for (const prop in obj) {
+      if (obj.hasOwnProperty(prop)) {
+        return false;
+      }
+  }
+  return true;
+}
+
+export function resolveChildNodes(children?: ReactNode | ReactNode[]): ReactNode[] {
+  let actualChildren: ReactNode[];
+  if (!Array.isArray(children)) {
+    if (isEmpty(children)) {
+      actualChildren = [];
+    } else {
+      actualChildren = [children];
+    }
+  } else {
+    actualChildren = children;
+  }
+  return actualChildren;
 }

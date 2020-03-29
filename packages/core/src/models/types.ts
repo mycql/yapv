@@ -1,7 +1,7 @@
 export type ScaleLinear<T, U> = {
   (value: T): U;
-  domain(values: T[]): ScaleLinear<T, U>;
-  range(values: U[]): ScaleLinear<T, U>;
+  domain<V = ScaleLinear<T, U>>(values?: T[]): V;
+  range<V = ScaleLinear<T, U>>(values?: U[]): V;
 };
 
 export type StringKeyValMap = { [key: string]: string };
@@ -59,20 +59,20 @@ export type ViewDisplayConfig = {
   viewBox: Dimension;
 } & SizedDisplayConfig;
 
-export type ComponentModel<T extends DisplayConfig, U = {}> = {
+export type ComponentModel<T extends DisplayConfig, U> = {
   displayConfig: T;
-  parent?: U;
+  layout?: U;
 };
 
-export type LocatableComponentModel<T extends DisplayConfig> = {
+export type LocatableComponentModel<T extends DisplayConfig, U> = {
   location: Location;
-} & ComponentModel<T>;
+} & ComponentModel<T, U>;
 
-export type LineComponentModel = {
+export type LineComponentModel<T> = {
   coords?: Coord[];
-} & ComponentModel<DisplayConfig>;
+} & ComponentModel<DisplayConfig, T>;
 
-export type Line = LineComponentModel;
+export type Line<T = {}> = LineComponentModel<T>;
 
 export type LabelType = 'path' | 'text';
 
@@ -82,12 +82,12 @@ export type LabelDisplayConfig = {
   type: LabelType;
 } & SpacedDispayConfig;
 
-export type LabelComponentModel = {
+export type LabelComponentModel<T> = {
   text: string;
   line?: boolean | Line;
-} & LocatableComponentModel<LabelDisplayConfig>;
+} & LocatableComponentModel<LabelDisplayConfig, T>;
 
-export type Label = LabelComponentModel;
+export type Label<T = {}> = LabelComponentModel<T>;
 
 export type Direction = '+' | '-' | '#' | '*';
 
@@ -103,13 +103,13 @@ export type MarkerDisplayConfig = {
  * stroke-width, stroke-linecap, stroke-linejoin,
  * stroke-miterlimit, stroke-dasharray, stroke-dashoffset
  */
-export type MarkerComponentModel = {
+export type MarkerComponentModel<T> = {
   direction: Direction;
-} & LocatableComponentModel<MarkerDisplayConfig>;
+} & LocatableComponentModel<MarkerDisplayConfig, T>;
 
-export type Marker = {
+export type Marker<T = {}> = {
   labels?: Label[];
-} & MarkerComponentModel;
+} & MarkerComponentModel<T>;
 
 export type TrackDisplayConfig = SpacedDispayConfig;
 
@@ -158,9 +158,9 @@ export type AxisDisplayConfig = {
   scales: AxisTickConfig[];
 } & SpacedDispayConfig;
 
-export type AxisComponentModel = LocatableComponentModel<AxisDisplayConfig>;
+export type AxisComponentModel<T> = LocatableComponentModel<AxisDisplayConfig, T>;
 
-export type Axis = AxisComponentModel;
+export type Axis<T = {}> = AxisComponentModel<T>;
 
 /**
  * Supported styles:
@@ -168,14 +168,14 @@ export type Axis = AxisComponentModel;
  * stroke-width, stroke-linecap, stroke-linejoin,
  * stroke-miterlimit, stroke-dasharray, stroke-dashoffset
  */
-export type TrackComponentModel = {
+export type TrackComponentModel<T> = {
   index: number;
-} & ComponentModel<TrackDisplayConfig>;
+} & ComponentModel<TrackDisplayConfig, T>;
 
-export type Track = {
+export type Track<T = {}> = {
   markers?: Marker[];
   axes?: Axis[];
-} & TrackComponentModel;
+} & TrackComponentModel<T>;
 
 export type VectorMapDisplayConfig = ViewDisplayConfig;
 
@@ -184,19 +184,21 @@ export type VectorMapSeqConfig = {
   sequence?: string;
 };
 
-export type VectorMapComponentModel = {
+export type VectorMapComponentModel<T> = {
   displayConfig: VectorMapDisplayConfig;
   sequenceConfig: VectorMapSeqConfig;
-} & ComponentModel<VectorMapDisplayConfig>;
+} & ComponentModel<VectorMapDisplayConfig, T>;
 
-export type VectorMap = {
+export type VectorMap<T = {}> = {
   tracks?: Track[];
   labels?: Label[];
-} & VectorMapComponentModel;
+} & VectorMapComponentModel<T>;
 
-export type RenderModelTransformer<T extends ComponentModel<U>,
+export type RenderModelTransformer<T extends ComponentModel<U, X>,
                                    U extends DisplayConfig,
-                                   V extends object, W extends object> =
+                                   V extends object,
+                                   W extends object,
+                                   X = {}> =
   (model: T, scale: ScaleLinear<number, number>, params?: W) => V;
 export type ComponentRenderer<T extends object,
                               U extends object,
@@ -211,7 +213,17 @@ export type TextMeasurer = (text: string, style: StringKeyValMap) => number;
 
 export type DataToComponentModelFn<T extends object> = (model: VectorMap, measure: TextMeasurer) => T;
 
+export type LayoutType = 'circular';
+
 export type InHouseVectorMapRenderer<T extends object> = {
-  key: string;
+  key: LayoutType;
   createRenderer(transform: DataToComponentModelFn<T>): VectorMapRenderer;
+};
+
+export type VectorMapLayoutProvider<T, U, V, W> = {
+  scale: ScaleLinear<number, number>;
+  track(model: Track, scale: ScaleLinear<number, number>, range?: Location): T;
+  axis(model: Axis, scale: ScaleLinear<number, number>): U;
+  marker(model: Marker, scale: ScaleLinear<number, number>): V;
+  label(model: Label, scale: ScaleLinear<number, number>, measureText?: TextMeasurer): W;
 };

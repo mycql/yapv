@@ -1,10 +1,10 @@
 import { CSSProperties, ReactNode } from 'react';
 import { H } from './core';
 import { Coord } from '../core/models/types';
-import { MarkerRenderModel } from '../core/transformer/circular/types';
+import { Marker as MarkerBase, MarkerRenderModel } from '../core/transformer/circular/types';
 import { PI } from '../core/models';
 import { toCamelCaseKeys } from '../core/util';
-import { arcEndsCoords, Positioned } from './common';
+import { arcEndsCoords, Positioned, resolveChildNodes } from './common';
 
 function anchorPaths(coords: Coord[], isBeginning: boolean): string[] {
   return coords.map((coord: Coord, index: number) => {
@@ -45,5 +45,20 @@ export const MarkerRenderer = (h: H) => {
         </g>
       </g>
     );
+  };
+};
+
+export type Marker = {
+  children?: ReactNode | ReactNode[];
+} & MarkerBase;
+export type MarkerComponentMaker = (h: H) => (props: Marker, children: ReactNode[]) => JSX.Element;
+export const MarkerComponent = (h: H) => {
+  const render = MarkerRenderer(h);
+  return (props: Marker, children: ReactNode[]) => {
+    const { layout } = props;
+    const { scale } = layout;
+    const params = layout.marker(props, scale);
+    const actualChildren: ReactNode[] = resolveChildNodes(props.children || children);
+    return render(params, actualChildren);
   };
 };

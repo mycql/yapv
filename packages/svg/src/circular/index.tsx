@@ -3,20 +3,19 @@ import { Actions, App } from './core';
 import {
   DataToComponentModelFn,
   InHouseVectorMapRenderer,
-  StringKeyValMap,
   TextMeasurer,
   VectorMap,
 } from '../core/models/types';
 
-import { AxisRenderer } from './axis';
-import { LabelRenderer } from './label';
-import { MarkerRenderer } from './marker';
-import { TrackRenderer } from './track';
-import { PlasmidMapRenderer } from './map';
+import { AxisComponent, AxisComponentMaker, AxisRenderer } from './axis';
+import { LabelComponent, LabelComponentMaker, LabelRenderer } from './label';
+import { MarkerComponent, MarkerComponentMaker, MarkerRenderer } from './marker';
+import { TrackComponent, TrackComponentMaker, TrackRenderer } from './track';
+import { PlasmidMapComponent, PlasmidMapComponentMaker, PlasmidMapRenderer } from './map';
 
 import * as Transformer from '../core/transformer/circular/types';
 
-import { resolveTextStyle, updateContextStyle } from '../core/util';
+import { canvasContextTextMeasurer } from '../core/util';
 
 const { h, app } = core;
 
@@ -43,16 +42,6 @@ const DEFAULT_STATE: VectorMap = {
   },
   tracks: [],
 };
-
-function canvasContextTextMeasurer(context: CanvasRenderingContext2D): TextMeasurer {
-  return (text: string, style: StringKeyValMap) => {
-    context.save();
-    updateContextStyle(context, style, resolveTextStyle);
-    const size: number = context.measureText(text).width;
-    context.restore();
-    return size;
-  };
-}
 
 function createCanvasContext(container: HTMLElement): CanvasRenderingContext2D {
   const canvas: HTMLCanvasElement = document.createElement('canvas');
@@ -98,7 +87,21 @@ function createLabels(labels: Transformer.LabelRenderModel[]): JSX.Element[] {
   return labels.map((params: Transformer.LabelRenderModel) => <Label {...params}></Label>);
 }
 
-const render: InHouseVectorMapRenderer<Transformer.MapRenderModel> = {
+type SVGVectorMapRenderer = {
+  AxisComponent: AxisComponentMaker,
+  LabelComponent: LabelComponentMaker,
+  TrackComponent: TrackComponentMaker,
+  MarkerComponent: MarkerComponentMaker,
+  PlasmidMapComponent: PlasmidMapComponentMaker,
+  textMeasurer: (root: HTMLElement) => TextMeasurer;
+} & InHouseVectorMapRenderer<Transformer.MapRenderModel>;
+
+const render: SVGVectorMapRenderer = {
+  AxisComponent,
+  LabelComponent,
+  TrackComponent,
+  MarkerComponent,
+  PlasmidMapComponent,
   key: 'circular',
   createRenderer: (transform: DataToComponentModelFn<Transformer.MapRenderModel>) => {
     return (root: HTMLElement) => {
@@ -140,6 +143,7 @@ const render: InHouseVectorMapRenderer<Transformer.MapRenderModel> = {
       };
     };
   },
+  textMeasurer: (root: HTMLElement) => canvasContextTextMeasurer(createCanvasContext(root)),
 };
 
 export default render;

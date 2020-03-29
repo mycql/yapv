@@ -1,38 +1,33 @@
-import { DataToComponentModelFn, InHouseVectorMapRenderer, RenderFn, VectorMap, VectorMapRenderer } from './models/types';
+import { DataToComponentModelFn, InHouseVectorMapRenderer, Location, RenderFn, VectorMap, VectorMapRenderer } from './models/types';
+import { LayoutProvider as CircularLayoutProvider } from './transformer/circular/types';
 
-import circularTransform from './transformer/circular/map';
+import { mapData as mapAsCircularData, provideLayout as provideCircularLayoutTransforms } from './transformer/circular';
 
-const InHouseTransformers: { [key: string]: DataToComponentModelFn<any>} = {
-  circular: circularTransform,
+const dataTransformers: { [key: string]: DataToComponentModelFn<any>} = {
+  circular: mapAsCircularData,
 };
 
-type MapRenderer = VectorMapRenderer | InHouseVectorMapRenderer<any>;
-
 export type YapvViewer = {
-  use: (renderer: MapRenderer) => YapvViewer;
+  use: (renderer: InHouseVectorMapRenderer<object>) => YapvViewer;
   draw: RenderFn;
   clear: () => Promise<void>;
 };
 
 export type YapvBase = {
   create: (container: HTMLElement) => YapvViewer;
+  layout: {
+    circular: (range: Location) => CircularLayoutProvider;
+  };
 };
 
 const baseImpl: YapvBase = {
   create: (container: HTMLElement) => {
-    let doRender: VectorMapRenderer;
     let renderFn: RenderFn;
     const viewer: YapvViewer = {
-      use: (renderer: MapRenderer) => {
+      use: (renderer: InHouseVectorMapRenderer<object>) => {
         viewer.clear();
-        const isBuiltIn: boolean = typeof renderer === 'object';
-        if (isBuiltIn) {
-          const inHouseRenderer = (renderer as InHouseVectorMapRenderer<object>);
-          const { key, createRenderer } = inHouseRenderer;
-          doRender = createRenderer(InHouseTransformers[key]);
-        } else {
-          doRender = renderer as VectorMapRenderer;
-        }
+        const { key, createRenderer } = renderer;
+        const doRender: VectorMapRenderer = createRenderer(dataTransformers[key]);
         renderFn = doRender(container);
         return viewer;
       },
@@ -50,6 +45,9 @@ const baseImpl: YapvBase = {
       },
     };
     return viewer;
+  },
+  layout: {
+    circular: provideCircularLayoutTransforms,
   },
 };
 

@@ -1,10 +1,20 @@
-import { CharInfo, Coord, ScaleLinear, StringKeyValMap } from './models/types';
+import { CharInfo, Coord, ScaleLinear, StringKeyValMap, TextMeasurer } from './models/types';
 
 import { PI } from './models';
 
 export type StyleResolver = (styleProp: string, styleVal: string, context: CanvasRenderingContext2D) => void;
 
 export const _AXIS_OFFSET_RADIANS: number = -PI.HALF;
+
+export function canvasContextTextMeasurer(context: CanvasRenderingContext2D): TextMeasurer {
+  return (text: string, style: StringKeyValMap) => {
+    context.save();
+    updateContextStyle(context, style, resolveTextStyle);
+    const size: number = context.measureText(text).width;
+    context.restore();
+    return size;
+  };
+}
 
 export function scaleLinear(): ScaleLinear<number, number> {
   return (() => {
@@ -21,12 +31,18 @@ export function scaleLinear(): ScaleLinear<number, number> {
       }
       return answer;
     };
-    scale.domain = (values: number[]): ScaleLinear<number, number> => {
+    scale.domain = (values?: number[]): ScaleLinear<number, number> | number[] => {
+      if (!values) {
+        return domain;
+      }
       answers = {};
       domain = values;
       return scale;
     };
-    scale.range = (values: number[]): ScaleLinear<number, number> => {
+    scale.range = (values?: number[]): ScaleLinear<number, number> | number[] => {
+      if (!values) {
+        return range;
+      }
       answers = {};
       range = values;
       return scale;

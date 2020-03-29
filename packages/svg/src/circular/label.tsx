@@ -1,7 +1,7 @@
-import { CSSProperties } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 import { H } from './core';
 import { Coord, Location } from '../core/models/types';
-import { ConnectorRenderModel, LabelRenderModel, TextRenderModel } from '../core/transformer/circular/types';
+import { ConnectorRenderModel, Label, LabelRenderModel, TextRenderModel } from '../core/transformer/circular/types';
 import { LabelTypes, PI } from '../core/models';
 import { textContentWidth, toCamelCaseKeys, toCartesianCoords } from '../core/util';
 import { generateId } from './common';
@@ -97,5 +97,16 @@ export const LabelRenderer = (h: H) => {
     } else {
       return labelComponent;
     }
+  };
+};
+
+export type LabelComponentMaker = (h: H) => (props: Label, children: ReactNode[]) => JSX.Element;
+export const LabelComponent: LabelComponentMaker = (h: H) => {
+  const render = LabelRenderer(h);
+  return (props: Label) => {
+    const { layout, measureText } = props;
+    const { scale } = layout;
+    const params = layout.label(props, scale, measureText);
+    return render(params);
   };
 };

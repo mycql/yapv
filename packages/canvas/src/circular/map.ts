@@ -2,7 +2,6 @@ import {
   ComponentRenderer,
   DataToComponentModelFn,
   InHouseVectorMapRenderer,
-  StringKeyValMap,
   TextMeasurer,
   VectorMap,
 } from '../core/models/types';
@@ -18,7 +17,7 @@ import {
   TrackRenderModelComponents,
 } from '../core/transformer/circular/types';
 
-import { resolveTextStyle, updateContextStyle } from '../core/util';
+import { canvasContextTextMeasurer } from '../core/util';
 import { preserveAspectRatio } from './common';
 
 import renderTrack from './track';
@@ -80,16 +79,6 @@ function pairRendererWithModels(orderedModels: OrderedModels): ModelRendererPair
     },
   ];
   return renderPairs;
-}
-
-function canvasContextTextMeasurer(context: CanvasRenderingContext2D): TextMeasurer {
-  return (text: string, style: StringKeyValMap) => {
-    context.save();
-    updateContextStyle(context, style, resolveTextStyle);
-    const size: number = context.measureText(text).width;
-    context.restore();
-    return size;
-  };
 }
 
 const render: InHouseVectorMapRenderer<MapRenderModel> = {
