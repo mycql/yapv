@@ -93,7 +93,6 @@ type SVGVectorMapRenderer = {
   TrackComponent: TrackComponentMaker,
   MarkerComponent: MarkerComponentMaker,
   PlasmidMapComponent: PlasmidMapComponentMaker,
-  textMeasurer: (root: HTMLElement) => TextMeasurer;
 } & InHouseVectorMapRenderer<Transformer.MapRenderModel>;
 
 const render: SVGVectorMapRenderer = {
@@ -143,7 +142,6 @@ const render: SVGVectorMapRenderer = {
       };
     };
   },
-  textMeasurer: (root: HTMLElement) => canvasContextTextMeasurer(createCanvasContext(root)),
 };
 
 export default render;

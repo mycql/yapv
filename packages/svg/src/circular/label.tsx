@@ -3,7 +3,7 @@ import { H } from './core';
 import { Coord, Location } from '../core/models/types';
 import { ConnectorRenderModel, Label, LabelRenderModel, TextRenderModel } from '../core/transformer/circular/types';
 import { LabelTypes, PI } from '../core/models';
-import { textContentWidth, toCamelCaseKeys, toCartesianCoords } from '../core/util';
+import { canvasContextTextMeasurer, textContentWidth, toCamelCaseKeys, toCartesianCoords } from '../core/util';
 import { generateId } from './common';
 
 function textAlongPath(h: H) {
@@ -104,9 +104,9 @@ export type LabelComponentMaker = (h: H) => (props: Label, children: ReactNode[]
 export const LabelComponent: LabelComponentMaker = (h: H) => {
   const render = LabelRenderer(h);
   return (props: Label) => {
-    const { layout, measureText } = props;
+    const { layout, canvasContext } = props;
     const { scale } = layout;
-    const params = layout.label(props, scale, measureText);
+    const params = layout.label(props, scale, canvasContextTextMeasurer(canvasContext()));
     return render(params);
   };
 };
