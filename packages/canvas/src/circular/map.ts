@@ -81,7 +81,7 @@ function pairRendererWithModels(orderedModels: OrderedModels): ModelRendererPair
   return renderPairs;
 }
 
-const render: InHouseVectorMapRenderer<MapRenderModel> = {
+const render: InHouseVectorMapRenderer<MapRenderModel, object, object, object, object> = {
   key: 'circular',
   createRenderer: (transform: DataToComponentModelFn<MapRenderModel>) => {
     return (container: HTMLElement) => {

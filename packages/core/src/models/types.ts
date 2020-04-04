@@ -211,14 +211,9 @@ export type VectorMapRenderer = (container: HTMLElement) => RenderFn;
 
 export type TextMeasurer = (text: string, style: StringKeyValMap) => number;
 
-export type DataToComponentModelFn<T extends object> = (model: VectorMap, measure: TextMeasurer) => T;
+export type DataToComponentModelFn<T> = (model: VectorMap, measure: TextMeasurer) => T;
 
 export type LayoutType = 'circular';
-
-export type InHouseVectorMapRenderer<T extends object> = {
-  key: LayoutType;
-  createRenderer(transform: DataToComponentModelFn<T>): VectorMapRenderer;
-};
 
 export type VectorMapLayoutProvider<T, U, V, W> = {
   scale: ScaleLinear<number, number>;
@@ -226,4 +221,12 @@ export type VectorMapLayoutProvider<T, U, V, W> = {
   axis(model: Axis, scale: ScaleLinear<number, number>): U;
   marker(model: Marker, scale: ScaleLinear<number, number>): V;
   label(model: Label, scale: ScaleLinear<number, number>, measureText?: TextMeasurer): W;
+};
+
+export type VectorMapLayoutProviderMaker<T, U, V, W> = (range: Location) => VectorMapLayoutProvider<T, U, V, W>;
+
+export type InHouseVectorMapRenderer<T, U, V, W, X> = {
+  key: LayoutType;
+  withLayout?: (layoutProviderMaker: VectorMapLayoutProviderMaker<U, V, W, X>) => VectorMapRenderer;
+  createRenderer(transform: DataToComponentModelFn<T>): VectorMapRenderer;
 };

@@ -3,9 +3,9 @@ import {
   Label as LabelCore,
   Location,
   Marker as MarkerCore,
-  TextMeasurer,
   Track as TrackCore,
   VectorMapLayoutProvider,
+  VectorMapLayoutProviderMaker,
 } from '../../models/types';
 
 import { AnnulusRenderModel, AxisRenderModel, ScaleRenderModel, TickRenderModel} from './axis';
@@ -15,6 +15,13 @@ import { MarkerRenderModel } from './marker';
 import { TrackRenderModel } from './track';
 
 export type LayoutProvider = VectorMapLayoutProvider<
+  TrackRenderModel,
+  AxisRenderModel,
+  MarkerRenderModel,
+  LabelRenderModel
+>;
+
+export type LayoutProviderMaker = VectorMapLayoutProviderMaker<
   TrackRenderModel,
   AxisRenderModel,
   MarkerRenderModel,

@@ -7,8 +7,10 @@ const dataTransformers: { [key: string]: DataToComponentModelFn<any>} = {
   circular: mapAsCircularData,
 };
 
+type GenericVectorMapRenderer = InHouseVectorMapRenderer<object, object, object, object, object>;
+
 export type YapvViewer = {
-  use: (renderer: InHouseVectorMapRenderer<object>) => YapvViewer;
+  use: (renderer: GenericVectorMapRenderer) => YapvViewer;
   draw: RenderFn;
   clear: () => Promise<void>;
 };
@@ -24,10 +26,12 @@ const baseImpl: YapvBase = {
   create: (container: HTMLElement) => {
     let renderFn: RenderFn;
     const viewer: YapvViewer = {
-      use: (renderer: InHouseVectorMapRenderer<object>) => {
+      use: (renderer: GenericVectorMapRenderer) => {
         viewer.clear();
-        const { key, createRenderer } = renderer;
-        const doRender: VectorMapRenderer = createRenderer(dataTransformers[key]);
+        const { key, createRenderer, withLayout } = renderer;
+        const doRender: VectorMapRenderer = withLayout ?
+          withLayout(provideCircularLayoutTransforms) :
+          createRenderer(dataTransformers[key]);
         renderFn = doRender(container);
         return viewer;
       },
