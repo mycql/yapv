@@ -35,4 +35,13 @@ const AxisRenderer: Renderer = (params: Transformer.AxisRenderModel,
   return Promise.resolve(true);
 };
 
+type Render = ComponentRenderer<Transformer.Axis, CanvasRenderingContext2D, boolean>;
+export const render: Render = (props: Transformer.Axis,
+                               context: CanvasRenderingContext2D): Promise<boolean> => {
+  const { layout } = props;
+  const { scale } = layout;
+  const params = layout.axis(props, scale);
+  return AxisRenderer(params, context);
+};
+
 export default AxisRenderer;

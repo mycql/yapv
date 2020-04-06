@@ -1,138 +1,23 @@
-import {
-  ComponentRenderer,
-  DataToComponentModelFn,
-  InHouseVectorMapRenderer,
-  TextMeasurer,
-  VectorMap,
-} from '../core/models/types';
+import { ComponentRenderer, VectorMap } from '../core/models/types';
 
-import {
-  AxisAndLabels,
-  AxisRenderModel,
-  LabelRenderModel,
-  MapRenderModel,
-  MarkerAndLabels,
-  MarkerRenderModel,
-  TrackRenderModel,
-  TrackRenderModelComponents,
-} from '../core/transformer/circular/types';
+type Render = ComponentRenderer<VectorMap, HTMLCanvasElement, boolean>;
+const render: Render = (props: VectorMap, canvas: HTMLCanvasElement): Promise<boolean> => {
+  const context: CanvasRenderingContext2D = canvas.getContext('2d') as CanvasRenderingContext2D;
+  const { displayConfig } = props;
+  const { viewBox, width: viewWidth, height: viewHeight } = displayConfig;
+  const { width, height } = viewBox;
+  canvas.setAttribute('width', `${width}`);
+  canvas.setAttribute('height', `${height}`);
+  canvas.style.width = `${viewWidth}px`;
+  canvas.style.height = `${viewHeight}px`;
+  const x: number = width / 2;
+  const y: number = height / 2;
 
-import { canvasContextTextMeasurer } from '../core/util';
-import { preserveAspectRatio } from './common';
+  context.save();
+  context.translate(x, y);
+  context.clearRect(-x, -y, width, height);
 
-import renderTrack from './track';
-import renderMarker from './marker';
-import renderAxis from './axis';
-import renderLabel from './label';
-
-type ComponentObjectRenderer = ComponentRenderer<object, CanvasRenderingContext2D, boolean>;
-
-type ModelRendererPair = {
-  render: ComponentObjectRenderer;
-  models: object[];
-};
-
-export type OrderedModels = {
-  tracks: TrackRenderModel[];
-  axes: AxisRenderModel[];
-  markers: MarkerRenderModel[];
-  labels: LabelRenderModel[];
-};
-
-export function orderModels(renderModel: MapRenderModel): OrderedModels {
-  const orderedModels: OrderedModels = {
-    axes: [], labels: [], markers: [], tracks: [],
-  };
-  renderModel.tracks.reduce((acc: OrderedModels, trackComponents: TrackRenderModelComponents) => {
-    acc.tracks.push(trackComponents.track);
-    trackComponents.markers.forEach((markerAndLabels: MarkerAndLabels) => {
-      acc.markers.push(markerAndLabels.marker);
-      acc.labels = acc.labels.concat(markerAndLabels.labels);
-    });
-    (trackComponents.axes || []).forEach((axisAndLabels: AxisAndLabels) => {
-      acc.axes.push(axisAndLabels.axis);
-      acc.labels = acc.labels.concat(axisAndLabels.labels);
-    });
-    return acc;
-  }, orderedModels);
-  orderedModels.labels = orderedModels.labels.concat(renderModel.labels);
-  return orderedModels;
-}
-
-function pairRendererWithModels(orderedModels: OrderedModels): ModelRendererPair[] {
-  const renderPairs: ModelRendererPair[] = [
-    {
-      render: renderTrack as ComponentObjectRenderer,
-      models: orderedModels.tracks,
-    },
-    {
-      render: renderAxis as ComponentObjectRenderer,
-      models: orderedModels.axes,
-    },
-    {
-      render: renderMarker as ComponentObjectRenderer,
-      models: orderedModels.markers,
-    },
-    {
-      render: renderLabel as ComponentObjectRenderer,
-      models: orderedModels.labels,
-    },
-  ];
-  return renderPairs;
-}
-
-const render: InHouseVectorMapRenderer<MapRenderModel, object, object, object, object> = {
-  key: 'circular',
-  createRenderer: (transform: DataToComponentModelFn<MapRenderModel>) => {
-    return (container: HTMLElement) => {
-      const canvas: HTMLCanvasElement = document.createElement('canvas');
-      const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
-      container.appendChild(canvas);
-      return (model: VectorMap): Promise<boolean> => {
-        if (!context) {
-          return Promise.resolve(false);
-        }
-        let { displayConfig } = model;
-        displayConfig = {
-          ...{
-            viewBox: {
-              height: displayConfig.width,
-              width: displayConfig.width,
-            },
-          },
-          ...displayConfig,
-        };
-        displayConfig.viewBox = preserveAspectRatio(displayConfig,
-          displayConfig.viewBox, 'xMidYMid meet').dest;
-        const { viewBox, width: viewWidth, height: viewHeight } = displayConfig;
-        const { width, height } = viewBox;
-        canvas.setAttribute('width', `${width}`);
-        canvas.setAttribute('height', `${height}`);
-        canvas.style.width = `${viewWidth}px`;
-        canvas.style.height = `${viewHeight}px`;
-        const x: number = width / 2;
-        const y: number = height / 2;
-
-        context.save();
-        context.translate(x, y);
-        context.clearRect(-x, -y, width, height);
-
-        const measureText: TextMeasurer = canvasContextTextMeasurer(context);
-        const renderModel: MapRenderModel = transform(model, measureText);
-        const orderedModels: OrderedModels = orderModels(renderModel);
-        const renderPairs: ModelRendererPair[] = pairRendererWithModels(orderedModels);
-
-        renderPairs.forEach((renderPair: ModelRendererPair) => {
-          renderPair.models.forEach((toRender: object) => {
-            renderPair.render(toRender, context);
-          });
-        });
-
-        context.restore();
-        return Promise.resolve(true);
-      };
-    };
-  },
+  return Promise.resolve<boolean>(true);
 };
 
 export default render;

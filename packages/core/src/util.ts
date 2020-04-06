@@ -1,4 +1,4 @@
-import { CharInfo, Coord, ScaleLinear, StringKeyValMap, TextMeasurer } from './models/types';
+import { CharInfo, Coord, ScaleLinear, StringKeyValMap, TextMeasurer, VectorMap } from './models/types';
 
 import { PI } from './models';
 
@@ -188,4 +188,24 @@ export function textContentWidth(symbols: string[], charInfo: CharInfo) {
   return symbols.reduce((total: number, symbol: string) => {
     return total + widths[symbol];
   }, spaceWidth);
+}
+
+export function withDefaultViewBoxIfNotPresent(vectorMap: VectorMap): VectorMap {
+  const { displayConfig : mapDisplayConfig } = vectorMap;
+  return {
+    ...vectorMap,
+    displayConfig: {
+      ...{
+        viewBox: {
+          height: mapDisplayConfig.width,
+          width: mapDisplayConfig.width,
+        },
+      },
+      ...mapDisplayConfig,
+    },
+  };
+}
+
+export function arrayOrEmpty<T>(array: T[] | undefined): T[] {
+  return array || [];
 }

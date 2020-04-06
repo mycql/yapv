@@ -196,14 +196,11 @@ export type VectorMap<T = {}> = {
 
 export type RenderModelTransformer<T extends ComponentModel<U, X>,
                                    U extends DisplayConfig,
-                                   V extends object,
-                                   W extends object,
+                                   V,
+                                   W,
                                    X = {}> =
   (model: T, scale: ScaleLinear<number, number>, params?: W) => V;
-export type ComponentRenderer<T extends object,
-                              U extends object,
-                              V extends any> =
-  (params: T, context: U) => Promise<V>;
+export type ComponentRenderer<T, U, V> = (params: T, context: U) => Promise<V>;
 
 export type RenderFn = (mode: VectorMap) => Promise<boolean>;
 
@@ -228,5 +225,5 @@ export type VectorMapLayoutProviderMaker<T, U, V, W> = (range: Location) => Vect
 export type InHouseVectorMapRenderer<T, U, V, W, X> = {
   key: LayoutType;
   withLayout?: (layoutProviderMaker: VectorMapLayoutProviderMaker<U, V, W, X>) => VectorMapRenderer;
-  createRenderer(transform: DataToComponentModelFn<T>): VectorMapRenderer;
+  createRenderer: (transform: DataToComponentModelFn<T>) => VectorMapRenderer;
 };

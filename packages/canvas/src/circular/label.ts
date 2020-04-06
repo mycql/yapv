@@ -1,7 +1,7 @@
 import { ComponentRenderer, Coord, LabelType } from '../core/models/types';
-import { ConnectorRenderModel, LabelRenderModel, TextRenderModel } from '../core/transformer/circular/types';
+import { ConnectorRenderModel, Label, LabelRenderModel, TextRenderModel } from '../core/transformer/circular/types';
 import { LabelTypes, PI } from '../core/models';
-import { resolveTextStyle, textContentWidth, updateContextStyle, withAxisOffset } from '../core/util';
+import { canvasContextTextMeasurer, resolveTextStyle, textContentWidth, updateContextStyle, withAxisOffset } from '../core/util';
 
 import { pathDraw } from './common';
 
@@ -83,6 +83,14 @@ const LabelRenderer: Renderer = (params: LabelRenderModel, context: CanvasRender
     drawLine(params.connector, context);
   }
   return Promise.resolve(true);
+};
+
+type Render = ComponentRenderer<Label, CanvasRenderingContext2D, boolean>;
+export const render: Render = (props: Label, context: CanvasRenderingContext2D): Promise<boolean> => {
+  const { layout, canvasContext } = props;
+  const { scale } = layout;
+  const params = layout.label(props, scale, canvasContextTextMeasurer(canvasContext()));
+  return LabelRenderer(params, context);
 };
 
 export default LabelRenderer;

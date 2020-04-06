@@ -15,7 +15,7 @@ import { PlasmidMapComponent, PlasmidMapComponentMaker, PlasmidMapRenderer } fro
 
 import * as Transformer from '../core/transformer/circular/types';
 
-import { canvasContextTextMeasurer } from '../core/util';
+import { arrayOrEmpty, canvasContextTextMeasurer, withDefaultViewBoxIfNotPresent } from '../core/util';
 
 const { h, app } = core;
 
@@ -93,10 +93,6 @@ function createLabels(labels: Transformer.LabelRenderModel[]): JSX.Element[] {
   return labels.map((params: Transformer.LabelRenderModel) => <Label {...params}></Label>);
 }
 
-function arrayOrEmpty<T>(array: T[] | undefined): T[] {
-  return array || [];
-}
-
 type SVGVectorMapRenderer = {
   AxisComponent: AxisComponentMaker,
   LabelComponent: LabelComponentMaker,
@@ -129,19 +125,7 @@ const render: SVGVectorMapRenderer = {
         render: (value: VectorMap) => value,
       };
       const view = (state: VectorMap = DEFAULT_STATE) => {
-        const { displayConfig : mapDisplayConfig } = state;
-        const vectorMap: VectorMap =  {
-          ...state,
-          displayConfig: {
-            ...{
-              viewBox: {
-                height: mapDisplayConfig.width,
-                width: mapDisplayConfig.width,
-              },
-            },
-            ...mapDisplayConfig,
-          },
-        };
+        const vectorMap: VectorMap =  withDefaultViewBoxIfNotPresent(state);
         const { sequenceConfig } = vectorMap;
         const { range } = sequenceConfig;
         const layout = layoutCreator(range);
