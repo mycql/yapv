@@ -200,7 +200,6 @@ export type RenderModelTransformer<T extends ComponentModel<U, X>,
                                    W,
                                    X = {}> =
   (model: T, scale: ScaleLinear<number, number>, params?: W) => V;
-export type ComponentRenderer<T, U, V> = (params: T, context: U) => Promise<V>;
 
 export type RenderFn = (mode: VectorMap) => Promise<boolean>;
 
@@ -208,9 +207,28 @@ export type VectorMapRenderer = (container: HTMLElement) => RenderFn;
 
 export type TextMeasurer = (text: string, style: StringKeyValMap) => number;
 
-export type DataToComponentModelFn<T> = (model: VectorMap, measure: TextMeasurer) => T;
-
 export type LayoutType = 'circular';
+
+export type NormalizedComponentModel<T, U, V, W> = {
+  vectorMap: VectorMap;
+  tracks: Array<{
+    track: T;
+    axes: Array<{
+      axis: U;
+      labels: W[];
+    }>;
+    markers: Array<{
+      marker: V;
+      labels: W[];
+    }>
+  }>;
+  labels: W[];
+};
+
+export type VectortMapDataNormalizer<T, U, V, W, A, B, C, D> =
+  (vectorMap: VectorMap,
+   layoutCreator: VectorMapLayoutProviderMaker<T, U, V, W>,
+   canvasContextProvider: () => CanvasRenderingContext2D) => NormalizedComponentModel<A, B, C, D>;
 
 export type VectorMapLayoutProvider<T, U, V, W> = {
   scale: ScaleLinear<number, number>;
@@ -222,8 +240,8 @@ export type VectorMapLayoutProvider<T, U, V, W> = {
 
 export type VectorMapLayoutProviderMaker<T, U, V, W> = (range: Location) => VectorMapLayoutProvider<T, U, V, W>;
 
-export type InHouseVectorMapRenderer<T, U, V, W, X> = {
+export type InHouseVectorMapRenderer<U, V, W, X, A = {}, B = {}, C = {}, D = {}> = {
   key: LayoutType;
-  withLayout?: (layoutProviderMaker: VectorMapLayoutProviderMaker<U, V, W, X>) => VectorMapRenderer;
-  createRenderer: (transform: DataToComponentModelFn<T>) => VectorMapRenderer;
+  withLayout: (layoutProviderMaker: VectorMapLayoutProviderMaker<U, V, W, X>,
+               convert: VectortMapDataNormalizer<U, V, W, X, A, B, C, D>) => VectorMapRenderer;
 };

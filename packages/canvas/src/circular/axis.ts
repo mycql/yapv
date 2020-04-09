@@ -1,4 +1,5 @@
-import { ComponentRenderer, Coord } from '../core/models/types';
+import { Coord } from '../core/models/types';
+import { ComponentRenderer } from './types';
 import * as Transformer from '../core/transformer/circular/types';
 import { donut, pathDraw } from './common';
 
@@ -27,8 +28,8 @@ function drawScales(params: Transformer.ScaleRenderModel, context: CanvasRenderi
 }
 
 type Renderer = ComponentRenderer<Transformer.AxisRenderModel, CanvasRenderingContext2D, boolean>;
-const AxisRenderer: Renderer = (params: Transformer.AxisRenderModel,
-                                context: CanvasRenderingContext2D): Promise<boolean> => {
+const doRender: Renderer = (params: Transformer.AxisRenderModel,
+                            context: CanvasRenderingContext2D): Promise<boolean> => {
   drawAxis(params.axis, context);
   params.scales.forEach((scaleParams: Transformer.ScaleRenderModel) =>
     drawScales(scaleParams, context));
@@ -41,7 +42,5 @@ export const render: Render = (props: Transformer.Axis,
   const { layout } = props;
   const { scale } = layout;
   const params = layout.axis(props, scale);
-  return AxisRenderer(params, context);
+  return doRender(params, context);
 };
-
-export default AxisRenderer;

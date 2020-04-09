@@ -1,4 +1,5 @@
-import { ComponentRenderer, VectorMap } from '../core/models/types';
+import { VectorMap } from '../core/models/types';
+import { ComponentRenderer } from './types';
 
 type Render = ComponentRenderer<VectorMap, HTMLCanvasElement, boolean>;
 const render: Render = (props: VectorMap, canvas: HTMLCanvasElement): Promise<boolean> => {

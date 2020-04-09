@@ -1,13 +1,27 @@
-import { DataToComponentModelFn, InHouseVectorMapRenderer, Location, RenderFn, VectorMap, VectorMapRenderer } from './models/types';
+import {
+  InHouseVectorMapRenderer,
+  Location,
+  RenderFn,
+  VectorMap,
+  VectortMapDataNormalizer,
+  VectorMapLayoutProviderMaker,
+  VectorMapRenderer,
+} from './models/types';
 import { LayoutProvider as CircularLayoutProvider } from './transformer/circular/types';
 
-import { mapData as mapAsCircularData, provideLayout as provideCircularLayoutTransforms } from './transformer/circular';
+import {
+  provideLayout as provideCircularLayoutTransforms,
+  convert as convertCircular,
+} from './transformer/circular';
 
-const dataTransformers: { [key: string]: DataToComponentModelFn<any>} = {
-  circular: mapAsCircularData,
+const providers: { [key: string]: [
+  VectorMapLayoutProviderMaker<any, any, any, any>,
+  VectortMapDataNormalizer<any, any, any, any, any, any, any, any>,
+]} = {
+  circular: [provideCircularLayoutTransforms, convertCircular],
 };
 
-type GenericVectorMapRenderer = InHouseVectorMapRenderer<object, object, object, object, object>;
+type GenericVectorMapRenderer = InHouseVectorMapRenderer<any, any, any, any>;
 
 export type YapvViewer = {
   use: (renderer: GenericVectorMapRenderer) => YapvViewer;
@@ -28,10 +42,9 @@ const baseImpl: YapvBase = {
     const viewer: YapvViewer = {
       use: (renderer: GenericVectorMapRenderer) => {
         viewer.clear();
-        const { key, createRenderer, withLayout } = renderer;
-        const doRender: VectorMapRenderer = withLayout ?
-          withLayout(provideCircularLayoutTransforms) :
-          createRenderer(dataTransformers[key]);
+        const { key, withLayout } = renderer;
+        const [ layoutProvider, converter ] = providers[key];
+        const doRender: VectorMapRenderer = withLayout(layoutProvider, converter);
         renderFn = doRender(container);
         return viewer;
       },

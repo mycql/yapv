@@ -1,10 +1,10 @@
 import { ReactNode } from 'react';
-import { H } from './core';
+import { ComponentMaker, H } from './types';
 import { VectorMap as VectorMapBase, ViewDisplayConfig } from '../core/models/types';
 
 import { resolveChildNodes } from './common';
 
-export const PlasmidMapRenderer = (h: H) => {
+const createRenderer: ComponentMaker<ViewDisplayConfig> = (h: H) => {
   return (params: ViewDisplayConfig, children: ReactNode[]) => {
     const { width, height } = params;
     const { width: viewWidth, height: viewHeight } = params.viewBox;
@@ -33,9 +33,9 @@ export const PlasmidMapRenderer = (h: H) => {
 export type VectorMap = {
   children?: ReactNode | ReactNode[];
 } & VectorMapBase;
-export type PlasmidMapComponentMaker = (h: H) => (props: VectorMap, children: ReactNode[]) => JSX.Element;
-export const PlasmidMapComponent = (h: H) => {
-  const render = PlasmidMapRenderer(h);
+export type PlasmidMapComponentMaker = ComponentMaker<VectorMap>;
+export const PlasmidMapComponent: PlasmidMapComponentMaker = (h: H) => {
+  const render = createRenderer(h);
   return (props: VectorMap, children: ReactNode[]) => {
     const { displayConfig } = props;
     const actualChildren: ReactNode[] = resolveChildNodes(props.children || children);

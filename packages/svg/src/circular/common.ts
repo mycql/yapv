@@ -1,9 +1,8 @@
 import { ReactNode } from 'react';
 import { Coord, DefaultArcObject } from '../core/models/types';
+import { Positioned } from './types';
 import { PI } from '../core/models';
 import { toCartesianCoords } from '../core/util';
-
-export type Positioned = { start: Coord; end: Coord; };
 
 export function arcEndsCoords(radius: number, startAngle: number, endAngle: number): Positioned {
   const center: Coord = { x: 0, y: 0 };

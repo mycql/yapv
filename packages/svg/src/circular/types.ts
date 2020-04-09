@@ -1,4 +1,7 @@
-import { VectorMap } from '../core/models/types';
+import { ReactNode } from 'react';
+import { Coord, VectorMap } from '../core/models/types';
+
+export type Positioned = { start: Coord; end: Coord; };
 
 export type Actions = {
   render: (value: VectorMap) => VectorMap;
@@ -25,3 +28,6 @@ export type H<Attributes = {}> = (
   attributes?: Attributes,
   ...children: Array<Children | Children[]>
 ) => VNode<Attributes>;
+
+export type ComponentRenderer<T> = (params: T, children: ReactNode[]) => JSX.Element;
+export type ComponentMaker<T> = (h: H) => ComponentRenderer<T>;

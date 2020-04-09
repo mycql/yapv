@@ -1,5 +1,5 @@
 import { CSSProperties, ReactNode } from 'react';
-import { H } from './core';
+import { ComponentMaker, H } from './types';
 import { Coord, Location } from '../core/models/types';
 import { ConnectorRenderModel, Label, LabelRenderModel, TextRenderModel } from '../core/transformer/circular/types';
 import { LabelTypes, PI } from '../core/models';
@@ -76,8 +76,8 @@ function polyLines(h: H) {
   };
 }
 
-export const LabelRenderer = (h: H) => {
-  return (params: LabelRenderModel) => {
+const createRenderer: ComponentMaker<LabelRenderModel> = (h: H) => {
+  return (params: LabelRenderModel, children: ReactNode[]) => {
     const { connector, label, type } = params;
     const { style } = label;
     const labelStyle = style || {};
@@ -100,13 +100,13 @@ export const LabelRenderer = (h: H) => {
   };
 };
 
-export type LabelComponentMaker = (h: H) => (props: Label, children: ReactNode[]) => JSX.Element;
+export type LabelComponentMaker = ComponentMaker<Label>;
 export const LabelComponent: LabelComponentMaker = (h: H) => {
-  const render = LabelRenderer(h);
+  const render = createRenderer(h);
   return (props: Label) => {
     const { layout, canvasContext } = props;
     const { scale } = layout;
     const params = layout.label(props, scale, canvasContextTextMeasurer(canvasContext()));
-    return render(params);
+    return render(params, []);
   };
 };

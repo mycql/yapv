@@ -1,4 +1,5 @@
-import { ComponentRenderer, Coord, LabelType } from '../core/models/types';
+import { Coord, LabelType } from '../core/models/types';
+import { ComponentRenderer } from './types';
 import { ConnectorRenderModel, Label, LabelRenderModel, TextRenderModel } from '../core/transformer/circular/types';
 import { LabelTypes, PI } from '../core/models';
 import { canvasContextTextMeasurer, resolveTextStyle, textContentWidth, updateContextStyle, withAxisOffset } from '../core/util';
@@ -75,7 +76,8 @@ function drawTextAlongAxis(params: TextRenderModel, context: CanvasRenderingCont
 }
 
 type Renderer = ComponentRenderer<LabelRenderModel, CanvasRenderingContext2D, boolean>;
-const LabelRenderer: Renderer = (params: LabelRenderModel, context: CanvasRenderingContext2D): Promise<boolean> => {
+const doRender: Renderer = (params: LabelRenderModel,
+                            context: CanvasRenderingContext2D): Promise<boolean> => {
   const drawLabel: RenderLabel = [params.type].map((type: LabelType) =>
     type === LabelTypes.PATH ? drawTextAlongArc : drawTextAlongAxis)[0];
   drawLabel(params.label, context);
@@ -90,7 +92,5 @@ export const render: Render = (props: Label, context: CanvasRenderingContext2D):
   const { layout, canvasContext } = props;
   const { scale } = layout;
   const params = layout.label(props, scale, canvasContextTextMeasurer(canvasContext()));
-  return LabelRenderer(params, context);
+  return doRender(params, context);
 };
-
-export default LabelRenderer;

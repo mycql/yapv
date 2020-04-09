@@ -1,4 +1,5 @@
-import { ComponentRenderer, Coord, Location } from '../core/models/types';
+import { Coord, Location } from '../core/models/types';
+import { ComponentRenderer } from './types';
 import { Marker, MarkerRenderModel } from '../core/transformer/circular/types';
 import { pathDraw } from './common';
 
@@ -9,7 +10,7 @@ function drawLine(context: CanvasRenderingContext2D): (coord: Coord) => void {
 }
 
 type Renderer = ComponentRenderer<MarkerRenderModel, CanvasRenderingContext2D, boolean>;
-const MarkerRenderer: Renderer = (params: MarkerRenderModel, context: CanvasRenderingContext2D): Promise<boolean> => {
+const doRender: Renderer = (params: MarkerRenderModel, context: CanvasRenderingContext2D): Promise<boolean> => {
   const { center, style, anchorPositions, radii, anglesInRadians}: MarkerRenderModel = params;
   const { start: arcStart, end: arcEnd }: Location = anglesInRadians;
   context.beginPath();
@@ -26,7 +27,5 @@ export const render: Render = (props: Marker, context: CanvasRenderingContext2D)
   const { layout } = props;
   const { scale } = layout;
   const params = layout.marker(props, scale);
-  return MarkerRenderer(params, context);
+  return doRender(params, context);
 };
-
-export default MarkerRenderer;

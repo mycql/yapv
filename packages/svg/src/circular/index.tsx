@@ -1,29 +1,18 @@
 import * as core from 'hyperapp';
-import { Actions, App } from './core';
-import {
-  DataToComponentModelFn,
-  InHouseVectorMapRenderer,
-  TextMeasurer,
-  VectorMap,
-} from '../core/models/types';
+import { Actions, App } from './types';
+import { InHouseVectorMapRenderer, VectorMap } from '../core/models/types';
 
-import { AxisComponent, AxisComponentMaker, AxisRenderer } from './axis';
-import { LabelComponent, LabelComponentMaker, LabelRenderer } from './label';
-import { MarkerComponent, MarkerComponentMaker, MarkerRenderer } from './marker';
-import { TrackComponent, TrackComponentMaker, TrackRenderer } from './track';
-import { PlasmidMapComponent, PlasmidMapComponentMaker, PlasmidMapRenderer } from './map';
+import { AxisComponent, AxisComponentMaker } from './axis';
+import { LabelComponent, LabelComponentMaker } from './label';
+import { MarkerComponent, MarkerComponentMaker } from './marker';
+import { TrackComponent, TrackComponentMaker } from './track';
+import { PlasmidMapComponent, PlasmidMapComponentMaker } from './map';
 
 import * as Transformer from '../core/transformer/circular/types';
 
-import { arrayOrEmpty, canvasContextTextMeasurer, withDefaultViewBoxIfNotPresent } from '../core/util';
+import { arrayOrEmpty } from '../core/util';
 
 const { h, app } = core;
-
-const Axis = AxisRenderer(h);
-const Label = LabelRenderer(h);
-const Marker = MarkerRenderer(h);
-const Track = TrackRenderer(h);
-const PlasmidMap = PlasmidMapRenderer(h);
 
 const VectorAxis = AxisComponent(h);
 const VectorLabel = LabelComponent(h);
@@ -59,40 +48,6 @@ function createCanvasContext(container: HTMLElement): CanvasRenderingContext2D {
   return canvas.getContext('2d') as CanvasRenderingContext2D;
 }
 
-function createTracks(trackComponents: Transformer.TrackRenderModelComponents[]): JSX.Element[] {
-  return trackComponents.map((componentMap: Transformer.TrackRenderModelComponents) => {
-    const { axes, track, markers } = componentMap;
-    const axisComponents = (axes || []).map((axisWithLabels: Transformer.AxisAndLabels) => {
-      const { axis, labels } = axisWithLabels;
-      const labelComponents = createLabels(labels);
-      return (
-        <Axis {...axis}>
-          {labelComponents}
-        </Axis>
-      );
-    });
-    const markerComponents = (markers || []).map((markerWithLabels: Transformer.MarkerAndLabels) => {
-      const { marker, labels } = markerWithLabels;
-      const labelComponents = createLabels(labels);
-      return (
-        <Marker {...marker}>
-          {labelComponents}
-        </Marker>
-      );
-    });
-    return (
-      <Track {...track}>
-        {axisComponents}
-        {markerComponents}
-      </Track>
-    );
-  });
-}
-
-function createLabels(labels: Transformer.LabelRenderModel[]): JSX.Element[] {
-  return labels.map((params: Transformer.LabelRenderModel) => <Label {...params}></Label>);
-}
-
 type SVGVectorMapRenderer = {
   AxisComponent: AxisComponentMaker,
   LabelComponent: LabelComponentMaker,
@@ -100,11 +55,14 @@ type SVGVectorMapRenderer = {
   MarkerComponent: MarkerComponentMaker,
   PlasmidMapComponent: PlasmidMapComponentMaker,
 } & InHouseVectorMapRenderer<
-  Transformer.MapRenderModel,
   Transformer.TrackRenderModel,
   Transformer.AxisRenderModel,
   Transformer.MarkerRenderModel,
-  Transformer.LabelRenderModel
+  Transformer.LabelRenderModel,
+  Transformer.Track,
+  Transformer.Axis,
+  Transformer.Marker,
+  Transformer.Label
 >;
 
 const render: SVGVectorMapRenderer = {
@@ -114,7 +72,8 @@ const render: SVGVectorMapRenderer = {
   MarkerComponent,
   PlasmidMapComponent,
   key: 'circular',
-  withLayout: (layoutCreator: Transformer.LayoutProviderMaker) => {
+  withLayout: (layoutCreator: Transformer.LayoutProviderMaker,
+               convert: Transformer.DataNormalizer) => {
     return (root: HTMLElement) => {
       const container: HTMLElement = document.createElement('div');
       root.appendChild(container);
@@ -125,58 +84,24 @@ const render: SVGVectorMapRenderer = {
         render: (value: VectorMap) => value,
       };
       const view = (state: VectorMap = DEFAULT_STATE) => {
-        const vectorMap: VectorMap =  withDefaultViewBoxIfNotPresent(state);
-        const { sequenceConfig } = vectorMap;
-        const { range } = sequenceConfig;
-        const layout = layoutCreator(range);
+        const componentModel: Transformer.DataComponentModel =
+          convert(state, layoutCreator, canvasContext);
+        const { vectorMap, tracks, labels: vectorMapLabels } =
+          componentModel;
         return (
           <VectorMapCanvas {...vectorMap}>
             {
-              arrayOrEmpty(state.tracks).map((trackState) => {
-                const { displayConfig } = trackState;
-                const { distance: trackDistance } = displayConfig;
-                const track: Transformer.Track = {
-                  ...trackState,
-                  range,
-                  layout,
-                };
+              arrayOrEmpty(tracks).map((trackState) => {
+                const { track, axes, markers } = trackState;
                 return (
                   <VectorTrack {...track}>
                     {
-                      arrayOrEmpty(trackState.axes).map((axisState) => {
-                        const { displayConfig: axisDisplayConfig } = axisState;
-                        const { scales } = axisDisplayConfig;
-                        const axisDistance: number = trackDistance + axisDisplayConfig.distance;
-                        const axis: Transformer.Axis = {
-                          ...axisState,
-                          displayConfig: {
-                            ...axisDisplayConfig,
-                            distance: axisDistance,
-                            scales: scales.map((scaleState) => {
-                              const { label: scaleLabel } = scaleState;
-                              return {
-                                ...scaleState,
-                                label: scaleLabel ? {
-                                  ...scaleLabel,
-                                  distance: (scaleLabel.distance || 0) + axisDistance,
-                                } : undefined,
-                              };
-                            }),
-                          },
-                          location: range,
-                          layout,
-                        };
-                        const axisLabels = layout.axis(axis, layout.scale).labels
-                              .reduce((acc, next) => acc.concat(next), []);
+                      arrayOrEmpty(axes).map((axisState) => {
+                        const { axis, labels } = axisState;
                         return (
                           <VectorAxis {...axis}>
                             {
-                              arrayOrEmpty(axisLabels).map((labelState) => {
-                                const label: Transformer.Label = {
-                                  ...labelState,
-                                  layout,
-                                  canvasContext,
-                                };
+                              arrayOrEmpty(labels).map((label) => {
                                 return <VectorLabel {...label}/>;
                               })
                             }
@@ -185,30 +110,12 @@ const render: SVGVectorMapRenderer = {
                       })
                     }
                     {
-                      arrayOrEmpty(trackState.markers).map((markerState) => {
-                        const { displayConfig: markerDisplayConfig, location: markerLocation } = markerState;
-                        const marker: Transformer.Marker = {
-                          ...markerState,
-                          displayConfig: {
-                            ...markerDisplayConfig,
-                            distance: trackDistance,
-                          },
-                          layout,
-                        };
+                      arrayOrEmpty(markers).map((markerState) => {
+                        const { marker, labels } = markerState;
                         return (
                           <VectorMarker {...marker}>
                             {
-                              arrayOrEmpty(marker.labels).map((labelState) => {
-                                const label: Transformer.Label = {
-                                  ...labelState,
-                                  location: markerLocation,
-                                  displayConfig: {
-                                    ...labelState.displayConfig,
-                                    distance: trackDistance,
-                                  },
-                                  layout,
-                                  canvasContext,
-                                };
+                              arrayOrEmpty(labels).map((label) => {
                                 return <VectorLabel {...label}/>;
                               })
                             }
@@ -222,63 +129,12 @@ const render: SVGVectorMapRenderer = {
             }
             <g>
               {
-                arrayOrEmpty(state.labels).map((labelState) => {
-                  const { displayConfig } = labelState;
-                  const label: Transformer.Label = {
-                    ...labelState,
-                    displayConfig: {
-                      ...displayConfig,
-                      distance: displayConfig.distance || 0,
-                    },
-                    location: { start: 0, end: 0},
-                    layout,
-                    canvasContext,
-                  };
+                arrayOrEmpty(vectorMapLabels).map((label) => {
                   return <VectorLabel {...label}/>;
                 })
               }
             </g>
           </VectorMapCanvas>
-        );
-      };
-      const actionables = application(DEFAULT_STATE, actions, view, container);
-      return (model: VectorMap): Promise<boolean> => {
-        actionables.render(model);
-        return Promise.resolve(true);
-      };
-    };
-  },
-  createRenderer: (transform: DataToComponentModelFn<Transformer.MapRenderModel>) => {
-    return (root: HTMLElement) => {
-      const container: HTMLElement = document.createElement('div');
-      root.appendChild(container);
-      const context: CanvasRenderingContext2D = createCanvasContext(root);
-      const textMeasure: TextMeasurer = canvasContextTextMeasurer(context);
-      const application: App = app as App;
-      const actions: Actions = {
-        render: (value: VectorMap) => value,
-      };
-      const view = (state: VectorMap = DEFAULT_STATE) => {
-        let { displayConfig } = state;
-        displayConfig = {
-          ...{
-            viewBox: {
-              height: displayConfig.width,
-              width: displayConfig.width,
-            },
-          },
-          ...displayConfig,
-        };
-        const mapModel: Transformer.MapRenderModel = transform(state, textMeasure);
-        const tracks: JSX.Element[] = createTracks(mapModel.tracks);
-        const labels: JSX.Element[] = createLabels(mapModel.labels);
-        return (
-          <PlasmidMap {...displayConfig}>
-            {tracks}
-            <g>
-              {labels}
-            </g>
-          </PlasmidMap>
         );
       };
       const actionables = application(DEFAULT_STATE, actions, view, container);

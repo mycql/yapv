@@ -1,5 +1,5 @@
 import { CSSProperties, ReactNode } from 'react';
-import { H } from './core';
+import { ComponentMaker, H } from './types';
 import { Coord } from '../core/models/types';
 import { Axis as AxisBase, AxisRenderModel, ScaleRenderModel, TickRenderModel } from '../core/transformer/circular/types';
 import { arcAsDonutPaths, resolveChildNodes } from './common';
@@ -23,7 +23,7 @@ function scalesAsPaths(h: H) {
   };
 }
 
-export const AxisRenderer = (h: H) => {
+const createRenderer: ComponentMaker<AxisRenderModel> = (h: H) => {
   return (params: AxisRenderModel, children: ReactNode[]) => {
     const { axis, scales } = params;
     const axisStyle = {...axis.style, ...{ 'fill-rule' : 'evenodd' }};
@@ -49,9 +49,9 @@ export const AxisRenderer = (h: H) => {
 export type Axis = {
   children?: ReactNode | ReactNode[];
 } & AxisBase;
-export type AxisComponentMaker = (h: H) => (props: Axis, children: ReactNode[]) => JSX.Element;
+export type AxisComponentMaker = ComponentMaker<Axis> ;
 export const AxisComponent: AxisComponentMaker = (h: H) => {
-  const render = AxisRenderer(h);
+  const render = createRenderer(h);
   return (props: Axis, children: ReactNode[]) => {
     const { layout } = props;
     const { scale } = layout;

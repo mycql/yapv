@@ -1,11 +1,11 @@
 import { CSSProperties, ReactNode } from 'react';
-import { H } from './core';
+import { ComponentMaker, H } from './types';
 import { Track as TrackBase, TrackRenderModel } from '../core/transformer/circular/types';
 
 import { arcAsDonutPaths, resolveChildNodes } from './common';
 import { toCamelCaseKeys } from '../core/util';
 
-export const TrackRenderer = (h: H) => {
+const createRenderer: ComponentMaker<TrackRenderModel> = (h: H) => {
   return (params: TrackRenderModel, children: ReactNode[]) => {
     const trackStyle = {...params.style, ...{ 'fill-rule': 'evenodd' }};
     const cssProps: CSSProperties = toCamelCaseKeys(trackStyle);
@@ -26,9 +26,9 @@ export const TrackRenderer = (h: H) => {
 export type Track = {
   children?: ReactNode | ReactNode[];
 } & TrackBase;
-export type TrackComponentMaker = (h: H) => (props: Track, children: ReactNode[]) => JSX.Element;
-export const TrackComponent = (h: H) => {
-  const render = TrackRenderer(h);
+export type TrackComponentMaker = ComponentMaker<Track>;
+export const TrackComponent: TrackComponentMaker = (h: H) => {
+  const render = createRenderer(h);
   return (props: Track, children: ReactNode[]) => {
     const { layout, range } = props;
     const { scale } = layout;

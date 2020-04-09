@@ -3,16 +3,30 @@ import {
   Label as LabelCore,
   Location,
   Marker as MarkerCore,
+  NormalizedComponentModel,
   Track as TrackCore,
+  VectortMapDataNormalizer,
   VectorMapLayoutProvider,
   VectorMapLayoutProviderMaker,
 } from '../../models/types';
 
 import { AnnulusRenderModel, AxisRenderModel, ScaleRenderModel, TickRenderModel} from './axis';
 import { ConnectorRenderModel, LabelRenderModel, TextRenderModel } from './label';
-import { AxisAndLabels, MapRenderModel, MarkerAndLabels, TrackRenderModelComponents } from './map';
 import { MarkerRenderModel } from './marker';
 import { TrackRenderModel } from './track';
+
+export type DataComponentModel = NormalizedComponentModel<Track, Axis, Marker, Label>;
+
+export type DataNormalizer = VectortMapDataNormalizer<
+  TrackRenderModel,
+  AxisRenderModel,
+  MarkerRenderModel,
+  LabelRenderModel,
+  Track,
+  Axis,
+  Marker,
+  Label
+>;
 
 export type LayoutProvider = VectorMapLayoutProvider<
   TrackRenderModel,
@@ -54,10 +68,6 @@ export {
   ConnectorRenderModel,
   LabelRenderModel,
   TextRenderModel,
-  AxisAndLabels,
-  MapRenderModel,
-  MarkerAndLabels,
-  TrackRenderModelComponents,
   MarkerRenderModel,
   TrackRenderModel,
 };

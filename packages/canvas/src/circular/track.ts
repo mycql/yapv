@@ -1,9 +1,9 @@
-import { ComponentRenderer } from '../core/models/types';
+import { ComponentRenderer } from './types';
 import { Track, TrackRenderModel } from '../core/transformer/circular/types';
 import { donut, pathDraw } from './common';
 
 type Renderer = ComponentRenderer<TrackRenderModel, CanvasRenderingContext2D, boolean>;
-const TrackRenderer: Renderer = (params: TrackRenderModel, context: CanvasRenderingContext2D): Promise<boolean> => {
+const doRender: Renderer = (params: TrackRenderModel, context: CanvasRenderingContext2D): Promise<boolean> => {
   const { annulus, style }: TrackRenderModel = params;
   context.beginPath();
   donut(context, annulus);
@@ -17,7 +17,5 @@ export const render: Render = (props: Track, context: CanvasRenderingContext2D):
   const { layout, range } = props;
   const { scale } = layout;
   const params: TrackRenderModel = layout.track(props, scale, range);
-  return TrackRenderer(params, context);
+  return doRender(params, context);
 };
-
-export default TrackRenderer;
