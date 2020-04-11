@@ -7,12 +7,12 @@ import {
   LabelType,
   Line,
   Location,
-  RenderModelTransformer,
   ScaleLinear,
   StringKeyNumValMap,
   StringKeyValMap,
   TextMeasurer,
 } from '../../models/types';
+import { RenderModelTransformer } from './types';
 import { LabelTypes, PI } from '../../models';
 import {
   textContentWidth,

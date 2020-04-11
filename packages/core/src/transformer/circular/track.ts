@@ -1,12 +1,12 @@
 import {
   DefaultArcObject,
   Location,
-  RenderModelTransformer,
   ScaleLinear,
   StringKeyValMap,
   Track,
   TrackDisplayConfig,
 } from '../../models/types';
+import { RenderModelTransformer } from './types';
 import { PI } from '../../models';
 import { parseStyle } from '../../util';
 

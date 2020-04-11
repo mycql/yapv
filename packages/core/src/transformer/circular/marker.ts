@@ -5,10 +5,10 @@ import {
   Location,
   Marker,
   MarkerDisplayConfig,
-  RenderModelTransformer,
   ScaleLinear,
   StringKeyValMap,
 } from '../../models/types';
+import { RenderModelTransformer } from './types';
 import { Directions, PI } from '../../models';
 import {
   angleRadInBetweenSides,

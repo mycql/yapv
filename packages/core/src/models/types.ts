@@ -194,13 +194,6 @@ export type VectorMap<T = {}> = {
   labels?: Label[];
 } & VectorMapComponentModel<T>;
 
-export type RenderModelTransformer<T extends ComponentModel<U, X>,
-                                   U extends DisplayConfig,
-                                   V,
-                                   W,
-                                   X = {}> =
-  (model: T, scale: ScaleLinear<number, number>, params?: W) => V;
-
 export type RenderFn = (mode: VectorMap) => Promise<boolean>;
 
 export type VectorMapRenderer = (container: HTMLElement) => RenderFn;

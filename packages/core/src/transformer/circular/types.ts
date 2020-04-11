@@ -1,9 +1,12 @@
 import {
   Axis as AxisCore,
   Label as LabelCore,
+  ComponentModel,
+  DisplayConfig,
   Location,
   Marker as MarkerCore,
   NormalizedComponentModel,
+  ScaleLinear,
   Track as TrackCore,
   VectortMapDataNormalizer,
   VectorMapLayoutProvider,
@@ -14,6 +17,13 @@ import { AnnulusRenderModel, AxisRenderModel, ScaleRenderModel, TickRenderModel}
 import { ConnectorRenderModel, LabelRenderModel, TextRenderModel } from './label';
 import { MarkerRenderModel } from './marker';
 import { TrackRenderModel } from './track';
+
+export type RenderModelTransformer<T extends ComponentModel<U, X>,
+                                   U extends DisplayConfig,
+                                   V,
+                                   W,
+                                   X = {}> =
+  (model: T, scale: ScaleLinear<number, number>, params?: W) => V;
 
 export type DataComponentModel = NormalizedComponentModel<Track, Axis, Marker, Label>;
 

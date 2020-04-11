@@ -7,10 +7,10 @@ import {
   Location,
   Label,
   LabelDisplayConfig,
-  RenderModelTransformer,
   ScaleLinear,
   StringKeyValMap,
 } from '../../models/types';
+import { RenderModelTransformer } from './types';
 import { parseStyle, toCartesianCoords } from '../../util';
 
 const defaultStyle: string = 'stroke: black; fill: gray;';
