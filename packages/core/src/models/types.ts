@@ -195,8 +195,14 @@ export type VectorMap<T = {}> = {
 } & VectorMapComponentModel<T>;
 
 export type RenderFn = (mode: VectorMap) => Promise<boolean>;
+export type ClearRenderFn = () => Promise<boolean>;
 
-export type VectorMapRenderer = (container: HTMLElement) => RenderFn;
+export type ComponentRenderer = {
+  clear: ClearRenderFn;
+  render: RenderFn;
+};
+
+export type VectorMapRenderer = (container: HTMLElement) => ComponentRenderer;
 
 export type TextMeasurer = (text: string, style: StringKeyValMap) => number;
 

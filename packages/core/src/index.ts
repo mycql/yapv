@@ -1,4 +1,5 @@
 import {
+  ComponentRenderer,
   InHouseVectorMapRenderer,
   Location,
   RenderFn,
@@ -26,7 +27,7 @@ type GenericVectorMapRenderer = InHouseVectorMapRenderer<any, any, any, any>;
 export type YapvViewer = {
   use: (renderer: GenericVectorMapRenderer) => YapvViewer;
   draw: RenderFn;
-  clear: () => Promise<void>;
+  clear: () => Promise<boolean>;
 };
 
 export type YapvBase = {
@@ -38,27 +39,34 @@ export type YapvBase = {
 
 const baseImpl: YapvBase = {
   create: (container: HTMLElement) => {
-    let renderFn: RenderFn;
+    let component: ComponentRenderer;
+    let initialClearState: Promise<boolean> | null;
     const viewer: YapvViewer = {
       use: (renderer: GenericVectorMapRenderer) => {
-        viewer.clear();
-        const { key, withLayout } = renderer;
-        const [ layoutProvider, converter ] = providers[key];
-        const doRender: VectorMapRenderer = withLayout(layoutProvider, converter);
-        renderFn = doRender(container);
+        initialClearState = viewer.clear().finally(() => {
+          const { key, withLayout } = renderer;
+          const [ layoutProvider, converter ] = providers[key];
+          const doRender: VectorMapRenderer = withLayout(layoutProvider, converter);
+          component = doRender(container);
+          return Promise.resolve<boolean>(true);
+        });
         return viewer;
       },
       draw: (model: VectorMap) => {
-        return renderFn(model);
+        if (initialClearState) {
+          return initialClearState.finally(() => {
+            initialClearState = null;
+            return component.render(model);
+          });
+        } else {
+          return component.render(model);
+        }
       },
       clear: () => {
-        while (container.hasChildNodes()) {
-          const { lastChild } = container;
-          if (lastChild) {
-            container.removeChild(lastChild);
-          }
+        if (!component) {
+          return Promise.resolve<boolean>(false);
         }
-        return Promise.resolve();
+        return component.clear();
       },
     };
     return viewer;

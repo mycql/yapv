@@ -38,14 +38,13 @@ const DEFAULT_STATE: VectorMap = {
   tracks: [],
 };
 
-function createCanvasContext(container: HTMLElement): CanvasRenderingContext2D {
+function createCanvas(): HTMLCanvasElement {
   const canvas: HTMLCanvasElement = document.createElement('canvas');
   canvas.style.position = 'fixed';
   canvas.style.display = 'none';
   canvas.style.left = '-1000px';
   canvas.style.top = '-10000px';
-  container.appendChild(canvas);
-  return canvas.getContext('2d') as CanvasRenderingContext2D;
+  return canvas;
 }
 
 type SVGVectorMapRenderer = {
@@ -77,7 +76,12 @@ const render: SVGVectorMapRenderer = {
     return (root: HTMLElement) => {
       const container: HTMLElement = document.createElement('div');
       root.appendChild(container);
-      const context: CanvasRenderingContext2D = createCanvasContext(root);
+      const canvas = createCanvas();
+      root.appendChild(canvas);
+      const context = canvas.getContext('2d');
+      if (!context) {
+        throw new Error('Canvas not supported!');
+      }
       const canvasContext = () => context;
       const application: App = app as App;
       const actions: Actions = {
@@ -138,9 +142,16 @@ const render: SVGVectorMapRenderer = {
         );
       };
       const actionables = application(DEFAULT_STATE, actions, view, container);
-      return (model: VectorMap): Promise<boolean> => {
-        actionables.render(model);
-        return Promise.resolve(true);
+      return {
+        render: (model: VectorMap): Promise<boolean> => {
+          actionables.render(model);
+          return Promise.resolve(true);
+        },
+        clear: (): Promise<boolean> => {
+          root.removeChild(canvas);
+          root.removeChild(container);
+          return Promise.resolve<boolean>(true);
+        },
       };
     };
   },

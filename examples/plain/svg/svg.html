@@ -22,16 +22,18 @@
   <script src="../../../packages/core/lib/index.umd.js"></script>
   <script src="../../../packages/svg/lib/index.umd.js"></script>
   <script>
-    window.addEventListener('message', function(event) {
-      var textData = event.data;
-      if (!textData || textData.length <= 0) {
-        return;
-      }
-      var plasmidData = JSON.parse(textData);
+    window.addEventListener('load', function() {
       var workspace = document.querySelector('#workspace');
       var plasmidRenderer = YAPV.create(workspace).use(YAPV.svg.circular);
-      plasmidRenderer.draw(plasmidData);
-    }, false);
+      window.addEventListener('message', function(event) {
+        var textData = event.data;
+        if (!textData || textData.length <= 0) {
+          return;
+        }
+        var plasmidData = JSON.parse(textData);
+        plasmidRenderer.draw(plasmidData);
+      }, false);
+    });
   </script>
 </head>
 <body>

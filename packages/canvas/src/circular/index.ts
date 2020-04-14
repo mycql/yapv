@@ -3,6 +3,7 @@ import { InHouseVectorMapRenderer, VectorMap } from '../core/models/types';
 import * as Transformer from '../core/transformer/circular/types';
 
 import { arrayOrEmpty } from '../core/util';
+import { preserveAspectRatio } from './common';
 
 import { render as renderTrack } from './track';
 import { render as renderMarker } from './marker';
@@ -63,18 +64,27 @@ const render: CanvasVectorMapRenderer = {
         throw new Error('Canvas not supported!');
       }
       const canvasContext = () => context;
-      return (state: VectorMap): Promise<boolean> => {
-        const componentModel: Transformer.DataComponentModel =
-          convert(state, layoutCreator, canvasContext);
-        const { vectorMap } = componentModel;
-        const components = groupByComponent(componentModel);
-        renderMap(vectorMap, canvas);
-        components.tracks.forEach((track) => renderTrack(track, context));
-        components.axes.forEach((axis) => renderAxis(axis, context));
-        components.markers.forEach((marker) => renderMarker(marker, context));
-        components.labels.forEach((label) => renderLabel(label, context));
-        context.restore();
-        return Promise.resolve(true);
+      return {
+        render: (state: VectorMap): Promise<boolean> => {
+          const componentModel: Transformer.DataComponentModel =
+            convert(state, layoutCreator, canvasContext);
+          const { vectorMap } = componentModel;
+          const { displayConfig } = vectorMap;
+          displayConfig.viewBox = preserveAspectRatio(displayConfig,
+            displayConfig.viewBox, 'xMidYMid meet').dest;
+          const components = groupByComponent(componentModel);
+          renderMap(vectorMap, canvas);
+          components.tracks.forEach((track) => renderTrack(track, context));
+          components.axes.forEach((axis) => renderAxis(axis, context));
+          components.markers.forEach((marker) => renderMarker(marker, context));
+          components.labels.forEach((label) => renderLabel(label, context));
+          context.restore();
+          return Promise.resolve(true);
+        },
+        clear: (): Promise<boolean> => {
+          container.removeChild(canvas);
+          return Promise.resolve<boolean>(true);
+        },
       };
     };
   },
