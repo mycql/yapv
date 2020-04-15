@@ -2,10 +2,6 @@ language: node_js
 node_js:
   - lts/* # latest LTS Node.js release
 cache: npm
-branches:
-  only:
-    - master # build master branch only
-    - /v\d+\.\d+\.\d+/ # build tagged commits
 script:
   - npm run build
 before_deploy:
@@ -16,3 +12,4 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
+    all_branches: true
