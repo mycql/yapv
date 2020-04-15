@@ -5,6 +5,7 @@ cache: npm
 branches:
   only:
     - master # build master branch only
+    - /v\d+\.\d+\.\d+/ # build tagged commits
 script:
   - npm run build
 before_deploy:
