@@ -1,6 +1,6 @@
 {
   "name": "@yapv/canvas",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Canvas based renderer for YAPV",
   "keywords": [
     "plasmid",
