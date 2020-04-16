@@ -69,3 +69,7 @@ The 'data' instance is a JS object that conforms to the schema below.
 ## [Learn The Basics](tutorial/)
 
 If you want more guidance, head over to the [Tutorial](tutorial/) section to get started on how to slowly build your data model from scratch.
+
+## [Framework / Library Interoperability](interop/)
+
+YAPV can be used together with some of the most popular UI libraries in the community. This [guide](interop/) can help you get started.
