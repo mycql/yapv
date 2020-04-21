@@ -34,19 +34,42 @@ function textAlongPath(h: H) {
     }
     const pathId: string = `tpath${generateId()}`;
     const pathRef: string = `#${pathId}`;
-    const attrs = {
+    const textPathAttrs = {
       'xlink:href': pathRef,
       'href': pathRef,
     };
     // non-chrome like browsers do not implement 'letter-spacing'
     // svg style, so use 'textLength' attribute instead
     const textLength: number = textContentWidth(content.split(''), charInfo);
+    const pathAttrs = {
+      id: pathId,
+      style: pathStyle,
+      d: path,
+    };
+    const textAttrs = {
+      textLength,
+      dy: '0.5ex',
+      style: labelStyle,
+    };
+    // why an additional 'attrs' property? well, we
+    // have Vue's not so portable 'h' implementation
+    // to thank for that
+    // also, Vue expects child elements to come in
+    // the form of array, so there you go
     return (
       <g>
-        <path id={pathId} style={pathStyle} d={path}></path>
-        <text dy='0.5ex' style={labelStyle} textLength={textLength}>
-          <textPath {...attrs}>{content}</textPath>
-        </text>
+        {
+          [
+            <path {...{...pathAttrs, attrs: { ...pathAttrs}}}></path>,
+            <text {...{...textAttrs, attrs: { ...textAttrs}}}>
+              {
+                [
+                  <textPath {...{...textPathAttrs, attrs: { ...textPathAttrs}}}>{content}</textPath>,
+                ]
+              }
+            </text>,
+          ]
+        }
       </g>
     );
   };
@@ -58,8 +81,19 @@ function textAlongAxis(h: H) {
     // non-chrome like browsers do not implement 'letter-spacing'
     // svg style, so use 'textLength' attribute instead
     const textLength: number = textContentWidth(content.split(''), charInfo);
+    const { x, y } = position;
+    const attrs = {
+      x,
+      y,
+      textLength,
+      dy: '0.5ex',
+      style: labelStyle,
+    };
+    // why an additional 'attrs' property? well, we
+    // have Vue's not so portable 'h' implementation
+    // to thank for that
     return (
-      <text dy='0.5ex' x={position.x} y={position.y} style={labelStyle} textLength={textLength}>{content}</text>
+      <text {...{...attrs, attrs: { ...attrs}}}>{content}</text>
     );
   };
 }
@@ -72,7 +106,14 @@ function polyLines(h: H) {
       `${params.from.x} ${params.from.y}`,
       ...params.to.map((coord: Coord) => `${coord.x} ${coord.y}`),
     ];
-    return (<polyline points={paths.join(', ')} style={cssProps} />);
+    const attrs = {
+      points: paths.join(', '),
+      style: cssProps,
+    };
+    // why an additional 'attrs' property? well, we
+    // have Vue's not so portable 'h' implementation
+    // to thank for that
+    return (<polyline {...{...attrs, attrs: { ...attrs}}} />);
   };
 }
 
@@ -90,8 +131,12 @@ const createRenderer: ComponentMaker<LabelRenderModel> = (h: H) => {
       const connectorComponent: JSX.Element = polyLines(h)(connector);
       return (
         <g>
-          {labelComponent}
-          {connectorComponent}
+          {
+            [
+              labelComponent,
+              connectorComponent,
+            ]
+          }
         </g>
       );
     } else {

@@ -13,8 +13,15 @@ function scalesAsPaths(h: H) {
       const from: Coord = coords[0];
       const to: Coord = coords[1];
       const path = `M ${from.x} ${from.y} L ${to.x} ${to.y}`;
+      const attrs = {
+        d: path,
+        style: cssProps,
+      };
+      // why an additional 'attrs' property? well, we
+      // have Vue's not so portable 'h' implementation
+      // to thank for that
       return (
-        <path d={path} style={cssProps}></path>
+        <path {...{...attrs, attrs: { ...attrs}}}></path>
       );
     });
     return (
@@ -30,17 +37,34 @@ const createRenderer: ComponentMaker<AxisRenderModel> = (h: H) => {
     const cssProps: CSSProperties = toCamelCaseKeys(axisStyle);
     const path = arcAsDonutPaths(axis.annulus).join(' ');
     const scalePaths = scales.map(scalesAsPaths(h));
+    const attrs = {
+      d: path,
+      style: cssProps,
+    };
+    // why an additional 'attrs' property? well, we
+    // have Vue's not so portable 'h' implementation
+    // to thank for that
+    // also, Vue expects child elements to come in
+    // the form of array, so there you go
     return (
       <g>
-        <g>
-          <path d={path} style={cssProps}></path>
-        </g>
-        <g>
-          {scalePaths}
-        </g>
-        <g>
-          {children}
-        </g>
+        {
+          [
+            <g>
+              {
+                [
+                  <path {...{...attrs, attrs: { ...attrs}}}></path>,
+                ]
+              }
+            </g>,
+            <g>
+              {scalePaths}
+            </g>,
+            <g>
+              {children}
+            </g>,
+          ]
+        }
       </g>
     );
   };

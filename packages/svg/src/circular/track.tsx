@@ -10,14 +10,31 @@ const createRenderer: ComponentMaker<TrackRenderModel> = (h: H) => {
     const trackStyle = {...params.style, ...{ 'fill-rule': 'evenodd' }};
     const cssProps: CSSProperties = toCamelCaseKeys(trackStyle);
     const path = arcAsDonutPaths(params.annulus).join(' ');
+    const attrs = {
+      d: path,
+      style: cssProps,
+    };
+    // why an additional 'attrs' property? well, we
+    // have Vue's not so portable 'h' implementation
+    // to thank for that
+    // also, Vue expects child elements to come in
+    // the form of array, so there you go
     return (
       <g>
-        <g>
-          <path d={path} style={cssProps}></path>
-        </g>
-        <g>
-          {children}
-        </g>
+        {
+          [
+            <g>
+              {
+                [
+                  <path {...{...attrs, attrs: { ...attrs}}}></path>,
+                ]
+              }
+            </g>,
+            <g>
+              {children}
+            </g>,
+          ]
+        }
       </g>
     );
   };

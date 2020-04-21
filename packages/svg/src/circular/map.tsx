@@ -20,11 +20,23 @@ const createRenderer: ComponentMaker<ViewDisplayConfig> = (h: H) => {
       'xmlns': 'http://www.w3.org/2000/svg',
       'xmlns:xlink': 'http://www.w3.org/1999/xlink',
     };
+    const gAttrs = {
+      transform,
+    };
+    // why an additional 'attrs' property? well, we
+    // have Vue's not so portable 'h' implementation
+    // to thank for that.
+    // also, Vue expects child elements to come in
+    // the form of array, so there you go
     return (
-      <svg {...attrs}>
-        <g transform={transform}>
-          {children}
-        </g>
+      <svg {...{...attrs, attrs: { ...attrs}}}>
+        {
+          [
+            <g {...{...gAttrs, attrs: { ...gAttrs}}}>
+              {children}
+            </g>,
+          ]
+        }
       </svg>
     );
   };
