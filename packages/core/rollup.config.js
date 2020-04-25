@@ -10,7 +10,7 @@ export default [
 		output: [
 			{
 				name: 'YAPV',
-				file: pkg.browser,
+				file: pkg.umd,
 				format: 'umd',
 				extend: true,
         sourcemap: true,
