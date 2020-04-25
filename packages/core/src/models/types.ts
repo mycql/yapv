@@ -235,9 +235,12 @@ export type VectorMapLayoutProvider<T, U, V, W> = {
   axis(model: Axis, scale: ScaleLinear<number, number>): U;
   marker(model: Marker, scale: ScaleLinear<number, number>): V;
   label(model: Label, scale: ScaleLinear<number, number>, measureText?: TextMeasurer): W;
+  canvasContext(): CanvasRenderingContext2D;
+  clear(): void;
 };
 
-export type VectorMapLayoutProviderMaker<T, U, V, W> = (range: Location) => VectorMapLayoutProvider<T, U, V, W>;
+export type VectorMapLayoutProviderMaker<T, U, V, W> =
+  (range: Location, canvasContextProvider?: () => CanvasRenderingContext2D) => VectorMapLayoutProvider<T, U, V, W>;
 
 export type InHouseVectorMapRenderer<U, V, W, X, A = {}, B = {}, C = {}, D = {}> = {
   key: LayoutType;

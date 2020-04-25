@@ -83,6 +83,8 @@ const render: CanvasVectorMapRenderer = {
         },
         clear: (): Promise<boolean> => {
           container.removeChild(canvas);
+          (canvas as unknown) = null;
+          (context as unknown) = null;
           return Promise.resolve<boolean>(true);
         },
       };

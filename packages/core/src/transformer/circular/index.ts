@@ -3,14 +3,13 @@ import {
   Axis,
   DataNormalizer,
   Label,
-  LayoutProvider,
   LayoutProviderMaker,
   Marker,
   Track,
 } from './types';
 
 import { PI } from '../../models';
-import { arrayOrEmpty, scaleLinear, withAxisOffset, withDefaultViewBoxIfNotPresent } from '../../util';
+import { arrayOrEmpty, createCanvas, scaleLinear, withAxisOffset, withDefaultViewBoxIfNotPresent } from '../../util';
 
 import trackFn from './track';
 import markerFn from './marker';
@@ -23,7 +22,7 @@ const convert: DataNormalizer = (state: VectorMap,
   const vectorMap: VectorMap =  withDefaultViewBoxIfNotPresent(state);
   const { sequenceConfig } = vectorMap;
   const { range } = sequenceConfig;
-  const layout = layoutCreator(range);
+  const layout = layoutCreator(range, canvasContext);
   const tracks = arrayOrEmpty(state.tracks).map((trackState) => {
     const { displayConfig } = trackState;
     const { distance: trackDistance } = displayConfig;
@@ -61,7 +60,6 @@ const convert: DataNormalizer = (state: VectorMap,
         const axisLabel: Label = {
           ...labelState,
           layout,
-          canvasContext,
         };
         return axisLabel;
       });
@@ -88,7 +86,6 @@ const convert: DataNormalizer = (state: VectorMap,
             distance: trackDistance,
           },
           layout,
-          canvasContext,
         };
         return label;
       });
@@ -108,19 +105,46 @@ const convert: DataNormalizer = (state: VectorMap,
       },
       location: { start: 0, end: 0},
       layout,
-      canvasContext,
     };
     return label;
   });
   return { vectorMap, tracks, labels: mapLabels };
 };
 
-const provideLayout: (range: Location) => LayoutProvider = (range: Location) => {
+const provideLayout: LayoutProviderMaker = (range: Location,
+                                            canvasContextProvider?: () => CanvasRenderingContext2D) => {
   const scale: ScaleLinear<number, number> = scaleLinear()
     .domain([range.start, range.end])
     .range([withAxisOffset(0), withAxisOffset(PI.TWICE)]);
+  let contextTuple: [() => CanvasRenderingContext2D, () => void];
+  // why do we need to do this you ask? To render
+  // labels, we need some way to measure their distance.
+  // to do that, we use a canvas context to render text
+  // offscreen and then measure them
+  if (canvasContextProvider) {
+    contextTuple = [
+      canvasContextProvider,
+      () => console.error('No cleanup needed'),
+    ];
+  } else {
+    const canvas = createCanvas();
+    const context = canvas.getContext('2d');
+    if (!context) {
+      throw new Error('Canvas not supported!');
+    }
+    contextTuple = [
+      (): CanvasRenderingContext2D => context,
+      (): void => {
+        (canvas as unknown) = null;
+        (context as unknown) = null;
+      },
+    ];
+  }
+  const [ canvasContext, clear ] = contextTuple;
   return {
     scale,
+    canvasContext,
+    clear,
     marker: markerFn,
     track: trackFn,
     axis: axisFn,

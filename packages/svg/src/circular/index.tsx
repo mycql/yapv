@@ -10,7 +10,7 @@ import { PlasmidMapComponent, PlasmidMapComponentMaker } from './map';
 
 import * as Transformer from '../core/transformer/circular/types';
 
-import { arrayOrEmpty } from '../core/util';
+import { arrayOrEmpty, createCanvas } from '../core/util';
 
 const { h, app } = core;
 
@@ -37,15 +37,6 @@ const DEFAULT_STATE: VectorMap = {
   },
   tracks: [],
 };
-
-function createCanvas(): HTMLCanvasElement {
-  const canvas: HTMLCanvasElement = document.createElement('canvas');
-  canvas.style.position = 'fixed';
-  canvas.style.display = 'none';
-  canvas.style.left = '-1000px';
-  canvas.style.top = '-10000px';
-  return canvas;
-}
 
 type SVGVectorMapRenderer = {
   AxisComponent: AxisComponentMaker,
@@ -77,7 +68,6 @@ const render: SVGVectorMapRenderer = {
       const container: HTMLElement = document.createElement('div');
       root.appendChild(container);
       const canvas = createCanvas();
-      root.appendChild(canvas);
       const context = canvas.getContext('2d');
       if (!context) {
         throw new Error('Canvas not supported!');
@@ -148,8 +138,9 @@ const render: SVGVectorMapRenderer = {
           return Promise.resolve(true);
         },
         clear: (): Promise<boolean> => {
-          root.removeChild(canvas);
           root.removeChild(container);
+          (canvas as unknown) = null;
+          (context as unknown) = null;
           return Promise.resolve<boolean>(true);
         },
       };

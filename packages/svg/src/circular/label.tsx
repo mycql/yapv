@@ -149,8 +149,8 @@ export type LabelComponentMaker = ComponentMaker<Label>;
 export const LabelComponent: LabelComponentMaker = (h: H) => {
   const render = createRenderer(h);
   return (props: Label) => {
-    const { layout, canvasContext } = props;
-    const { scale } = layout;
+    const { layout } = props;
+    const { scale, canvasContext } = layout;
     const params = layout.label(props, scale, canvasContextTextMeasurer(canvasContext()));
     return render(params, []);
   };

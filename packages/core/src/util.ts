@@ -209,3 +209,12 @@ export function withDefaultViewBoxIfNotPresent(vectorMap: VectorMap): VectorMap 
 export function arrayOrEmpty<T>(array: T[] | undefined): T[] {
   return array || [];
 }
+
+export function createCanvas(): HTMLCanvasElement {
+  const canvas: HTMLCanvasElement = document.createElement('canvas');
+  canvas.style.position = 'fixed';
+  canvas.style.display = 'none';
+  canvas.style.left = '-1000px';
+  canvas.style.top = '-10000px';
+  return canvas;
+}

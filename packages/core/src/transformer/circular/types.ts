@@ -67,7 +67,6 @@ export type Axis = {
 
 export type Label = {
   layout: LayoutProvider;
-  canvasContext: () => CanvasRenderingContext2D;
 } & LabelCore<LayoutProvider>;
 
 export {

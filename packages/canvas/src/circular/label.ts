@@ -89,8 +89,8 @@ const doRender: Renderer = (params: LabelRenderModel,
 
 type Render = ComponentRenderer<Label, CanvasRenderingContext2D, boolean>;
 export const render: Render = (props: Label, context: CanvasRenderingContext2D): Promise<boolean> => {
-  const { layout, canvasContext } = props;
-  const { scale } = layout;
+  const { layout } = props;
+  const { scale, canvasContext } = layout;
   const params = layout.label(props, scale, canvasContextTextMeasurer(canvasContext()));
   return doRender(params, context);
 };
