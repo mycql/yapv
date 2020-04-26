@@ -121,11 +121,14 @@
           "properties": {
               "range": {
                   "$ref": "#/definitions/Range"
+              },
+              "length": {
+                "type": "integer"
+              },
+              "sequence": {
+                "type": "string"
               }
           },
-          "required": [
-              "range"
-          ],
           "title": "SequenceConfig"
       },
       "Range": {

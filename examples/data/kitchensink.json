@@ -9,10 +9,7 @@
     }
   },
   "sequenceConfig": {
-    "range": {
-      "start": 1,
-      "end": 201
-    }
+    "length": 200
   },
   "labels": [
     {

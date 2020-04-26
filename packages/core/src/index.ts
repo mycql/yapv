@@ -1,12 +1,12 @@
 import {
   ComponentRenderer,
   InHouseVectorMapRenderer,
-  Location,
   RenderFn,
   VectorMap,
   VectortMapDataNormalizer,
   VectorMapLayoutProviderMaker,
   VectorMapRenderer,
+  VectorMapSeqConfig,
 } from './models/types';
 import { LayoutProvider as CircularLayoutProvider } from './transformer/circular/types';
 
@@ -33,7 +33,7 @@ export type YapvViewer = {
 export type YapvBase = {
   create: (container: HTMLElement) => YapvViewer;
   layout: {
-    circular: (range: Location) => CircularLayoutProvider;
+    circular: (sequenceConfig: VectorMapSeqConfig) => CircularLayoutProvider;
   };
 };
 

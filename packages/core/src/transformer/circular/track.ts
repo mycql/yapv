@@ -8,7 +8,7 @@ import {
 } from '../../models/types';
 import { RenderModelTransformer } from './types';
 import { PI } from '../../models';
-import { parseStyle } from '../../util';
+import { parseStyle, withAxisOffset } from '../../util';
 
 const defaultStyle: string = 'stroke: black; fill: transparent;';
 
@@ -26,8 +26,8 @@ const TrackModelTransformer: Transformer = (model: Track,
   const style: StringKeyValMap = parseStyle(styleStr || defaultStyle);
   const annulus: DefaultArcObject = {
     anglesInRadians: {
-      start: range ? scale(range.start) : 0,
-      end: range ? scale(range.end) : PI.TWICE,
+      start: range ? scale(range.start) : withAxisOffset(0),
+      end: range ? scale(range.end) : withAxisOffset(PI.TWICE),
     },
     radii: {
       inner: distance - halfWidth,

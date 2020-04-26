@@ -1,4 +1,4 @@
-import { Location, ScaleLinear, VectorMap } from '../../models/types';
+import { Location, ScaleLinear, VectorMap, VectorMapSeqConfig } from '../../models/types';
 import {
   Axis,
   DataNormalizer,
@@ -9,20 +9,33 @@ import {
 } from './types';
 
 import { PI } from '../../models';
-import { arrayOrEmpty, createCanvas, scaleLinear, withAxisOffset, withDefaultViewBoxIfNotPresent } from '../../util';
+import {
+  arrayOrEmpty,
+  createCanvas,
+  scaleLinear,
+  withAxisOffset,
+  withDefaultViewBoxIfNotPresent,
+} from '../../util';
 
 import trackFn from './track';
 import markerFn from './marker';
 import labelFn from './label';
 import axisFn from './axis';
 
+function locationFromConfig(sequenceConfig: VectorMapSeqConfig): Location {
+  const { range, length, sequence } = sequenceConfig;
+  const location: Location = range ? { ...range } : ((length && length > 0) ?
+    { start: 1, end: length } : (sequence ? { start: 1, end: sequence.length } : { start: 0, end: 0 }));
+  return location;
+}
+
 const convert: DataNormalizer = (state: VectorMap,
                                  layoutCreator: LayoutProviderMaker,
                                  canvasContext: () => CanvasRenderingContext2D) => {
   const vectorMap: VectorMap =  withDefaultViewBoxIfNotPresent(state);
   const { sequenceConfig } = vectorMap;
-  const { range } = sequenceConfig;
-  const layout = layoutCreator(range, canvasContext);
+  const range: Location = locationFromConfig(sequenceConfig);
+  const layout = layoutCreator(sequenceConfig, canvasContext);
   const tracks = arrayOrEmpty(state.tracks).map((trackState) => {
     const { displayConfig } = trackState;
     const { distance: trackDistance } = displayConfig;
@@ -111,10 +124,11 @@ const convert: DataNormalizer = (state: VectorMap,
   return { vectorMap, tracks, labels: mapLabels };
 };
 
-const provideLayout: LayoutProviderMaker = (range: Location,
+const provideLayout: LayoutProviderMaker = (sequenceConfig: VectorMapSeqConfig,
                                             canvasContextProvider?: () => CanvasRenderingContext2D) => {
+  const location: Location = locationFromConfig(sequenceConfig);
   const scale: ScaleLinear<number, number> = scaleLinear()
-    .domain([range.start, range.end])
+    .domain([location.start, location.end])
     .range([withAxisOffset(0), withAxisOffset(PI.TWICE)]);
   let contextTuple: [() => CanvasRenderingContext2D, () => void];
   // why do we need to do this you ask? To render

@@ -180,8 +180,9 @@ export type Track<T = {}> = {
 export type VectorMapDisplayConfig = ViewDisplayConfig;
 
 export type VectorMapSeqConfig = {
-  range: Location;
+  range?: Location;
   sequence?: string;
+  length?: number;
 };
 
 export type VectorMapComponentModel<T> = {
@@ -240,7 +241,8 @@ export type VectorMapLayoutProvider<T, U, V, W> = {
 };
 
 export type VectorMapLayoutProviderMaker<T, U, V, W> =
-  (range: Location, canvasContextProvider?: () => CanvasRenderingContext2D) => VectorMapLayoutProvider<T, U, V, W>;
+  (sequenceConfig: VectorMapSeqConfig,
+   canvasContextProvider?: () => CanvasRenderingContext2D) => VectorMapLayoutProvider<T, U, V, W>;
 
 export type InHouseVectorMapRenderer<U, V, W, X, A = {}, B = {}, C = {}, D = {}> = {
   key: LayoutType;
