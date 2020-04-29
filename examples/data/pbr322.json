@@ -290,7 +290,7 @@
                 "style": "stroke: transparent; stroke-width: 0;",
                 "label": {
                   "type": "text",
-                  "style": "text-anchor: middle; font: 10px \"Arial\", sans-serif; fill: black;",
+                  "style": "text-anchor: start; font: 10px \"Arial\", sans-serif; fill: black;",
                   "distance": -10
                 }
               }
@@ -326,7 +326,7 @@
                 "style": "stroke: transparent; stroke-width: 0;",
                 "label": {
                   "type": "text",
-                  "style": "text-anchor: middle; font: 10px \"Arial\", sans-serif; fill: blue;",
+                  "style": "text-anchor: start; font: 10px \"Arial\", sans-serif; fill: blue;",
                   "distance": -10
                 }
               }

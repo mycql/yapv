@@ -50,7 +50,7 @@
                 "style": "stroke: green; stroke-width: 2;",
                 "label": {
                   "type": "text",
-                  "style": "text-anchor: middle; font: 10px \"Courier\", monotype; fill: teal;",
+                  "style": "text-anchor: start; font: 10px \"Courier\", monotype; fill: teal;",
                   "distance": -15
                 }
               }
@@ -133,7 +133,7 @@
                 "style": "stroke: green; stroke-width: 2;",
                 "label": {
                   "type": "path",
-                  "style": "text-anchor: middle; font: 10px \"Arial\", sans-serif; fill: red;",
+                  "style": "text-anchor: start; font: 10px \"Arial\", sans-serif; fill: red;",
                   "distance": 10
                 }
               }
@@ -167,7 +167,7 @@
                 "style": "stroke: red; stroke-width: 4;",
                 "label": {
                   "type": "text",
-                  "style": "text-anchor: middle; font: 10px \"Arial\", sans-serif; fill: red;",
+                  "style": "text-anchor: start; font: 10px \"Arial\", sans-serif; fill: red;",
                   "distance": -10
                 }
               }

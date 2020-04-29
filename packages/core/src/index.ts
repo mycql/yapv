@@ -8,18 +8,25 @@ import {
   VectorMapRenderer,
   VectorMapSeqConfig,
 } from './models/types';
-import { LayoutProvider as CircularLayoutProvider } from './transformer/circular/types';
+import {
+  LayoutProvider as CircularLayoutProvider,
+  LayoutProviderMaker as CircularLayoutProviderMaker,
+} from './transformer/circular/types';
 
 import {
-  provideLayout as provideCircularLayoutTransforms,
+  provideLayout as provideCircularLayout,
   convert as convertCircular,
 } from './transformer/circular';
+
+import { normalizeProviderMaker } from './transformer/common';
+
+const provideCircular: CircularLayoutProviderMaker = normalizeProviderMaker(provideCircularLayout);
 
 const providers: { [key: string]: [
   VectorMapLayoutProviderMaker<any, any, any, any>,
   VectortMapDataNormalizer<any, any, any, any, any, any, any, any>,
 ]} = {
-  circular: [provideCircularLayoutTransforms, convertCircular],
+  circular: [provideCircular, convertCircular],
 };
 
 type GenericVectorMapRenderer = InHouseVectorMapRenderer<any, any, any, any>;
@@ -72,7 +79,7 @@ const baseImpl: YapvBase = {
     return viewer;
   },
   layout: {
-    circular: provideCircularLayoutTransforms,
+    circular: provideCircular,
   },
 };
 

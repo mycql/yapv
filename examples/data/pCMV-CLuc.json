@@ -50,7 +50,7 @@
                 "style": "stroke: black; stroke-width: 2;",
                 "label": {
                   "type": "text",
-                  "style": "text-anchor: middle; font: 10px \"Courier\", monotype; fill: black;",
+                  "style": "text-anchor: start; font: 10px \"Courier\", monotype; fill: black;",
                   "distance": 24
                 }
               }
@@ -166,7 +166,7 @@
           },
           "location": {
             "start": 5909,
-            "end": 6979
+            "end": 6769
           },
           "direction": "-",
           "labels": [

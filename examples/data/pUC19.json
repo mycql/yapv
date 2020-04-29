@@ -4,8 +4,8 @@
     "height": 450,
     "width": 450,
     "viewBox": {
-      "height": 350,
-      "width": 350
+      "height": 450,
+      "width": 450
     }
   },
   "sequenceConfig": {
@@ -46,7 +46,7 @@
                 "width":5,
                 "distance": -24,
                 "interval": 60,
-                "style": "stroke: #800000; stroke-width: 1;"
+                "style": "text-anchor: start; stroke: #800000; stroke-width: 1;"
               }
             ]
           }
@@ -291,7 +291,7 @@
                 "style": "stroke: black; stroke-width: 3;",
                 "label": {
                   "type": "text",
-                  "style": "text-anchor: middle; font: 10px \"Arial\", sans-serif; fill: gray;",
+                  "style": "text-anchor: start; font: 10px \"Arial\", sans-serif; fill: gray;",
                   "distance": 15
                 }
               }
@@ -317,7 +317,7 @@
                 "width": 5,
                 "distance": 0,
                 "interval": 5,
-                "style": "stroke: black; stroke-width: 1;"
+                "style": "text-anchor: start; stroke: black; stroke-width: 1;"
               }
             ]
           }

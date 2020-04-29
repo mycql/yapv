@@ -36,10 +36,14 @@ export type AxisRenderModel = {
 function intervalToScales(tickInterVal: number, location: Location): number[] {
   const ticks: number[] = [];
   const { start, end }: Location = location;
-  let tick: number = start === 1 ? start - 1 : start;
-  while (tick <= end) {
-    ticks.push(tick);
-    tick += tickInterVal;
+  // always show the start position
+  ticks.push(start);
+  // since positions are 1-based, we offset by 1
+  // before actually start generating by intervals
+  for (let tick = start - 1; tick <= end; tick += tickInterVal) {
+    if (tick >= start) {
+      ticks.push(tick);
+    }
   }
   return ticks;
 }
@@ -145,7 +149,7 @@ function ticksAsLabels(config: LabelDisplayConfig,
                        scale: ScaleLinear<number, number>): (digit: number) => Label {
   return (digit: number) => {
     return {
-      text: digit.toString(),
+      text: (digit % 1 !== 0) ? digit.toFixed(2) : digit.toString(),
       location: { start: digit, end: digit },
       displayConfig: config,
     };
