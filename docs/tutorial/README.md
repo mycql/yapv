@@ -1,8 +1,8 @@
 # YAPV Basics
 
-YAPV's data model revolves around setting dimensions, positioning and styling of its built-in component model. In real world projects, you should be building higher level components abstracting away this model, so you should at least familiarize yourself with the model's properties.
+YAPV's data object revolves around setting dimensions, positioning and styling of its built-in component model. In real world projects, you should be building higher level components abstracting away this data object, so you should at least familiarize yourself with the object's properties.
 
-We'll run through the data model explaining each section in detail. At the very end, you'll see code samples which you can play around with. If you'd rather skip this section, you can head straight to the fiddles [here](tutorial/?id=Samples).
+We'll run through the data object explaining each section in detail. At the very end, you'll see code samples which you can play around with. If you'd rather skip this section, you can head straight to the fiddles [here](tutorial/?id=Samples).
 
 ## Step 1 - Define the sequence constraint
 
@@ -11,10 +11,7 @@ First things first. Since we're dealing with sequences, we want to specify how l
 ```javscript
 {
   sequenceConfig: {
-    range: {
-      start: 1,   // The start and end determines the
-      end: 6905,  // location in the sequence the map represents
-    },
+    length: 6905,
   },
   ...
 }
@@ -88,7 +85,7 @@ Now we want to give users an idea of the ratio of the sequence they are viewing 
 ...
 ```
 
-Instead of specifying the **interval** between scale, you can alternatively use the **total** property which will render N number of scales only throught the entire axis.
+Instead of specifying the **interval** between scale, you can alternatively use the **total** property which will trye to attempt and render N number of scales throught the entire axis. It will do normalization of the scale marks and will try to distribute it evenly based target total number of scales.
 
 ```javascript
 ...
@@ -96,7 +93,7 @@ scales: [
   {
     width: 10,
     distance: 6,
-    total: 10, // renders 10 scale lines
+    total: 10,
     style: "stroke: black; stroke-width: 2;",
   }
 ]
@@ -130,7 +127,7 @@ scales: [
     style: "stroke: black; stroke-width: 2;",
     label: {
       type: "text",
-      style: "text-anchor: middle; font: 10px \"Courier\", monotype; fill: black;",
+      style: "text-anchor: start; font: 10px \"Courier\", monotype; fill: black;",
       distance: 24 // distance from the center of the axis
     }
   }
@@ -163,6 +160,7 @@ markers: [
   // '+' - for clockwise (positive strand)
   // '-' - for counter clockwise (negative strand)
   // '#' - for no direction marker
+  // '*' - for both direction marker
   labels: [
     {
       text: "pCMV",
@@ -177,6 +175,20 @@ markers: [
 ]
 ...
 ```
+
+It is important to note that locations are 1-based as a de-facto for scientific notation.
+
+Scientific formats define locations for annotations
+as inclusive ranges of bp positions. Example given a 4 bp
+sequence, with cursor represented by '|'
+```sh
+| A | C | T | G |
+1   2   3   4
+```
+- A is at position 1
+- G is at position 4
+
+Positions are 1-based. So if we were to refer to the whole sequence and annotate it, then, start = 1 end = 4 (start of 1st base, end of 4th base).
 
 ## Samples
 

@@ -33,10 +33,11 @@ npm install @yapv/canvas
 
 If you want it directly off html:
 ```html
-<script src="https://unpkg.com/@yapv/core@0.1.0/lib/index.umd.js" />
-<script src="https://unpkg.com/@yapv/canvas@0.1.0/lib/index.umd.js" />
+<script src="https://unpkg.com/@yapv/core@0.2.2/lib/index.umd.js" />
+// and use any of the renderers
+<script src="https://unpkg.com/@yapv/svg@0.2.2/lib/index.umd.js" />
 // OR
-<script src="https://unpkg.com/@yapv/svg@0.1.0/lib/index.umd.js" />
+<script src="https://unpkg.com/@yapv/canvas@0.2.2/lib/index.umd.js" />
 ```
 
 ## How do I use it? Show me the code!
@@ -63,7 +64,7 @@ plasmidViewer.draw(data);
 
 The 'data' instance is a JS object that conforms to the schema below.
 
-## Data Schema
+## Data Object Schema
 [schema.json](https://ghcdn.rawgit.org/mycql/yapv/master/packages/core/src/schema.json ':include :type=code')
 
 ## [Learn The Basics](tutorial/)
