@@ -1,6 +1,6 @@
 {
   "name": "@yapv/svg",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "SVG based renderer for YAPV",
   "keywords": [
     "plasmid",
