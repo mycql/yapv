@@ -194,9 +194,9 @@ Positions are 1-based. So if we were to refer to the whole sequence and annotate
 
 Combining and playing around with these properties will allow you to build more complex maps.
 
-<iframe width="100%" height="420" src="//jsfiddle.net/mycql/gtk1sybr/32/embedded/result,js/" allowfullscreen="allowfullscreen" allowpaymentrequest frameborder="0"></iframe>
+<iframe width="100%" height="420" src="//jsfiddle.net/mycql/gtk1sybr/39/embedded/result,js/" allowfullscreen="allowfullscreen" allowpaymentrequest frameborder="0"></iframe>
 
-<iframe width="100%" height="420" src="//jsfiddle.net/mycql/gtk1sybr/33/embedded/result,js/" allowfullscreen="allowfullscreen" allowpaymentrequest frameborder="0"></iframe>
+<iframe width="100%" height="420" src="//jsfiddle.net/mycql/gtk1sybr/41/embedded/result,js/" allowfullscreen="allowfullscreen" allowpaymentrequest frameborder="0"></iframe>
 
-<iframe width="100%" height="420" src="//jsfiddle.net/mycql/gtk1sybr/34/embedded/result,js/" allowfullscreen="allowfullscreen" allowpaymentrequest frameborder="0"></iframe>
+<iframe width="100%" height="420" src="//jsfiddle.net/mycql/gtk1sybr/43/embedded/result,js/" allowfullscreen="allowfullscreen" allowpaymentrequest frameborder="0"></iframe>
 
