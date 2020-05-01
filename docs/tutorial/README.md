@@ -85,7 +85,7 @@ Now we want to give users an idea of the ratio of the sequence they are viewing 
 ...
 ```
 
-Instead of specifying the **interval** between scale, you can alternatively use the **total** property which will trye to attempt and render N number of scales throught the entire axis. It will do normalization of the scale marks and will try to distribute it evenly based target total number of scales.
+Instead of specifying the **interval** between scale, you can alternatively use the **total** property which will try to attempt and render N number of scales throught the entire axis. It will do normalization of the scale marks and will try to distribute it evenly based on target total number of scales.
 
 ```javascript
 ...

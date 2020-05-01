@@ -30,7 +30,13 @@ Whichever among the view libraries you choose to integrate with, interoperabilit
 
 Using YAPV with React is dead easy. Just use React's [createElement](https://reactjs.org/docs/react-api.html#createelement) function to bootstrap the components and you're off.
 
-<iframe width="100%" height="400" src="//jsfiddle.net/mycql/x02so9ky/13/embedded/js,result/" allowfullscreen="allowfullscreen" allowpaymentrequest frameborder="0"></iframe>
+<iframe
+     src="https://codesandbox.io/embed/hopeful-hugle-zm0cg?autoresize=1&fontsize=14&hidenavigation=1&module=%2Fsrc%2FApp.js&theme=light"
+     style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
+     title="hopeful-hugle-zm0cg"
+     allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr"
+     sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+></iframe>
 
 ## Using YAPV with Vue and Single File Components
 
