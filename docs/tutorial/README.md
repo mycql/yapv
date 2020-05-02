@@ -19,7 +19,7 @@ First things first. Since we're dealing with sequences, we want to specify how l
 
 ## Step 2 - Define the map dimensions
 
-We want to layout the dimensions of your map. The size of how you want your map to be rendered depends on you. You just have to specify them in YAPV's data model.
+We want to layout the dimensions of your map. The size of how you want your map to be rendered depends on you. You just have to specify them in YAPV's data object.
 
 ```javascript
 {
@@ -85,7 +85,7 @@ Now we want to give users an idea of the ratio of the sequence they are viewing 
 ...
 ```
 
-Instead of specifying the **interval** between scale, you can alternatively use the **total** property which will try to attempt and render N number of scales throught the entire axis. It will do normalization of the scale marks and will try to distribute it evenly based on target total number of scales.
+Instead of specifying the **interval** between scales, you can alternatively use the **total** property which will try to attempt and render N number of scales throughout the entire axis. It will do normalization of the scale marks and will try to distribute it evenly based on target total number of scales.
 
 ```javascript
 ...
@@ -196,7 +196,7 @@ Combining and playing around with these properties will allow you to build more 
 
 <iframe width="100%" height="420" src="//jsfiddle.net/mycql/gtk1sybr/39/embedded/result,js/" allowfullscreen="allowfullscreen" allowpaymentrequest frameborder="0"></iframe>
 
-<iframe width="100%" height="420" src="//jsfiddle.net/mycql/gtk1sybr/41/embedded/result,js/" allowfullscreen="allowfullscreen" allowpaymentrequest frameborder="0"></iframe>
+<iframe width="100%" height="420" src="//jsfiddle.net/mycql/gtk1sybr/46/embedded/result,js/" allowfullscreen="allowfullscreen" allowpaymentrequest frameborder="0"></iframe>
 
 <iframe width="100%" height="420" src="//jsfiddle.net/mycql/gtk1sybr/43/embedded/result,js/" allowfullscreen="allowfullscreen" allowpaymentrequest frameborder="0"></iframe>
 

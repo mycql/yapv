@@ -1,0 +1,95 @@
+<!doctype html>
+<head>
+  <meta charset="UTF-8">
+  <title>YAPV - Canvas</title>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+    }
+    #workspace {
+      display: flex;
+      flex: 1 1 auto;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+  <script src="../../../packages/core/lib/index.umd.js"></script>
+  <script src="../../../packages/canvas/lib/index.umd.js"></script>
+  <script>
+    (() => {
+      const dataPromise = fetch(`../../data/pCMV-CLuc.json`)
+        .then((response) => response.json());
+      window.addEventListener('load', () => {
+        const workspace = document.querySelector('#workspace');
+        const plasmidRenderer = YAPV.create(workspace)
+          .use(YAPV.canvas.circular);
+        dataPromise.then((data) => {
+          const { sequenceConfig, tracks } = data;
+          const { length: sequenceLength } = sequenceConfig;
+          const [ track1 ] = tracks;
+          const { markers } = track1;
+          const selectionMarker = {
+            direction: '#',
+            location: {
+              start: 1,
+              end: 1000,
+            },
+            displayConfig: {
+              style: "stroke: blue; fill: lightgray; fill-opacity: 0.4; stroke-width: 2;",
+              width: 50
+            },
+            labels: [
+              {
+                text: "1",
+                displayConfig: {
+                  type: "path",
+                  style: "text-anchor: start; font: 10px \"Courier\", monotype; stroke: blue;",
+                  vOffset: 30,
+                }
+              },
+              {
+                text: "1000",
+                displayConfig: {
+                  type: "path",
+                  style: "text-anchor: end; font: 10px \"Courier\", monotype; stroke: blue;",
+                  vOffset: 30,
+                }
+              }
+            ],
+          };
+          const animateSelection = () => {
+            const { location: selectionLocation, labels: selectionLabels } = selectionMarker;
+            const [ startLabel, endLabel ] = selectionLabels;
+            let newStart = selectionLocation.start + 10;
+            let newEnd = selectionLocation.end  + 10;
+            if (newEnd > sequenceLength) {
+              newEnd = 1;
+            }
+            if (newStart > sequenceLength) {
+              newStart = 1;
+            }
+            selectionLocation.start = newStart;
+            selectionLocation.end = newEnd;
+            startLabel.text = `${newStart}`;
+            endLabel.text = `${newEnd}`;
+            plasmidRenderer.draw(data);
+            requestAnimationFrame(animateSelection);
+          };
+          markers.push(selectionMarker);
+          plasmidRenderer.draw(data);
+          animateSelection();
+        });
+      });
+    })();
+  </script>
+</head>
+<body>
+  <main id="workspace">
+  </main>
+</body>
