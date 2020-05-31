@@ -24,9 +24,7 @@ Yeah, yeah. I know what you're thinking. Sure there are tons of viewers out ther
 
 YAPV is composed of renderer implementations as modules. You choose which renderer you want to use.
 
-### Import the modules:
-
-#### With Node and NPM:
+### With Node and NPM
 ```shell
 npm install @yapv/core
 # and install any of the renderers
@@ -40,7 +38,7 @@ import SVG from '@yapv/svg';
 import Canvas from '@yapv/canvas';
 ```
 
-#### Directly off html:
+### Directly off html
 UMD:
 ```html
 <script src="https://unpkg.com/@yapv/core@0.2.2/lib/index.umd.js" />
@@ -58,13 +56,13 @@ ES Modules:
 <script type="module" src="https://unpkg.com/@yapv/canvas@0.2.2/lib/index.esm.js" />
 ```
 
-#### With [deno](https://deno.land):
+### With Deno
 ```javascript
 import YAPV from "https://unpkg.com/@yapv/core@0.2.2/lib/index.esm.js"
 import SVG from "https://unpkg.com/@yapv/svg@0.2.2/lib/index.esm.js"
 import Canvas from "https://unpkg.com/@yapv/svg@0.2.2/lib/index.esm.js"
 ```
-For deno, since this is a web project that manipulates the DOM, make sure you let the deno compiler know via tsconfig.json.
+For [deno](https://deno.land), since this is a web project that manipulates the DOM, make sure you let the deno compiler know via tsconfig.json.
 ```json
 "compilerOptions": {
   "lib": ["DOM", "DOM.Iterable", "ES6"]
