@@ -22,16 +22,26 @@ Yeah, yeah. I know what you're thinking. Sure there are tons of viewers out ther
 
 ## Getting Started
 
-If you're using a module bundler:
+YAPV is composed of renderer implementations as modules. You choose which renderer you want to use.
+
+### Import the modules:
+
+#### With Node and NPM:
 ```shell
 npm install @yapv/core
-// and install any of the renderers
+# and install any of the renderers
 npm install @yapv/svg
-// OR
+# OR
 npm install @yapv/canvas
 ```
+```javascript
+import YAPV from '@yapv/core';
+import SVG from '@yapv/svg';
+import Canvas from '@yapv/canvas';
+```
 
-If you want it directly off html:
+#### Directly off html:
+UMD:
 ```html
 <script src="https://unpkg.com/@yapv/core@0.2.2/lib/index.umd.js" />
 // and use any of the renderers
@@ -39,16 +49,30 @@ If you want it directly off html:
 // OR
 <script src="https://unpkg.com/@yapv/canvas@0.2.2/lib/index.umd.js" />
 ```
+ES Modules:
+```html
+<script type="module" src="https://unpkg.com/@yapv/core@0.2.2/lib/index.esm.js" />
+// and use any of the renderers
+<script type="module" src="https://unpkg.com/@yapv/svg@0.2.2/lib/index.esm.js" />
+// OR
+<script type="module" src="https://unpkg.com/@yapv/canvas@0.2.2/lib/index.esm.js" />
+```
+
+#### With [deno](https://deno.land):
+```javascript
+import YAPV from "https://unpkg.com/@yapv/core@0.2.2/lib/index.esm.js"
+import SVG from "https://unpkg.com/@yapv/svg@0.2.2/lib/index.esm.js"
+import Canvas from "https://unpkg.com/@yapv/svg@0.2.2/lib/index.esm.js"
+```
+For deno, since this is a web project that manipulates the DOM, make sure you let the deno compiler know via tsconfig.json.
+```json
+"compilerOptions": {
+  "lib": ["DOM", "DOM.Iterable", "ES6"]
+}
+```
 
 ## How do I use it? Show me the code!
-YAPV is composed of renderer implementations as modules. You choose which renderer you want to use.
-
-
 ```javascript
-import YAPV from '@yapv/core';
-import SVG from '@yapv/svg';
-import Canvas from '@yapv/canvas';
-
 const data = { ... }
 const workspace = document.querySelector('#workspace');
 // Attaches the viewer to the HTML element with the specified selector
