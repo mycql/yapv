@@ -15,10 +15,8 @@ Whichever among the view libraries you choose to integrate with, interoperabilit
 ```
 3. Propagate the layout to your components as props
 ```html
-  <!--
-    As a sidenote, as the components are merely functions, you can name
-    the components whatever you like when you bootstrap them
-  -->
+  <!-- As a sidenote, as the components are merely functions, you can name -->
+  <!-- the components whatever you like when you bootstrap them -->
   <Track layout={layout} ...other props/>
   <Axis layout={layout} ...other props/>
   <Marker layout={layout} ...other props>
