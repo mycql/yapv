@@ -1,6 +1,6 @@
 # Using YAPV with other libraries
 
-YAPV's most flexible implementation [YAPV SVG](https://www.npmjs.com/package/@yapv/svg), is built with functional components leveraging a [lightweight vdom combined with a hyperscript](https://github.com/jorgebucaran/hyperapp/tree/V1) based API, so it plays well with other vdom/hyperscript based libraries (e.g. React) and can leverage on component templating.
+YAPV's most flexible implementation [YAPV SVG](https://www.npmjs.com/package/@yapv/svg), is built with functional components leveraging a [lightweight vdom combined with a hyperscript](https://github.com/jorgebucaran/hyperapp/tree/18bfb9b34a98c02faf4c67041b8d7e91ad32c306) based API, so it plays well with other vdom/hyperscript based libraries (e.g. React) and can leverage on component templating.
 
 ## Interop steps
 

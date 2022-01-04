@@ -87,7 +87,7 @@ plasmidViewer.draw(data);
 The 'data' instance is a JS object that conforms to the schema below.
 
 ## Data Object Schema
-[schema.json](https://ghcdn.rawgit.org/mycql/yapv/master/packages/core/src/schema.json ':include :type=code')
+[schema.json](https://raw.githubusercontent.com/mycql/yapv/master/packages/core/src/schema.json ':include :type=code')
 
 ## [Learn The Basics](tutorial/)
 
